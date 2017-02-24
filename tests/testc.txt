@@ -1,0 +1,22 @@
+boolean true
+do .length double
+
+][
+
+]
+>=
+/
+%,%
+==!=
+>
+return static
+String void while
+
+Integer.parseInt
+System.out.println
+System
+,,,,,,;.,,,:*//t&&
+null
++-
++ + 
+++l,-.sçs
