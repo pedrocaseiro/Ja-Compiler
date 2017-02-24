@@ -4,12 +4,11 @@
   static int col = 1;
 %}
 
+id                  [a-zA-z_$][a-zA-z_$0-9]*
 whitespace          [ \n\t\f\r]*
 reserved            "++"|"--"|"null"|"Integer"|"System"|"abstract"|"assert"|"break"|"byte"|"case"|"catch"|"char"|"const"|"continue"|"default"|"enum"|"extends"|"final"|"finally"|"for"|"goto"|"implements"|"import"|"instanceof"|"interface"|"long"|"native"|"new"|"package"|"private"|"protected"|"short"|"strictfp"|"super"|"switch"|"synchronized"|"this"|"throw"|"throws"|"transient"|"try"|"volatile"
 
 %%
-{whitespace}        {;}
-
 "boolean"            {printf("BOOL\n"); col+=yyleng;}
 "true"|"false"       {printf("BOOLLIT(%s)\n", yytext); col+=yyleng;}
 "class"              {printf("CLASS\n"); col+=yyleng;}
@@ -50,7 +49,10 @@ reserved            "++"|"--"|"null"|"Integer"|"System"|"abstract"|"assert"|"bre
 "="                  {printf("ASSIGN\n"); col+=yyleng;}
 ";"                  {printf("SEMI\n"); col+=yyleng;}
 ","                  {printf("COMMA\n"); col+=yyleng;}
+
+{whitespace}         {;}
 {reserved}           {printf("RESERVED(%s)\n", yytext);}
+{id}                 {printf("ID(%s)\n", yytext);}
 .                    {;}
 %%
 int main(int argc, char **argv) {
