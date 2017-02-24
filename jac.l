@@ -4,16 +4,54 @@
   static int col = 1;
 %}
 
-%option yylineno
-%X COMMENT
-%X ERRORS
-
-int                 [0-9]+
-float               [0-9]+.[0-9]+ 
-whitespace          [ \n\t\f\r]
+whitespace          [ \n\t\f\r]*
+reserved            "++"|"--"|"null"|"Integer"|"System"|"abstract"|"assert"|"break"|"byte"|"case"|"catch"|"char"|"const"|"continue"|"default"|"enum"|"extends"|"final"|"finally"|"for"|"goto"|"implements"|"import"|"instanceof"|"interface"|"long"|"native"|"new"|"package"|"private"|"protected"|"short"|"strictfp"|"super"|"switch"|"synchronized"|"this"|"throw"|"throws"|"transient"|"try"|"volatile"
 
 %%
 {whitespace}        {;}
+
+"boolean"            {printf("BOOL\n"); col+=yyleng;}
+"true"|"false"       {printf("BOOLLIT(%s)\n", yytext); col+=yyleng;}
+"class"              {printf("CLASS\n"); col+=yyleng;}
+"do"                 {printf("DO\n"); col+=yyleng;} 
+".length"            {printf("DOTLENGTH\n"); col+=yyleng;}
+"double"             {printf("DOUBLE\n"); col+=yyleng;}
+"else"               {printf("ELSE\n"); col+=yyleng;}
+"if"                 {printf("IF\n"); col+=yyleng;}
+"int"                {printf("INT\n"); col+=yyleng;}
+"Integer.parseInt"   {printf("PARSEINT\n"); col+=yyleng;}
+"System.out.println" {printf("PRINT\n"); col+=yyleng;}
+"public"             {printf("PUBLIC\n"); col+=yyleng;}
+"return"             {printf("RETURN\n"); col+=yyleng;}
+"static"             {printf("STATIC\n"); col+=yyleng;}
+"String"             {printf("STRING\n"); col+=yyleng;}
+"void"               {printf("VOID\n"); col+=yyleng;}
+"while"              {printf("WHILE\n"); col+=yyleng;}
+"("                  {printf("OCURV\n"); col+=yyleng;}
+")"                  {printf("CCURV\n"); col+=yyleng;}
+"{"                  {printf("OBRACE\n"); col+=yyleng;}
+"}"                  {printf("CBRACE\n"); col+=yyleng;}
+"["                  {printf("OSQUARE\n"); col+=yyleng;}
+"]"                  {printf("CSQUARE\n"); col+=yyleng;}
+"&&"                 {printf("AND\n"); col+=yyleng;}
+"||"                 {printf("OR\n"); col+=yyleng;}
+"<"                  {printf("LT\n"); col+=yyleng;}
+">"                  {printf("GT\n"); col+=yyleng;}
+"=="                 {printf("EQ\n"); col+=yyleng;}
+"!="                 {printf("NEQ\n"); col+=yyleng;}
+"<="                 {printf("LEQ\n"); col+=yyleng;}
+">="                 {printf("GEQ\n"); col+=yyleng;}
+"+"                  {printf("PLUS\n"); col+=yyleng;}
+"-"                  {printf("MINUS\n"); col+=yyleng;}
+"*"                  {printf("STAR\n"); col+=yyleng;}
+"/"                  {printf("DIV\n"); col+=yyleng;}
+"%"                  {printf("MOD\n"); col+=yyleng;}
+"!"                  {printf("NOT\n"); col+=yyleng;}
+"="                  {printf("ASSIGN\n"); col+=yyleng;}
+";"                  {printf("SEMI\n"); col+=yyleng;}
+","                  {printf("COMMA\n"); col+=yyleng;}
+{reserved}           {printf("RESERVED(%s)\n", yytext);}
+.                    {;}
 %%
 int main(int argc, char **argv) {
   yylex();
