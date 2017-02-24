@@ -5,6 +5,8 @@
 %}
 
 id                  [a-zA-z_$][a-zA-z_$0-9]*
+declit              0|[1-9]+("_"*[0-9]+)*
+reallit             [1-9]+("_"*[0-9]+)*"."[0-9]*([eE][+-]?)*
 whitespace          [ \n\t\f\r]*
 reserved            "++"|"--"|"null"|"Integer"|"System"|"abstract"|"assert"|"break"|"byte"|"case"|"catch"|"char"|"const"|"continue"|"default"|"enum"|"extends"|"final"|"finally"|"for"|"goto"|"implements"|"import"|"instanceof"|"interface"|"long"|"native"|"new"|"package"|"private"|"protected"|"short"|"strictfp"|"super"|"switch"|"synchronized"|"this"|"throw"|"throws"|"transient"|"try"|"volatile"
 
@@ -52,6 +54,8 @@ reserved            "++"|"--"|"null"|"Integer"|"System"|"abstract"|"assert"|"bre
 
 {whitespace}         {;}
 {reserved}           {printf("RESERVED(%s)\n", yytext);}
+{declit}             {printf("DECLIT(%s)\n", yytext);}
+{reallit}            {printf("REALLIT(%s)\n", yytext);}
 {id}                 {printf("ID(%s)\n", yytext);}
 .                    {;}
 %%
