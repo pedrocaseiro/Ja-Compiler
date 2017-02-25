@@ -9,9 +9,8 @@ declit              0|[1-9]+("_"*[0-9]+)*
 reallit             [1-9]+("_"*[0-9]+)*"."[0-9]+("_"[0-9]+)*([eE][+-]?)*0+[0_]*|[1-9]+("_"*[0-9]+)*"."[0-9]*([eE][+-]?)*[1-9]+("_"[0-9]+)*|"."[0-9]+("_"[0-9]+)*([eE][+-]?)*0+[0_]*|"."[0-9]+("_"[0-9]+)*([eE][+-]?)*0+[0_]*|[1-9]+("_"*[0-9]+)*([eE][+-]?)*[1-9]+("_"[0-9]+)*|[1-9]+("_"*[0-9]+)*([eE][+-]?)*0+[0_]*
 escape              \\(f|n|r|t|\\|\")
 strlit              \"({escape}|[^\n\r\"])*\"
-
 whitespace          [ \n\t\f\r]*
-reserved            "++"|"--"|"null"|"Integer"|"System"|"abstract"|"assert"|"break"|"byte"|"case"|"catch"|"char"|"const"|"continue"|"default"|"enum"|"extends"|"final"|"finally"|"for"|"goto"|"implements"|"import"|"instanceof"|"interface"|"long"|"native"|"new"|"package"|"private"|"protected"|"short"|"strictfp"|"super"|"switch"|"synchronized"|"this"|"throw"|"throws"|"transient"|"try"|"volatile"
+reserved            "++"|"--"|"null"|"Integer"|"System"|"abstract"|"assert"|"break"|"byte"|"case"|"catch"|"char"|"const"|"continue"|"default"|"enum"|"extends"|"final"|"finally"|"float"|"for"|"goto"|"implements"|"import"|"instanceof"|"interface"|"long"|"native"|"new"|"package"|"private"|"protected"|"short"|"strictfp"|"super"|"switch"|"synchronized"|"this"|"throw"|"throws"|"transient"|"try"|"volatile"
 
 %%
 "boolean"            {printf("BOOL\n"); col+=yyleng;}
