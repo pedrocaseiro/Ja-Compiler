@@ -2,17 +2,35 @@
   #include<stdio.h>
   #include<ctype.h>
   static int col = 1;
+  static int comment_start_col = 0;
+  static int comment_start_line = 0;
 %}
+
+%X MULTILINECOMMENT
+%X COMMENT
 
 id                  [a-zA-Z_$][a-zA-Z_$0-9]*
 declit              0|[1-9]+("_"*[0-9]+)*
 reallit             [1-9]+("_"*[0-9]+)*"."[0-9]+("_"[0-9]+)*([eE][+-]?)*0+[0_]*|[1-9]+("_"*[0-9]+)*"."[0-9]*([eE][+-]?)*[1-9]+("_"[0-9]+)*|"."[0-9]+("_"[0-9]+)*([eE][+-]?)*0+[0_]*|"."[0-9]+("_"[0-9]+)*([eE][+-]?)*0+[0_]*|[1-9]+("_"*[0-9]+)*([eE][+-]?)*[1-9]+("_"[0-9]+)*|[1-9]+("_"*[0-9]+)*([eE][+-]?)*0+[0_]*
 escape              \\(f|n|r|t|\\|\")
-strlit              \"({escape}|[^\n\r\"])*\"
-whitespace          [ \n\t\f\r]*
+strlit              \"({escape}|[^\n\r\"\\])*\"
+whitespace          \\[fnrt]*
 reserved            "++"|"--"|"null"|"Integer"|"System"|"abstract"|"assert"|"break"|"byte"|"case"|"catch"|"char"|"const"|"continue"|"default"|"enum"|"extends"|"final"|"finally"|"float"|"for"|"goto"|"implements"|"import"|"instanceof"|"interface"|"long"|"native"|"new"|"package"|"private"|"protected"|"short"|"strictfp"|"super"|"switch"|"synchronized"|"this"|"throw"|"throws"|"transient"|"try"|"volatile"
 
 %%
+"/*" {BEGIN MULTILINECOMMENT; comment_start_col = col; comment_start_line = yylineno;}
+<MULTILINECOMMENT><<eof>> {printf("Line %d, col %d: unterminated comment\n", comment_start_line, comment_start_col); col=1; return 0;}
+<MULTILINECOMMENT>"*/"  {BEGIN 0;}
+<MULTILINECOMMENT>\n    {col=1;}  
+<MULTILINECOMMENT>.     {;}
+
+
+"//" {BEGIN COMMENT;}
+<COMMENT>"\n" {col=1; BEGIN 0;}
+<COMMENT>"\f" {BEGIN 0;}
+<COMMENT>"\r" {BEGIN 0;}
+<COMMENT>.    {;}
+
 "boolean"            {printf("BOOL\n"); col+=yyleng;}
 "true"|"false"       {printf("BOOLLIT(%s)\n", yytext); col+=yyleng;}
 "class"              {printf("CLASS\n"); col+=yyleng;}
@@ -53,14 +71,17 @@ reserved            "++"|"--"|"null"|"Integer"|"System"|"abstract"|"assert"|"bre
 "="                  {printf("ASSIGN\n"); col+=yyleng;}
 ";"                  {printf("SEMI\n"); col+=yyleng;}
 ","                  {printf("COMMA\n"); col+=yyleng;}
-
-{whitespace}         {;}
-{reserved}           {printf("RESERVED(%s)\n", yytext);}
-{reallit}            {printf("REALLIT(%s)\n", yytext);}
-{declit}             {printf("DECLIT(%s)\n", yytext);}
-{strlit}             {printf("STRLIT(%s)\n", yytext);}
-{id}                 {printf("ID(%s)\n", yytext);}
-.                    {;}
+" "                  {; col+=yyleng;}
+{whitespace}         {; col+=yyleng;}
+{reserved}           {printf("RESERVED(%s)\n", yytext); col+=yyleng;}
+{reallit}            {printf("REALLIT(%s)\n", yytext); col+=yyleng;}
+{declit}             {printf("DECLIT(%s)\n", yytext); col+=yyleng;}
+{strlit}             {printf("STRLIT(%s)\n", yytext); col+=yyleng;}
+{id}                 {printf("ID(%s)\n", yytext); col+=yyleng;}
+\"({escape}|[^\n\r\"\\])* {printf("Line %d, col %d: unterminated string literal\n", yylineno, col);}
+\\[^fnrt\\\"]        {printf("Line %d, col %d: invalid escape sequence (%s)\n", yylineno, col, yytext);} 
+<<eof>>              {col+=1; return 0;}
+.                    {printf("Line %d, col %d: illegal character (%c)\n", yylineno, col, yytext[0]);col+=yyleng;}
 %%
 int main(int argc, char **argv) {
   yylex();

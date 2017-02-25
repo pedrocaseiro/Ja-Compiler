@@ -8,7 +8,5 @@ int main(){
 	    printf("Error opening file!\n");
 	}
 
-
-	fprintf(f,"dadada\ndadadad");
-
+	fprintf(f,"lslslsls\alslsls");
 }
