@@ -1,5 +1,10 @@
    //asd
-  /*asd*/
+   5e-1
+// /*
+/*
+//*/
+/* this comment /* // /** ends here: */
+  /*asd*/ #
 ola /*
-
-
+   /* asd
+lasd 

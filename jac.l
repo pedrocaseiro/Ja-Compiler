@@ -4,12 +4,15 @@
   static int col = 1;
   static int comment_start_col = 0;
   static int comment_start_line = 0;
+  static int string_start_col = 0;
+  static int string_start_line = 0;
 %}
 
 %option yylineno
 
 %X MULTILINECOMMENT
 %X COMMENT
+%X STRING
 
 id                  [a-zA-Z_$][a-zA-Z_$0-9]*
 declit              0|[1-9]+("_"*[0-9]+)*
@@ -26,9 +29,15 @@ reserved            "++"|"--"|"null"|"Integer"|"System"|"abstract"|"assert"|"bre
 <MULTILINECOMMENT>.     {col+=yyleng;}
 
 "//" {BEGIN COMMENT;}
-<COMMENT>"\n" {col=1; BEGIN 0;}
-<COMMENT>"\r" {col=1; BEGIN 0;}
+<COMMENT>"\n"|"\r" {col=1; BEGIN 0;}
 <COMMENT>.    {col+=yyleng;}
+
+"\"" {BEGIN STRING; string_start_col = col; string_start_line = yylineno; col+=yyleng;}
+<STRING>\\[^nrft\\\"("\n")("\r")] {printf("Line %d, col %d: invalid escape sequence (%s)\n", yylineno, col, yytext); col+=yyleng;}
+<STRING>"\""          {col+=yyleng; BEGIN 0;}
+<STRING>"\n"          {printf("Line %d, col %d: unterminated string literal\n", string_start_line,string_start_col); col=1; BEGIN 0;}
+<STRING>.             {col+=yyleng;}
+
 
 "boolean"            {printf("BOOL\n"); col+=yyleng;}
 "true"|"false"       {printf("BOOLLIT(%s)\n", yytext); col+=yyleng;}
@@ -81,8 +90,6 @@ reserved            "++"|"--"|"null"|"Integer"|"System"|"abstract"|"assert"|"bre
 {reallit}            {printf("REALLIT(%s)\n", yytext); col+=yyleng;}
 {strlit}             {printf("STRLIT(%s)\n", yytext); col+=yyleng;}
 {id}                 {printf("ID(%s)\n", yytext); col+=yyleng;}
-\"({escape}|[^\n\r\"\\])* {printf("Line %d, col %d: unterminated string literal\n", yylineno, col); col+=yyleng;}
-\\[^fnrt\\\"]        {printf("Line %d, col %d: invalid escape sequence (%s)\n", yylineno, col, yytext); col+=yyleng;}
 <<eof>>              {col=1; return 0;}
 .                    {printf("Line %d, col %d: illegal character (%c)\n", yylineno, col, yytext[0]);col+=yyleng;}
 %%

@@ -4,7 +4,7 @@
 " asdads "" adads "
 "this is \n a string"
 "asd
-asd"
+lol"
 "this is not 
  a string"
  "this is not \a a string"
