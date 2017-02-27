@@ -1,0 +1,12 @@
+"this is a string"
+"this is \ not a string"
+"asdads\" asddas"
+" asdads "" adads "
+"this is \n a string"
+"asd
+asd"
+"this is not 
+ a string"
+ "this is not \a a string"
+ "this is not \b a string"
+

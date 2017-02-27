@@ -8,5 +8,5 @@ int main(){
 	    printf("Error opening file!\n");
 	}
 
-	fprintf(f,"lslslsls\alslsls");
+	fprintf(f,"\r\n\f\r\f");
 }

@@ -6,20 +6,21 @@
   static int comment_start_line = 0;
 %}
 
+%option yylineno
+
 %X MULTILINECOMMENT
 %X COMMENT
 
 id                  [a-zA-Z_$][a-zA-Z_$0-9]*
 declit              0|[1-9]+("_"*[0-9]+)*
-reallit             [1-9]+("_"*[0-9]+)*"."[0-9]+("_"[0-9]+)*([eE][+-]?)*0+[0_]*|[1-9]+("_"*[0-9]+)*"."[0-9]*([eE][+-]?)*[1-9]+("_"[0-9]+)*|"."[0-9]+("_"[0-9]+)*([eE][+-]?)*0+[0_]*|"."[0-9]+("_"[0-9]+)*([eE][+-]?)*0+[0_]*|[1-9]+("_"*[0-9]+)*([eE][+-]?)*[1-9]+("_"[0-9]+)*|[1-9]+("_"*[0-9]+)*([eE][+-]?)*0+[0_]*
+reallit             [0-9]+("_"*[0-9]+)*"."([0-9]+("_"[0-9]+)*)*(([eE][+-]?)*0+[0_]*)*|[0-9]+("_"*[0-9]+)*"."([0-9]+("_"[0-9]+)*)*(([eE][+-]?)[1-9]+("_"*[0-9]+)*)*|"."[0-9]+("_"[0-9]+)*(([eE][+-]?)*0+[0_]*)*|"."[0-9]+("_"*[0-9]+)*(([eE][+-]?)*0+[0_]*)*|[0-9]+("_"*[0-9]+)*([eE][+-]?)+[1-9]+("_"*[0-9]+)*|[0-9]+("_"*[0-9]+)*([eE][+-]?)+0+[0_]*
 escape              \\(f|n|r|t|\\|\")
 strlit              \"({escape}|[^\n\r\"\\])*\"
-whitespace          \\[fnrt]*
 reserved            "++"|"--"|"null"|"Integer"|"System"|"abstract"|"assert"|"break"|"byte"|"case"|"catch"|"char"|"const"|"continue"|"default"|"enum"|"extends"|"final"|"finally"|"float"|"for"|"goto"|"implements"|"import"|"instanceof"|"interface"|"long"|"native"|"new"|"package"|"private"|"protected"|"short"|"strictfp"|"super"|"switch"|"synchronized"|"this"|"throw"|"throws"|"transient"|"try"|"volatile"
 
 %%
-"/*" {BEGIN MULTILINECOMMENT; comment_start_col = col; comment_start_line = yylineno;}
-<MULTILINECOMMENT><<eof>> {printf("Line %d, col %d: unterminated comment\n", comment_start_line, comment_start_col); col=1; return 0;}
+"/*" {BEGIN MULTILINECOMMENT; comment_start_col = col; comment_start_line = yylineno; col+=yyleng;}
+<MULTILINECOMMENT><<eof>> {printf("Line %d, col %d: unterminated comment\n", comment_start_line, comment_start_col); return 0;}
 <MULTILINECOMMENT>"*/"  {BEGIN 0;}
 <MULTILINECOMMENT>\n    {col=1;}  
 <MULTILINECOMMENT>.     {;}
@@ -27,7 +28,6 @@ reserved            "++"|"--"|"null"|"Integer"|"System"|"abstract"|"assert"|"bre
 
 "//" {BEGIN COMMENT;}
 <COMMENT>"\n" {col=1; BEGIN 0;}
-<COMMENT>"\f" {BEGIN 0;}
 <COMMENT>"\r" {BEGIN 0;}
 <COMMENT>.    {;}
 
@@ -72,7 +72,11 @@ reserved            "++"|"--"|"null"|"Integer"|"System"|"abstract"|"assert"|"bre
 ";"                  {printf("SEMI\n"); col+=yyleng;}
 ","                  {printf("COMMA\n"); col+=yyleng;}
 " "                  {; col+=yyleng;}
-{whitespace}         {; col+=yyleng;}
+\t                   {; col+=yyleng;}
+\r                   {; col+=yyleng;}
+\n                   {; col=1;}
+\f                   {; col+=yyleng;}
+\r\f                 {; col+=yyleng;} 
 {reserved}           {printf("RESERVED(%s)\n", yytext); col+=yyleng;}
 {reallit}            {printf("REALLIT(%s)\n", yytext); col+=yyleng;}
 {declit}             {printf("DECLIT(%s)\n", yytext); col+=yyleng;}
