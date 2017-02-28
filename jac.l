@@ -35,11 +35,11 @@ reserved            "++"|"--"|"null"|"Integer"|"System"|"abstract"|"assert"|"bre
 <COMMENT>.    {col+=yyleng;}
 
 "\"" {BEGIN STRING; string_start_col = col; string_start_line = line; col+=yyleng;}
-<STRING>\\[^nrft\\\"("\n")("\r")] {printf("Line %d, col %d: invalid escape sequence (%s)\n", line, col, yytext); col+=yyleng;}
-<STRING>"\""          {col+=yyleng; BEGIN 0;}
-<STRING>"\n"          {printf("Line %d, col %d: unterminated string literal\n", string_start_line,string_start_col); col=1; line+=1; BEGIN 0;}
-<STRING>.             {col+=yyleng;}
-
+<STRING>({escape}|[^\"\\\n\r])*   {col+=yyleng;}
+<STRING>\\(.?)                    {printf("Line %d, col %d: invalid escape sequence (%s)\n", line, col, yytext); col+=yyleng;}
+<STRING>\n|\r|\r\n                {printf("Line %d, col %d: unterminated string literal\n", string_start_line , string_start_col); col = 1; line+=1; BEGIN 0;}
+<STRING>\"                        {col+=yyleng; BEGIN 0;}
+<STRING><<eof>>                   {printf("Line %d, col %d: unterminated string literal\n",string_start_line, string_start_col); col=1; return 0;}
 
 "boolean"            {if(input_flag) printf("BOOL\n"); col+=yyleng;}
 "true"|"false"       {if(input_flag) printf("BOOLLIT(%s)\n", yytext); col+=yyleng;}

@@ -2,3 +2,10 @@
 "saddsa\"
 "asdsadads\y
 "asddas \a"
+"asds\\"
+"asd\b"
+"ada\0asd"
+"ada\0123asd"
+"asd\9asd"
+"asd\2 asd"
+"asd\\\n
