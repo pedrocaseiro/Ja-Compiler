@@ -28,7 +28,7 @@ MethodHeader: Type ID OCURV FormalParams CCURV
 
 MethodBody: OBRACE VarDeclStatement CBRACE
 
-VarDeclStatemt: VarDeclStatement VarDecl
+VarDeclStatement: VarDeclStatement VarDecl
               | VarDeclStatement Statement
               | %empty
 
