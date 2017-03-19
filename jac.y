@@ -1,8 +1,11 @@
 %{
   #include <stdio.h>
   #include <string.h>
-  int yyerror();
+  void yyerror();
   int yylex();
+
+  extern char* yytext;
+  extern int line, col, yyleng;
 %}
 
 
@@ -15,6 +18,9 @@
 %token OSQUARE CSQUARE AND OR LT GT EQ NEQ LEQ GEQ PLUS MINUS STAR DIV MOD NOT
 %token ASSIGN SEMI COMMA RESERVED DECLIT REALLIT STRLIT ID
 
+%nonassoc IF_NO_ELSE
+%nonassoc ELSE
+
 %right ASSIGN
 %left OR
 %left AND
@@ -22,12 +28,7 @@
 %left GT LT GEQ LEQ
 %left PLUS MINUS
 %left STAR DIV MOD
-%right UNARY
-%right NOT
-%left OBRACE CBRACE 
-
-%nonassoc ELSE
-%nonassoc IF_NO_ELSE
+%right NOT UNARY
 
 %%
 
@@ -36,109 +37,101 @@ Program: CLASS ID OBRACE Declaration CBRACE
 Declaration: Declaration FieldDecl
            | Declaration MethodDecl
            | Declaration SEMI
-           | 
+           |
 
 FieldDecl: PUBLIC STATIC Type ID CommaId SEMI
+         | error SEMI
 
 MethodDecl: PUBLIC STATIC MethodHeader MethodBody
 
 MethodHeader: Type ID OCURV FormalParams CCURV
-            | Type ID OCURV CCURV
             | VOID ID OCURV FormalParams CCURV
-            | VOID ID OCURV CCURV
 
 MethodBody: OBRACE VarDeclStatement CBRACE
 
 VarDeclStatement: VarDeclStatement VarDecl
                 | VarDeclStatement Statement
-                | 
+                |
 
 FormalParams: Type ID CommaTypeId
             | STRING OSQUARE CSQUARE ID
+            |
 
 CommaTypeId: CommaTypeId COMMA Type ID
-           | 
+           |
 
 VarDecl: Type ID CommaId SEMI
 
 CommaId: CommaId COMMA ID
-       | 
-
-Type: BOOL
-    | INT
-    | DOUBLE
+       |
 
 Statement: OBRACE StatementL CBRACE
-         | IF OCURV Expr CCURV Statement ElseStatement
+         | IF OCURV Expr CCURV Statement ELSE Statement
+         | IF OCURV Expr CCURV Statement %prec IF_NO_ELSE
          | WHILE OCURV Expr CCURV Statement
          | DO Statement WHILE OCURV Expr CCURV SEMI
-         | PRINT OCURV ExprStrlit CCURV SEMI
+         | PRINT OCURV Expr CCURV SEMI
+         | PRINT OCURV STRLIT CCURV SEMI
          | AssignmentMethodInvocationParseArgs SEMI
          | RETURN Expr SEMI
          | RETURN SEMI
          | error SEMI
 
-StatementL: Statement StatementL
+StatementL: StatementL Statement
           |
-
-ElseStatement: ELSE Statement %prec IF_NO_ELSE
 
 Assignment: ID ASSIGN Expr
 
 MethodInvocation: ID OCURV ExprCommaExpr CCURV
+                | ID OCURV error CCURV
 
 ParseArgs: PARSEINT OCURV ID OSQUARE Expr CSQUARE CCURV
+         | PARSEINT OCURV error CCURV
 
-DotLength: DOTLENGTH
-         | 
-
-Expr: AssignmentMethodInvocationParseArgsNotEmpty
-    | Expr AndOr Expr
-    | Expr EqGeqGtLeqLtNeq Expr
-    | Expr PlusMinusStarDivMod Expr
-    | PlusMinusNot Expr
-    | ID DotLength
+Expr: Assignment
+    | MethodInvocation
+    | ParseArgs
+    | Expr AND Expr
+    | Expr OR Expr
+    | Expr EQ Expr
+    | Expr GEQ Expr
+    | Expr GT Expr
+    | Expr LEQ Expr
+    | Expr LT Expr
+    | Expr NEQ Expr
+    | Expr PLUS Expr
+    | Expr MINUS Expr %prec UNARY
+    | Expr STAR Expr
+    | Expr DIV Expr
+    | Expr MOD Expr
+    | PLUS Expr
+    | MINUS Expr %prec UNARY
+    | NOT Expr
+    | ID
+    | ID DOTLENGTH
     | OCURV Expr CCURV
-    | BoollitDeclitReallit
+    | BOOLLIT
+    | DECLIT
+    | REALLIT
+    | OCURV error CCURV
 
-BoollitDeclitReallit: BOOLLIT
-                    | DECLIT
-                    | REALLIT
+Type: BOOL
+    | INT
+    | DOUBLE
 
-PlusMinusNot: PLUS
-            | MINUS %prec UNARY
-            | NOT
-
-PlusMinusStarDivMod: PLUS
-                   | MINUS
-                   | STAR
-                   | DIV
-                   | MOD
-
-EqGeqGtLeqLtNeq: EQ
-               | GEQ
-               | GT
-               | LEQ
-               | NEQ
-
-AndOr: OR
-     | AND
-
-AssignmentMethodInvocationParseArgsNotEmpty: Assignment
-                                           | MethodInvocation
-                                           | ParseArgs
 
 ExprCommaExpr: Expr CommaExpr
-             | 
+             |
 
 CommaExpr: CommaExpr COMMA Expr
-         | 
-
-ExprStrlit: Expr
-          | STRLIT
-          | 
+         |
 
 AssignmentMethodInvocationParseArgs: Assignment
                                    | MethodInvocation
                                    | ParseArgs
-                                   | 
+                                   |
+%%
+
+void yyerror(const char *s) {
+	printf("Line %d, col %d: %s: %s\n", line, col - yyleng, s, yytext);
+}

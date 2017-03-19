@@ -1,10 +1,10 @@
 %{
-  #include<stdio.h>
-  #include<ctype.h>
+  #include <stdio.h>
+  #include <ctype.h>
   #include <stdarg.h>
   #include "y.tab.h"
-  static int col = 1;
-  static int line = 1;
+  int col = 1;
+  int line = 1;
   static int comment_start_col = 0;
   static int comment_start_line = 0;
   static int string_start_col = 0;
@@ -100,16 +100,13 @@ reserved            "++"|"--"|"null"|"Integer"|"System"|"abstract"|"assert"|"bre
 <<eof>>              {col=1; return 0;}
 .                    {printf("Line %d, col %d: illegal character (%c)\n", line, col, yytext[0]);col+=yyleng;}
 %%
-void yyerror() {
-	printf("Line %d, col %lu: syntax error: %s\n", line, col - yyleng, yytext);
-}
 
 int main(int argc, char **argv) {
   if(argc > 1){
     if (!strcmp(argv[1], "-l")) {
       input_flag = 1;
       yylex();
-    } else if(!strcmp(argv[2], "-1")){
+    } else if(!strcmp(argv[1], "-1")){
       input_flag = 0;
       yylex();
     }
