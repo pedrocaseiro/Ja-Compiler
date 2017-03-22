@@ -3,6 +3,7 @@
   #include <ctype.h>
   #include <stdarg.h>
   #include "y.tab.h"
+  int yyparse();
   int col = 1;
   int line = 1;
   static int comment_start_col = 0;
@@ -46,57 +47,57 @@ reserved            "++"|"--"|"null"|"Integer"|"System"|"abstract"|"assert"|"bre
 
 
 
-"boolean"            {if(input_flag) printf("BOOL\n"); col+=yyleng; yylval.token =(char *) strdup(yytext); return BOOL;}
-"true"|"false"       {if(input_flag) printf("BOOLLIT(%s)\n", yytext); col+=yyleng; yylval.token =(char *) strdup(yytext); return BOOLLIT;}
-"class"              {if(input_flag) printf("CLASS\n"); col+=yyleng; yylval.token =(char *) strdup(yytext); return CLASS;}
-"do"                 {if(input_flag) printf("DO\n"); col+=yyleng; yylval.token =(char *) strdup(yytext); return DO;}
-".length"            {if(input_flag) printf("DOTLENGTH\n"); col+=yyleng; yylval.token =(char *) strdup(yytext); return DOTLENGTH;}
-"double"             {if(input_flag) printf("DOUBLE\n"); col+=yyleng; yylval.token =(char *) strdup(yytext); return DOUBLE;}
-"else"               {if(input_flag) printf("ELSE\n"); col+=yyleng; yylval.token =(char *) strdup(yytext); return ELSE;}
-"if"                 {if(input_flag) printf("IF\n"); col+=yyleng; yylval.token =(char *) strdup(yytext); return IF;}
-"int"                {if(input_flag) printf("INT\n"); col+=yyleng; yylval.token =(char *) strdup(yytext); return INT;}
-"Integer.parseInt"   {if(input_flag) printf("PARSEINT\n"); col+=yyleng; yylval.token =(char *) strdup(yytext); return PARSEINT;}
-"System.out.println" {if(input_flag) printf("PRINT\n"); col+=yyleng; yylval.token =(char *) strdup(yytext); return PRINT;}
-"public"             {if(input_flag) printf("PUBLIC\n"); col+=yyleng; yylval.token =(char *) strdup(yytext); return PUBLIC;}
-"return"             {if(input_flag) printf("RETURN\n"); col+=yyleng; yylval.token =(char *) strdup(yytext); return RETURN;}
-"static"             {if(input_flag) printf("STATIC\n"); col+=yyleng; yylval.token =(char *) strdup(yytext); return STATIC;}
-"String"             {if(input_flag) printf("STRING\n"); col+=yyleng; yylval.token =(char *) strdup(yytext); return STRING;}
-"void"               {if(input_flag) printf("VOID\n"); col+=yyleng; yylval.token =(char *) strdup(yytext); return VOID;}
-"while"              {if(input_flag) printf("WHILE\n"); col+=yyleng; yylval.token =(char *) strdup(yytext); return WHILE;}
-"("                  {if(input_flag) printf("OCURV\n"); col+=yyleng; yylval.token =(char *) strdup(yytext); return OCURV;}
-")"                  {if(input_flag) printf("CCURV\n"); col+=yyleng; yylval.token =(char *) strdup(yytext); return CCURV;}
-"{"                  {if(input_flag) printf("OBRACE\n"); col+=yyleng; yylval.token =(char *) strdup(yytext); return OBRACE;}
-"}"                  {if(input_flag) printf("CBRACE\n"); col+=yyleng; yylval.token =(char *) strdup(yytext); return CBRACE;}
-"["                  {if(input_flag) printf("OSQUARE\n"); col+=yyleng; yylval.token =(char *) strdup(yytext); return OSQUARE;}
-"]"                  {if(input_flag) printf("CSQUARE\n"); col+=yyleng; yylval.token =(char *) strdup(yytext); return CSQUARE;}
-"&&"                 {if(input_flag) printf("AND\n"); col+=yyleng; yylval.token =(char *) strdup(yytext); return AND;}
-"||"                 {if(input_flag) printf("OR\n"); col+=yyleng; yylval.token =(char *) strdup(yytext); return OR;}
-"<"                  {if(input_flag) printf("LT\n"); col+=yyleng; yylval.token =(char *) strdup(yytext); return LT;}
-">"                  {if(input_flag) printf("GT\n"); col+=yyleng; yylval.token =(char *) strdup(yytext); return GT;}
-"=="                 {if(input_flag) printf("EQ\n"); col+=yyleng; yylval.token =(char *) strdup(yytext); return EQ;}
-"!="                 {if(input_flag) printf("NEQ\n"); col+=yyleng; yylval.token =(char *) strdup(yytext); return NEQ;}
-"<="                 {if(input_flag) printf("LEQ\n"); col+=yyleng; yylval.token =(char *) strdup(yytext); return LEQ;}
-">="                 {if(input_flag) printf("GEQ\n"); col+=yyleng; yylval.token =(char *) strdup(yytext); return GEQ;}
-"+"                  {if(input_flag) printf("PLUS\n"); col+=yyleng; yylval.token =(char *) strdup(yytext); return PLUS;}
-"-"                  {if(input_flag) printf("MINUS\n"); col+=yyleng; yylval.token =(char *) strdup(yytext); return MINUS;}
-"*"                  {if(input_flag) printf("STAR\n"); col+=yyleng; yylval.token =(char *) strdup(yytext); return STAR;}
-"/"                  {if(input_flag) printf("DIV\n"); col+=yyleng; yylval.token =(char *) strdup(yytext); return DIV;}
-"%"                  {if(input_flag) printf("MOD\n"); col+=yyleng; yylval.token =(char *) strdup(yytext); return MOD;}
-"!"                  {if(input_flag) printf("NOT\n"); col+=yyleng; yylval.token =(char *) strdup(yytext); return NOT;}
-"="                  {if(input_flag) printf("ASSIGN\n"); col+=yyleng; yylval.token =(char *) strdup(yytext); return ASSIGN;}
-";"                  {if(input_flag) printf("SEMI\n"); col+=yyleng; yylval.token =(char *) strdup(yytext); return SEMI;}
-","                  {if(input_flag) printf("COMMA\n"); col+=yyleng; yylval.token =(char *) strdup(yytext); return COMMA;}
+"boolean"            {if(input_flag) { printf("BOOL\n"); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return BOOL;}
+"true"|"false"       {if(input_flag) { printf("BOOLLIT(%s)\n", yytext); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return BOOLLIT;}
+"class"              {if(input_flag) { printf("CLASS\n"); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return CLASS;}
+"do"                 {if(input_flag) { printf("DO\n"); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return DO;}
+".length"            {if(input_flag) { printf("DOTLENGTH\n"); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return DOTLENGTH;}
+"double"             {if(input_flag) { printf("DOUBLE\n"); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return DOUBLE;}
+"else"               {if(input_flag) { printf("ELSE\n"); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return ELSE;}
+"if"                 {if(input_flag) { printf("IF\n"); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return IF;}
+"int"                {if(input_flag) { printf("INT\n"); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return INT;}
+"Integer.parseInt"   {if(input_flag) { printf("PARSEINT\n"); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return PARSEINT;}
+"System.out.println" {if(input_flag) { printf("PRINT\n"); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return PRINT;}
+"public"             {if(input_flag) { printf("PUBLIC\n"); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return PUBLIC;}
+"return"             {if(input_flag) { printf("RETURN\n"); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return RETURN;}
+"static"             {if(input_flag) { printf("STATIC\n"); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return STATIC;}
+"String"             {if(input_flag) { printf("STRING\n"); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return STRING;}
+"void"               {if(input_flag) { printf("VOID\n"); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return VOID;}
+"while"              {if(input_flag) { printf("WHILE\n"); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return WHILE;}
+"("                  {if(input_flag) { printf("OCURV\n"); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return OCURV;}
+")"                  {if(input_flag) { printf("CCURV\n"); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return CCURV;}
+"{"                  {if(input_flag) { printf("OBRACE\n"); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return OBRACE;}
+"}"                  {if(input_flag) { printf("CBRACE\n"); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return CBRACE;}
+"["                  {if(input_flag) { printf("OSQUARE\n"); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return OSQUARE;}
+"]"                  {if(input_flag) { printf("CSQUARE\n"); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return CSQUARE;}
+"&&"                 {if(input_flag) { printf("AND\n"); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return AND;}
+"||"                 {if(input_flag) { printf("OR\n"); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return OR;}
+"<"                  {if(input_flag) { printf("LT\n"); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return LT;}
+">"                  {if(input_flag) { printf("GT\n"); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return GT;}
+"=="                 {if(input_flag) { printf("EQ\n"); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return EQ;}
+"!="                 {if(input_flag) { printf("NEQ\n"); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return NEQ;}
+"<="                 {if(input_flag) { printf("LEQ\n"); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return LEQ;}
+">="                 {if(input_flag) { printf("GEQ\n"); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return GEQ;}
+"+"                  {if(input_flag) { printf("PLUS\n"); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return PLUS;}
+"-"                  {if(input_flag) { printf("MINUS\n"); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return MINUS;}
+"*"                  {if(input_flag) { printf("STAR\n"); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return STAR;}
+"/"                  {if(input_flag) { printf("DIV\n"); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return DIV;}
+"%"                  {if(input_flag) { printf("MOD\n"); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return MOD;}
+"!"                  {if(input_flag) { printf("NOT\n"); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return NOT;}
+"="                  {if(input_flag) { printf("ASSIGN\n"); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return ASSIGN;}
+";"                  {if(input_flag) { printf("SEMI\n"); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return SEMI;}
+","                  {if(input_flag) { printf("COMMA\n"); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return COMMA;}
 " "                  {col+=1;}
 \t                   {col+=1;}
 \r                   {col=1; line +=1;}
 \n                   {col=1; line+=1;}
 \f                   {col+=1;}
 \r\n                 {col=1; line+=1;}
-{reserved}           {if(input_flag) printf("RESERVED(%s)\n", yytext); col+=yyleng; yylval.token =(char *) strdup(yytext); return RESERVED;}
-{declit}             {if(input_flag) printf("DECLIT(%s)\n", yytext); col +=yyleng; yylval.token =(char *) strdup(yytext); return DECLIT;}
-{reallit}            {if(input_flag) printf("REALLIT(%s)\n", yytext); col+=yyleng; yylval.token =(char *) strdup(yytext); return REALLIT;}
-{strlit}             {if(input_flag) printf("STRLIT(%s)\n", yytext); col+=yyleng; yylval.token =(char *) strdup(yytext); return STRLIT;}
-{id}                 {if(input_flag) printf("ID(%s)\n", yytext); col+=yyleng; yylval.token =(char *) strdup(yytext); return ID;}
+{reserved}           {if(input_flag) { printf("RESERVED(%s)\n", yytext); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return RESERVED;}
+{declit}             {if(input_flag) { printf("DECLIT(%s)\n", yytext); col +=yyleng; yylval.token =(char *) strdup(yytext);} else return DECLIT;}
+{reallit}            {if(input_flag) { printf("REALLIT(%s)\n", yytext); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return REALLIT;}
+{strlit}             {if(input_flag) { printf("STRLIT(%s)\n", yytext); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return STRLIT;}
+{id}                 {if(input_flag) { printf("ID(%s)\n", yytext); col+=yyleng; yylval.token =(char *) strdup(yytext);} else return ID;}
 <<eof>>              {col=1; return 0;}
 .                    {printf("Line %d, col %d: illegal character (%c)\n", line, col, yytext[0]);col+=yyleng;}
 %%
