@@ -1,22 +1,27 @@
 %{
   #include <stdio.h>
   #include <string.h>
+  #include "ast.h"
   void yyerror();
   int yylex();
+
+  node* ast;
 
   extern char* yytext;
   extern int line, col, yyleng;
 %}
 
-
 %union{
   char* token;
+  char *id;
+  struct node *node;
 }
 
 %token BOOL BOOLLIT CLASS DO DOTLENGTH DOUBLE ELSE IF INT PARSEINT PRINT PUBLIC
 %token RETURN STATIC STRING VOID WHILE OCURV CCURV OBRACE CBRACE
 %token OSQUARE CSQUARE AND OR LT GT EQ NEQ LEQ GEQ PLUS MINUS STAR DIV MOD NOT
-%token ASSIGN SEMI COMMA RESERVED DECLIT REALLIT STRLIT ID
+%token ASSIGN SEMI COMMA RESERVED DECLIT REALLIT STRLIT
+%token <id> ID
 
 %nonassoc IF_NO_ELSE
 %nonassoc ELSE
@@ -30,22 +35,24 @@
 %left STAR DIV MOD
 %right NOT UNARY
 
+%type <node> Program Declaration FieldDecl MethodDecl MethodHeader MethodBody VarDeclStatement FormalParams CommaTypeId VarDecl CommaId Statement StatementL Assignment MethodInvocation ParseArgs Expr Type ExprCommaExpr CommaExpr IDAux
+
 %%
 
-Program: CLASS ID OBRACE Declaration CBRACE
+Program: CLASS IDAux OBRACE Declaration CBRACE                       {$$ = ast = create_and_insert_node("Program", 1, 2, $2, $4);}
 
-Declaration: Declaration FieldDecl
+Declaration: Declaration FieldDecl                                   {$$ = create_and_insert_node("FieldDecl", 1, 2, $1, $2);}
            | Declaration MethodDecl
            | Declaration SEMI
-           |
+           |                                                         {$$ = create_terminal_node("Empty", 0, NULL);}
 
-FieldDecl: PUBLIC STATIC Type ID CommaId SEMI
+FieldDecl: PUBLIC STATIC Type IDAux CommaId SEMI                     {$$ = create_and_insert_node("FieldDecl", 0, 2, $3, $4);}
          | error SEMI
 
 MethodDecl: PUBLIC STATIC MethodHeader MethodBody
 
-MethodHeader: Type ID OCURV FormalParams CCURV
-            | VOID ID OCURV FormalParams CCURV
+MethodHeader: Type IDAux OCURV FormalParams CCURV
+            | VOID IDAux OCURV FormalParams CCURV
 
 MethodBody: OBRACE VarDeclStatement CBRACE
 
@@ -53,16 +60,16 @@ VarDeclStatement: VarDeclStatement VarDecl
                 | VarDeclStatement Statement
                 |
 
-FormalParams: Type ID CommaTypeId
-            | STRING OSQUARE CSQUARE ID
+FormalParams: Type IDAux CommaTypeId
+            | STRING OSQUARE CSQUARE IDAux
             |
 
-CommaTypeId: CommaTypeId COMMA Type ID
+CommaTypeId: CommaTypeId COMMA Type IDAux
            |
 
-VarDecl: Type ID CommaId SEMI
+VarDecl: Type IDAux CommaId SEMI
 
-CommaId: CommaId COMMA ID
+CommaId: CommaId COMMA IDAux
        |
 
 Statement: OBRACE StatementL CBRACE
@@ -72,7 +79,10 @@ Statement: OBRACE StatementL CBRACE
          | DO Statement WHILE OCURV Expr CCURV SEMI
          | PRINT OCURV Expr CCURV SEMI
          | PRINT OCURV STRLIT CCURV SEMI
-         | AssignmentMethodInvocationParseArgs SEMI
+         | Assignment SEMI
+         | MethodInvocation SEMI
+         | ParseArgs SEMI
+         | SEMI
          | RETURN Expr SEMI
          | RETURN SEMI
          | error SEMI
@@ -80,12 +90,12 @@ Statement: OBRACE StatementL CBRACE
 StatementL: StatementL Statement
           |
 
-Assignment: ID ASSIGN Expr
+Assignment: IDAux ASSIGN Expr
 
-MethodInvocation: ID OCURV ExprCommaExpr CCURV
-                | ID OCURV error CCURV
+MethodInvocation: IDAux OCURV ExprCommaExpr CCURV
+                | IDAux OCURV error CCURV
 
-ParseArgs: PARSEINT OCURV ID OSQUARE Expr CSQUARE CCURV
+ParseArgs: PARSEINT OCURV IDAux OSQUARE Expr CSQUARE CCURV
          | PARSEINT OCURV error CCURV
 
 Expr: Assignment
@@ -105,19 +115,19 @@ Expr: Assignment
     | Expr DIV Expr
     | Expr MOD Expr
     | PLUS Expr
-    | MINUS Expr %prec UNARY
+    | MINUS Expr
     | NOT Expr
-    | ID
-    | ID DOTLENGTH
+    | IDAux
+    | IDAux DOTLENGTH
     | OCURV Expr CCURV
     | BOOLLIT
     | DECLIT
     | REALLIT
     | OCURV error CCURV
 
-Type: BOOL
-    | INT
-    | DOUBLE
+Type: BOOL                                                {$$=create_terminal_node("Bool", 1, NULL);}
+    | INT                                                 {$$=create_terminal_node("Int", 1, NULL);}
+    | DOUBLE                                              {$$=create_terminal_node("Double", 1, NULL);}
 
 
 ExprCommaExpr: Expr CommaExpr
@@ -126,10 +136,8 @@ ExprCommaExpr: Expr CommaExpr
 CommaExpr: CommaExpr COMMA Expr
          |
 
-AssignmentMethodInvocationParseArgs: Assignment
-                                   | MethodInvocation
-                                   | ParseArgs
-                                   |
+IDAux: ID                                                {$$=create_terminal_node("Id", 1, $1);}
+
 %%
 
 void yyerror(const char *s) {

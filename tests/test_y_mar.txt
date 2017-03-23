@@ -1,0 +1,51 @@
+/*class gcd {
+    public static void main(String[] args) {
+        int _a, _b, _c, _d, _e;*/
+
+        /* ParseArgs -> PARSEINT OCURV ID OSQUARE Expr CSQUARE CCURV */
+       /* _a = Integer.parseInt(args[0]);
+        _b = Integer.parseInt(args[1]);
+        _c = Integer.parseInt(args[args.length]);
+        _d = Integer.parseInt(args[2 + 2]);
+        _e = Integer.parseInt(args[1000 - 6]);
+        int a;
+
+        a = 1;
+        b = 2;
+        c = 3;*/
+        /* Expr -> (PLUS | MINUS | NOT) Expr */
+       /* a = +a;
+        b = -a;
+        c = !c;
+
+        d = a.length;
+        d = (a + b) * c - (b + b + b) / d;*/
+        //d = (a+) /* <------------------ */
+
+        /*there are no empty args here...*/
+      /*  System.out.println("");
+    }
+*/
+    /*public static int foo(int a, int b, int c, int d, int e, int f, int g) {
+        return foo(2,3,4,5,6,7,8);
+    }*/
+/*}*/
+
+class gcd {
+    public static void main(String[] args) {
+        int a,b;
+        a = Integer.parseInt(args[0]); // lel
+        b = Integer.parseInt(args[1]);
+        algorithm(a, b);
+        if (a == 0)
+            System.out.println(b);
+        else {
+            while (b > 0 )
+                if (a > b)
+                    a = a-b;
+                else
+                    b = b-a;
+            System.out.println(a);
+        }
+    }
+}
