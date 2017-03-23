@@ -42,37 +42,40 @@
 Program: CLASS IDAux OBRACE Declaration CBRACE                       {$$ = ast = create_and_insert_node("Program", 1, 2, $2, $4);}
 
 Declaration: Declaration FieldDecl                                   {$$ = create_and_insert_node("FieldDecl", 1, 2, $1, $2);}
-           | Declaration MethodDecl
+           | Declaration MethodDecl                                  {$$ = create_and_insert_node("MethodDecl", 1, 2, $1, $2);}
            | Declaration SEMI
            |                                                         {$$ = create_terminal_node("Empty", 0, NULL);}
 
 FieldDecl: PUBLIC STATIC Type IDAux CommaId SEMI                     {$$ = create_and_insert_node("FieldDecl", 0, 2, $3, $4);}
          | error SEMI
 
-MethodDecl: PUBLIC STATIC MethodHeader MethodBody
+MethodDecl: PUBLIC STATIC MethodHeader MethodBody                    {$$ = create_and_insert_node("MethodDecl", 0, 2, $3, $4);}
 
-MethodHeader: Type IDAux OCURV FormalParams CCURV
-            | VOID IDAux OCURV FormalParams CCURV
+MethodHeader: Type IDAux OCURV MethodParams CCURV                    {$$ = create_and_insert_node("MethodHeader", 1, 3, $1, $2, $4);}
+            | VOID IDAux OCURV MethodParams CCURV                    {$$ = create_and_insert_node("MethodHeader", 1, 3, $1, $2, $4);}
 
-MethodBody: OBRACE VarDeclStatement CBRACE
+MethodParams: FormalParams                                           {$$ = create_and_insert_node("MethodParams"), 1, 1, $1);}
+            |                                                        {$$ = create_terminal_node("Empty", 0, NULL);}
 
-VarDeclStatement: VarDeclStatement VarDecl
-                | VarDeclStatement Statement
-                |
+MethodBody: OBRACE VarDeclStatement CBRACE                           {$$ = create_and_insert_node("MethodBody", 1, 1, $2);}
 
-FormalParams: Type IDAux CommaTypeId
-            | STRING OSQUARE CSQUARE IDAux
-            |
+VarDeclStatement: VarDeclStatement VarDecl                           {$$ = create_and_insert_node("MethodBody", 0, 2, $1, $2);}
+                | VarDeclStatement Statement                         {$$ = create_and_insert_node("MethodBody", 0, 2, $1, $2);}
+                |                                                    {$$ = create_terminal_node("Empty", 0, NULL);}
 
-CommaTypeId: CommaTypeId COMMA Type IDAux
-           |
+FormalParams: Type IDAux CommaTypeId                                 {$$ = create_and_insert_node("ParamDecl", 1, 2, $1, $2);}
+            | STRING OSQUARE CSQUARE IDAux                           {$$ = create_and_insert_node("ParamDecl", 1, 2, $1, $4);}
+            |                                                        {$$ = create_terminal_node("Empty", 0, NULL);}
 
-VarDecl: Type IDAux CommaId SEMI
+CommaTypeId: CommaTypeId COMMA Type IDAux                            {}
+           |                                                         {$$ = create_terminal_node("Empty", 0, NULL);}
+
+VarDecl: Type IDAux CommaId SEMI                                     {$$ = create_and_insert_node("VarDecl", 1, 2, $1, $2);}
 
 CommaId: CommaId COMMA IDAux
        |
 
-Statement: OBRACE StatementL CBRACE
+Statement: OBRACE StatementL CBRACE                                  {$$ = create_and_insert_node("Block", 1, 1, $2);}
          | IF OCURV Expr CCURV Statement ELSE Statement
          | IF OCURV Expr CCURV Statement %prec IF_NO_ELSE
          | WHILE OCURV Expr CCURV Statement
