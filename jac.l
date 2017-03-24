@@ -122,6 +122,7 @@ int main(int argc, char **argv) {
   } else {
     yyparse();
   }
+  yylex_destroy();
   return 0;
 }
 

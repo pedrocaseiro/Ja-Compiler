@@ -14,4 +14,4 @@ class gcd {
       System.out.println(a);
     }
   }
-/*
+}
