@@ -2,7 +2,121 @@
 #include <string.h>
 #include "ast.h"
 
-/* method to create a node, of any type */
+node *merge_nodes[2048];
+
+node* newnode(char* nodetype, int to_be_used) {
+  printf("new_node");
+  node* new_node = (node*) malloc(sizeof(node));
+  new_node->type = strdup(nodetype);
+  new_node->value = NULL;
+  new_node->to_be_used = to_be_used;
+  new_node->n_children = 0;
+  new_node->childs = NULL;
+  return new_node;
+}
+
+node* create_terminal_node(char* nodetype, int to_be_used, char* v) {
+  //printf("Inserting new terminal: %s\n", node_types[nodetype]);
+  node* new_terminal_node = newnode(nodetype, to_be_used);
+  new_terminal_node->value = (char *) strdup(v);
+
+  return new_terminal_node;
+}
+
+
+node* create_and_insert_node(char* nodetype, int to_be_used, int n_children, ...) {
+  node *new_node, **tmp;
+  int i, nodes = 0;
+  va_list args;
+
+  new_node = newnode(nodetype, to_be_used);
+
+  tmp = merge_nodes;
+
+  va_start(args, n_children);
+
+  while (n_children--) {
+    node *children = va_arg(args, node *);
+
+    if (children == NULL) {
+      continue;
+    } else if (!children->to_be_used) { // it is not gonna be used
+      nodes += children->n_children;
+      for (i = 0; i < children->n_children; i++) {
+        *tmp++ = children->childs[i];
+      }
+    } else {
+      *tmp++ = children;
+      nodes++;
+    }
+  }
+
+  if (nodes != 0) {
+    new_node->childs = (node **) malloc (nodes * sizeof(node *));
+    memcpy(new_node->childs, merge_nodes, nodes * sizeof(node *));
+    new_node->n_children = nodes;
+  }
+
+  va_end(args);
+  return new_node;
+}
+
+
+
+node *save_nodes[2048];
+
+void _ast_add_typespec_to_declaration(node *typespec, node *declaration) {
+  node **ptr = save_nodes;
+
+  int u;
+  for (u = 0; u < declaration->n_children; u++) {
+    *ptr++ = declaration->childs[u];
+  }
+
+  declaration->n_children++;
+  declaration->childs = (node **) malloc (declaration->n_children * sizeof(node*));
+  declaration->childs[0] = typespec;
+
+  ptr = save_nodes;
+  for (u = 1; u < declaration->n_children; u++) {
+    declaration->childs[u] = *ptr++;
+  }
+}
+
+void ast_add_typespec(node *typespec, node *declarator) {
+  if (strcmp(declarator->childs[0]->type, "FieldDecl") == 0) {
+    int i;
+    for (i = 0; i < declarator->n_children; i++) {
+      _ast_add_typespec_to_declaration(typespec, declarator->childs[i]);
+    }
+  } else {
+    _ast_add_typespec_to_declaration(typespec, declarator);
+  }
+}
+
+void print_node(node* n) {
+  if (!strcmp(n->type, "Id")) {
+    printf("%s(%s)\n", n->type, (char*)n->value);
+  } else {
+    printf("%s\n", n->type);
+  }
+}
+
+
+void print_tree(node* n, int d) {
+  int i, k;
+  for (k = 0; k < d; k++)
+    printf("..");
+
+  print_node(n);
+
+  for (i = 0; i < n->n_children; i++) {
+    print_tree(n->childs[i], d + 1);
+  }
+}
+
+
+/*
 node* new_node(char* type, void* value) {
 	node* new_node = (node*)malloc(sizeof(node));
 	new_node->type = strdup(type);
@@ -13,14 +127,12 @@ node* new_node(char* type, void* value) {
 	return new_node;
 }
 
-/* this method uses the new_node method that creates a "general" node, but lets us change the to_be_used parameter */
 node* create_terminal_node(char* type, int to_be_used, void* value) {
 	node* new_terminal_node = new_node(type, value);
 	new_terminal_node->to_be_used = to_be_used;
 	return new_terminal_node;
 }
 
-/* this method uses the new_node method that creates a "general" node, but allows us to add children to it ( => it can't be terminal) */
 node* create_and_insert_node(char* type, int to_be_used, int n_children, ...) {
   int i = 0;
 
@@ -74,3 +186,5 @@ void print_node(node* n, int depth) {
 		print_node(n->children[i], depth+1);
 	}
 }
+
+*/

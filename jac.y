@@ -40,18 +40,18 @@
 
 %%
 
-Program: CLASS IDAux OBRACE Declaration CBRACE                       {printf("####################\n"); $$ = ast = create_and_insert_node("Program", 1, 2, $2, $4);}
+Program: CLASS IDAux OBRACE Declaration CBRACE                       {$$ = ast = create_and_insert_node("Program", 1, 2, $2, $4);}
 
 Declaration: Declaration FieldDecl                                   {$$ = $2;}
            | Declaration MethodDecl                                  {$$ = $2;}
-           | Declaration SEMI
-           |                                                         {$$ = create_terminal_node("Empty", 0, NULL);}
+           | Declaration SEMI                                        {;}
+           |                                                         {$$ = NULL;}
 
-FieldDecl: PUBLIC STATIC FieldDeclL SEMI                             {$$ = $3;}
+FieldDecl: PUBLIC STATIC Type FieldDeclL SEMI                        {ast_add_typespec($3, $4); $$ = $4;}
          | error SEMI                                                {$$ = NULL;}
 
-FieldDeclL: Type IDAux                                               {$$ = create_and_insert_node("FieldDecl", 1, 2, $1, $2);}
-          | FieldDeclL COMMA IDAux                                   {$$ = create_and_insert_node("FieldDecl", 1, 2, $1->children[0], $3);}
+FieldDeclL: IDAux                                                    {$$ = create_and_insert_node("FieldDecl", 1, 1, $1);}
+          | FieldDeclL COMMA IDAux                                   {$$ = create_and_insert_node("FieldDecl", 1, 2, $1, $3);}
 
 MethodDecl: PUBLIC STATIC MethodHeader MethodBody                    {$$ = create_and_insert_node("MethodDecl", 0, 2, $3, $4);}
 
