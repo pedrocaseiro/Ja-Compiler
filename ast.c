@@ -5,7 +5,6 @@
 node *merge_nodes[2048];
 
 node* newnode(char* nodetype, int to_be_used) {
-  printf("new_node %s", nodetype);
   node* new_node = (node*) malloc(sizeof(node));
   new_node->type = nodetype;
   new_node->value = NULL;
@@ -25,7 +24,6 @@ node* create_terminal_node(char* nodetype, int to_be_used, char* v) {
 
 
 node* create_and_insert_node(char* nodetype, int to_be_used, int n_children, ...) {
-  printf("LUL");
   node *new_node, **tmp;
   int i, nodes = 0;
   va_list args;
@@ -104,7 +102,6 @@ void print_node(node* n) {
 
 
 void print_tree(node* n, int d) {
-  printf("asdasd");
   int i, k;
   for (k = 0; k < d; k++)
     printf("..");
