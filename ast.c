@@ -24,6 +24,7 @@ node* create_terminal_node(char* nodetype, int to_be_used, char* v) {
 
 
 node* create_and_insert_node(char* nodetype, int to_be_used, int n_children, ...) {
+
   node *new_node, **tmp;
   int i, nodes = 0;
   va_list args;
@@ -102,6 +103,7 @@ void print_node(node* n) {
 
 
 void print_tree(node* n, int d) {
+
   int i, k;
   for (k = 0; k < d; k++)
     printf("..");
