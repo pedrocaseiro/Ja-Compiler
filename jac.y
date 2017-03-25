@@ -40,10 +40,10 @@
 
 %%
 
-Program: CLASS IDAux OBRACE Declaration CBRACE                       {printf("#########\n");$$ = ast = create_and_insert_node("Program", 1, 2, $2, $4);}
+Program: CLASS IDAux OBRACE Declaration CBRACE                       {$$ = ast = create_and_insert_node("Program", 1, 2, $2, $4);}
 
 Declaration: Declaration FieldDecl                                   {$$ = $2;}
-           | Declaration MethodDecl                                  {printf("#########\n");$$ = $2;}
+           | Declaration MethodDecl                                  {$$ = $2;}
            | Declaration SEMI                                        {;}
            |                                                         {$$ = NULL;}
 
