@@ -36,7 +36,7 @@
 %left STAR DIV MOD
 %right NOT UNARY
 
-%type <node> Program Declaration FieldDecl FieldDeclL MethodDecl MethodHeader MethodBody MethodParams VOIDAux VarDeclStatement FormalParams CommaTypeId VarDecl VarDeclL StringArray Statement StatementL Assignment MethodInvocation ParseArgs Expr Type CommaExpr IDAux
+%type <node> Program Declaration FieldDecl FieldDeclL MethodDecl MethodHeader MethodBody MethodParams VOIDAux VarDeclStatement FormalParams CommaTypeId VarDecl VarDeclL StringArray Statement StatementL StatementCanError Assignment MethodInvocation ParseArgs Expr Type CommaExpr IDAux
 
 %%
 
@@ -85,7 +85,7 @@ VarDeclL: VarDeclL COMMA IDAux                                       {$$ = creat
 Statement: OBRACE StatementL CBRACE                                  {if($2 != NULL && $2->n_children >= 2) { $$ = create_and_insert_node("Block", 1, 1, $2); } else { $$ = $2; }}
          | IF OCURV Expr CCURV Statement ELSE Statement              {$$ = create_and_insert_node("If", 1, 3, $3, $5, $7);}
          | IF OCURV Expr CCURV Statement %prec IF_NO_ELSE            {node *null_node = create_and_insert_node("Null", 1, 0); $$ = create_and_insert_node("If", 1, 3, $3, $5, null_node);}
-         | WHILE OCURV Expr CCURV Statement                          {$$ = create_and_insert_node("While", 1, 2, $3, $5);}
+         | WHILE OCURV Expr CCURV Statement                          {printf("#########");$$ = create_and_insert_node("While", 1, 2, $3, $5);}
          | DO Statement WHILE OCURV Expr CCURV SEMI                  {$$ = create_and_insert_node("DoWhile", 1, 2, $2, $5);}
          | PRINT OCURV Expr CCURV SEMI                               {$$ = create_and_insert_node("Print", 1, 1, $3);}
          | PRINT OCURV STRLIT CCURV SEMI                             {$$ = create_and_insert_node("Print", 1, 1, $3);}
@@ -95,10 +95,18 @@ Statement: OBRACE StatementL CBRACE                                  {if($2 != N
          | SEMI                                                      {;}
          | RETURN Expr SEMI                                          {$$ = create_and_insert_node("Return", 1, 1, $2);}
          | RETURN SEMI                                               {$$ = create_and_insert_node("Return", 1, 0);}
-         | error SEMI                                                {$$ = NULL;}
 
+ StatementCanError: Statement { $$ = $1; }
+                  | error SEMI { $$ = NULL; }
+                  ;
+
+StatementL: StatementL StatementCanError {if ($1 == NULL && $2 != NULL) { $$ = create_and_insert_node("Block", 0, 1, $2); } else if ($1 != NULL && $2 == NULL) { $$ = create_and_insert_node("Block", 0, 1, $1); } else if ($1 != NULL && $2 != NULL) $$ = create_and_insert_node("Block", 0, 2, $1, $2); else { $$ = NULL; } }
+             | StatementCanError               {$$ = create_and_insert_node("Block", 0, 1, $1); }
+
+/*
 StatementL: StatementL Statement                                      {if ($2 != NULL && $2->n_children >= 2) { $$ = create_and_insert_node("Block", 1, 1, $2); } else { $$ = $2; }}
           |                                                           {$$ = NULL;}
+*/
 
 Assignment: IDAux ASSIGN Expr                                         {$$ = create_and_insert_node("Assign", 1, 2, $1, $3);}
 
