@@ -5,9 +5,9 @@
 node *merge_nodes[2048];
 
 node* newnode(char* nodetype, int to_be_used) {
-  printf("new_node");
+  printf("new_node %s", nodetype);
   node* new_node = (node*) malloc(sizeof(node));
-  new_node->type = strdup(nodetype);
+  new_node->type = nodetype;
   new_node->value = NULL;
   new_node->to_be_used = to_be_used;
   new_node->n_children = 0;
@@ -25,6 +25,7 @@ node* create_terminal_node(char* nodetype, int to_be_used, char* v) {
 
 
 node* create_and_insert_node(char* nodetype, int to_be_used, int n_children, ...) {
+  printf("LUL");
   node *new_node, **tmp;
   int i, nodes = 0;
   va_list args;
@@ -61,36 +62,35 @@ node* create_and_insert_node(char* nodetype, int to_be_used, int n_children, ...
   return new_node;
 }
 
-
-
 node *save_nodes[2048];
 
-void _ast_add_typespec_to_declaration(node *typespec, node *declaration) {
+void ast_fielddecl_aux(node *type, node *field_decl) {
   node **ptr = save_nodes;
 
-  int u;
-  for (u = 0; u < declaration->n_children; u++) {
-    *ptr++ = declaration->childs[u];
+  int children;
+  for (children = 0; children < field_decl->n_children; children++) {
+    *ptr++ = field_decl->childs[children];
   }
 
-  declaration->n_children++;
-  declaration->childs = (node **) malloc (declaration->n_children * sizeof(node*));
-  declaration->childs[0] = typespec;
+  field_decl->n_children++;
+  field_decl->childs = (node **) malloc (field_decl->n_children * sizeof(node*));
+  field_decl->childs[0] = type;
 
   ptr = save_nodes;
-  for (u = 1; u < declaration->n_children; u++) {
-    declaration->childs[u] = *ptr++;
+  for (children = 1; children < field_decl->n_children; children++) {
+    field_decl->childs[children] = *ptr++;
   }
 }
 
-void ast_add_typespec(node *typespec, node *declarator) {
-  if (strcmp(declarator->childs[0]->type, "FieldDecl") == 0) {
+void ast_fielddecl(node *type, node *field_decl) {
+  if (strcmp(field_decl->childs[0]->type, "FieldDecl") == 0) {
+    printf("filho: %s\n", field_decl->childs[0]->type);
     int i;
-    for (i = 0; i < declarator->n_children; i++) {
-      _ast_add_typespec_to_declaration(typespec, declarator->childs[i]);
+    for (i = 0; i < field_decl->n_children; i++) {
+      ast_fielddecl_aux(type, field_decl->childs[i]);
     }
   } else {
-    _ast_add_typespec_to_declaration(typespec, declarator);
+    ast_fielddecl_aux(type, field_decl);
   }
 }
 
@@ -104,6 +104,7 @@ void print_node(node* n) {
 
 
 void print_tree(node* n, int d) {
+  printf("asdasd");
   int i, k;
   for (k = 0; k < d; k++)
     printf("..");

@@ -40,20 +40,20 @@
 
 %%
 
-Program: CLASS IDAux OBRACE Declaration CBRACE                       {$$ = ast = create_and_insert_node("Program", 1, 2, $2, $4);}
+Program: CLASS IDAux OBRACE Declaration CBRACE                       {printf("#########\n");$$ = ast = create_and_insert_node("Program", 1, 2, $2, $4);}
 
 Declaration: Declaration FieldDecl                                   {$$ = $2;}
-           | Declaration MethodDecl                                  {$$ = $2;}
+           | Declaration MethodDecl                                  {printf("#########\n");$$ = $2;}
            | Declaration SEMI                                        {;}
            |                                                         {$$ = NULL;}
 
-FieldDecl: PUBLIC STATIC Type FieldDeclL SEMI                        {ast_add_typespec($3, $4); $$ = $4;}
+FieldDecl: PUBLIC STATIC Type FieldDeclL SEMI                        {ast_fielddecl($3, $4); $$ = $4;}
          | error SEMI                                                {$$ = NULL;}
 
 FieldDeclL: IDAux                                                    {$$ = create_and_insert_node("FieldDecl", 1, 1, $1);}
-          | FieldDeclL COMMA IDAux                                   {$$ = create_and_insert_node("FieldDecl", 1, 2, $1, $3);}
+          | FieldDeclL COMMA IDAux                                   {$$ = create_and_insert_node("FieldDecl", 0, 2, $1, $3);}
 
-MethodDecl: PUBLIC STATIC MethodHeader MethodBody                    {$$ = create_and_insert_node("MethodDecl", 0, 2, $3, $4);}
+MethodDecl: PUBLIC STATIC MethodHeader MethodBody                    {$$ = create_and_insert_node("MethodDecl", 1, 2, $3, $4);}
 
 MethodHeader: Type IDAux OCURV MethodParams CCURV                    {$$ = create_and_insert_node("MethodHeader", 1, 3, $1, $2, $4);}
             | VOIDAux IDAux OCURV MethodParams CCURV                 {$$ = create_and_insert_node("MethodHeader", 1, 3, $1, $2, $4);}
@@ -67,7 +67,7 @@ MethodBody: OBRACE VarDeclStatement CBRACE                           {$$ = creat
 
 VarDeclStatement: VarDeclStatement VarDecl                           {$$ = create_and_insert_node("MethodBody", 0, 2, $1, $2);}
                 | VarDeclStatement Statement                         {$$ = create_and_insert_node("MethodBody", 0, 2, $1, $2);}
-                |                                                    {$$ = create_terminal_node("Empty", 0, NULL);}
+                |                                                    {$$ = NULL;}
 
 FormalParams: Type IDAux CommaTypeId                                 {$$ = create_and_insert_node("ParamDecl", 1, 2, $1, $2);}
             | STRING OSQUARE CSQUARE IDAux                           {$$ = create_and_insert_node("ParamDecl", 1, 2, $1, $4);}
