@@ -13,16 +13,15 @@
 
 %union{
   char* token;
-  char *id, *string;
   struct node *node;
 }
 
-%token <string> BOOL BOOLLIT CLASS DO DOTLENGTH DOUBLE ELSE IF INT PARSEINT PRINT PUBLIC
-%token <string> RETURN STATIC WHILE OCURV CCURV OBRACE CBRACE STRING
-%token <string> VOID
-%token <string> OSQUARE CSQUARE AND OR LT GT EQ NEQ LEQ GEQ PLUS MINUS STAR DIV MOD NOT
-%token <string> ASSIGN SEMI COMMA RESERVED DECLIT REALLIT STRLIT
-%token <id> ID
+%token <token> BOOL BOOLLIT CLASS DO DOTLENGTH DOUBLE ELSE IF INT PARSEINT PRINT PUBLIC
+%token <token> RETURN STATIC WHILE OCURV CCURV OBRACE CBRACE STRING
+%token <token> VOID
+%token <token> OSQUARE CSQUARE AND OR LT GT EQ NEQ LEQ GEQ PLUS MINUS STAR DIV MOD NOT
+%token <token> ASSIGN SEMI COMMA RESERVED DECLIT REALLIT STRLIT
+%token <token> ID
 
 %nonassoc IF_NO_ELSE
 %nonassoc ELSE
@@ -36,7 +35,7 @@
 %left STAR DIV MOD
 %right NOT UNARY
 
-%type <node> Program Declaration FieldDecl FieldDeclL MethodDecl MethodHeader MethodBody MethodParams VOIDAux VarDeclStatement FormalParams CommaTypeId VarDecl VarDeclL StringArray Statement StatementL StatementCanError Assignment MethodInvocation ParseArgs Expr Type CommaExpr IDAux
+%type <node> Program Declaration FieldDecl FieldDeclL FieldsIds MethodDecl MethodHeader MethodBody MethodParams VOIDAux VarDeclStatement FormalParams CommaTypeId VarDecl VarDeclL VarsIds StringArray Statement StatementL StatementAndError Assignment MethodInvocation ParseArgs Expr Type CommaExpr IDAux
 
 %%
 
@@ -47,11 +46,13 @@ Declaration: Declaration FieldDecl                                   {$$ = $2;}
            | Declaration SEMI                                        {;}
            |                                                         {$$ = NULL;}
 
-FieldDecl: PUBLIC STATIC Type FieldDeclL SEMI                        {ast_fielddecl($3, $4); $$ = $4;}
-         | error SEMI                                                {$$ = NULL;}
+FieldDecl: PUBLIC STATIC Type FieldDeclL SEMI                        { if ($2 != NULL) { ast_decl($3, $4); $$ = $4; } else { $$ = $4; } }
+         | error SEMI                                                { $$ = NULL; }
 
-FieldDeclL: IDAux                                                    {$$ = create_and_insert_node("FieldDecl", 1, 1, $1);}
-          | FieldDeclL COMMA IDAux                                   {$$ = create_and_insert_node("FieldDecl", 0, 2, $1, $3);}
+FieldDeclL: FieldDeclL COMMA FieldsIds                               { $$ = create_and_insert_node("FieldDecl", 0, 2, $1, $3); }
+          | FieldsIds                                                { $$ = $1; }
+
+FieldsIds: IDAux                                                     { $$ = create_and_insert_node("FieldDecl", 1, 1, $1);}
 
 MethodDecl: PUBLIC STATIC MethodHeader MethodBody                    {$$ = create_and_insert_node("MethodDecl", 1, 2, $3, $4);}
 
@@ -77,15 +78,18 @@ StringArray: STRING                                                  {$$ = creat
 CommaTypeId: CommaTypeId COMMA Type IDAux                            {;}
            |                                                         {$$ = NULL;}
 
-VarDecl: Type VarDeclL SEMI                                          {if ($2 != NULL) { ast_fielddecl($1, $2); $$ = $2; } else { $$ = $2; } }
 
-VarDeclL: VarDeclL COMMA IDAux                                       {$$ = create_and_insert_node("VarDecl", 0, 2, $1, $3);}
-        | IDAux                                                      {$$ = $1;}
+VarDecl: Type VarDeclL SEMI                                          {if ($2 != NULL) { ast_decl($1, $2); $$ = $2; } else { $$ = $2; } }
 
-Statement: OBRACE StatementL CBRACE                                  {if($2 != NULL && $2->n_children >= 2) { $$ = create_and_insert_node("Block", 1, 1, $2); } else { $$ = $2; }}
+VarDeclL: VarDeclL COMMA VarsIds                                     {$$ = create_and_insert_node("VarDecl", 0, 2, $1, $3);}
+        | VarsIds                                                     {$$ = $1;}
+
+VarsIds: IDAux                                                       { $$ = create_and_insert_node("VarDecl", 1, 1, $1);}
+
+Statement: OBRACE StatementL CBRACE                                  {if($2 != NULL && $2->n_children >= 2) {$$ = create_and_insert_node("Block", 1, 1, $2); } else { $$ = $2; }}
          | IF OCURV Expr CCURV Statement ELSE Statement              {$$ = create_and_insert_node("If", 1, 3, $3, $5, $7);}
          | IF OCURV Expr CCURV Statement %prec IF_NO_ELSE            {node *null_node = create_and_insert_node("Null", 1, 0); $$ = create_and_insert_node("If", 1, 3, $3, $5, null_node);}
-         | WHILE OCURV Expr CCURV Statement                          {printf("#########");$$ = create_and_insert_node("While", 1, 2, $3, $5);}
+         | WHILE OCURV Expr CCURV Statement                          {$$ = create_and_insert_node("While", 1, 2, $3, $5);}
          | DO Statement WHILE OCURV Expr CCURV SEMI                  {$$ = create_and_insert_node("DoWhile", 1, 2, $2, $5);}
          | PRINT OCURV Expr CCURV SEMI                               {$$ = create_and_insert_node("Print", 1, 1, $3);}
          | PRINT OCURV STRLIT CCURV SEMI                             {$$ = create_and_insert_node("Print", 1, 1, $3);}
@@ -96,17 +100,12 @@ Statement: OBRACE StatementL CBRACE                                  {if($2 != N
          | RETURN Expr SEMI                                          {$$ = create_and_insert_node("Return", 1, 1, $2);}
          | RETURN SEMI                                               {$$ = create_and_insert_node("Return", 1, 0);}
 
- StatementCanError: Statement { $$ = $1; }
-                  | error SEMI { $$ = NULL; }
-                  ;
+ StatementAndError: Statement                                        { $$ = $1; }
+                  | error SEMI                                       { $$ = NULL; }
 
-StatementL: StatementL StatementCanError {if ($1 == NULL && $2 != NULL) { $$ = create_and_insert_node("Block", 0, 1, $2); } else if ($1 != NULL && $2 == NULL) { $$ = create_and_insert_node("Block", 0, 1, $1); } else if ($1 != NULL && $2 != NULL) $$ = create_and_insert_node("Block", 0, 2, $1, $2); else { $$ = NULL; } }
-             | StatementCanError               {$$ = create_and_insert_node("Block", 0, 1, $1); }
+StatementL: StatementL StatementAndError                             {if ($1 == NULL && $2 != NULL) { $$ = create_and_insert_node("Block", 0, 1, $2); } else if ($1 != NULL && $2 == NULL) { $$ = create_and_insert_node("Block", 0, 1, $1); } else if ($1 != NULL && $2 != NULL) $$ = create_and_insert_node("Block", 0, 2, $1, $2); else { $$ = NULL; } }
+          | StatementAndError                                        {$$ = create_and_insert_node("Block", 0, 1, $1); }
 
-/*
-StatementL: StatementL Statement                                      {if ($2 != NULL && $2->n_children >= 2) { $$ = create_and_insert_node("Block", 1, 1, $2); } else { $$ = $2; }}
-          |                                                           {$$ = NULL;}
-*/
 
 Assignment: IDAux ASSIGN Expr                                         {$$ = create_and_insert_node("Assign", 1, 2, $1, $3);}
 
@@ -157,5 +156,6 @@ IDAux: ID                                                            {$$=create_
 %%
 
 void yyerror(const char *s) {
+  error_flag = 1;
 	printf("Line %d, col %d: %s: %s\n", line, col - yyleng, s, yytext);
 }

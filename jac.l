@@ -117,7 +117,9 @@ int main(int argc, char **argv) {
       yylex();
     } else if(!strcmp(argv[1], "-t")){
       yyparse();
-      print_tree(ast, 0);
+      if(!error_flag){
+        print_tree(ast, 0);
+      }
     }
   } else {
     yyparse();

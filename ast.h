@@ -10,10 +10,12 @@ typedef struct node {
 	struct node** childs;
 } node;
 
+int error_flag;
+
 
 node* new_node(char* nodetype, int to_be_used);
 node* create_terminal_node(char* nodetype, int to_be_used, char* v);
 node* create_and_insert_node(char* nodetype, int to_be_used, int n_children, ...);
-void ast_fielddecl(node *typespec, node *declarator);
+void ast_decl(node *typespec, node *declarator);
 void print_node(node* n);
 void print_tree(node* n, int d);

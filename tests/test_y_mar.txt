@@ -37,15 +37,8 @@ class gcd {
         a = Integer.parseInt(args[0]); // lel
         b = Integer.parseInt(args[1]);
         algorithm(a, b);
-        if (a == 0)
-            System.out.println(b);
-        else {
-            while (b > 0 )
-                if (a > b)
-                    a = a-b;
-                else
-                    b = b-a;
-            System.out.println(a);
+        while(1){
+        
         }
     }
 }

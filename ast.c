@@ -61,35 +61,34 @@ node* create_and_insert_node(char* nodetype, int to_be_used, int n_children, ...
   return new_node;
 }
 
-node *save_nodes[2048];
+node *decl_nodes[2048];
 
-void ast_fielddecl_aux(node *type, node *field_decl) {
-  node **ptr = save_nodes;
+void ast_decl_aux(node *type, node *decl) {
+  node **ptr = decl_nodes;
 
   int children;
-  for (children = 0; children < field_decl->n_children; children++) {
-    *ptr++ = field_decl->childs[children];
+  for (children = 0; children < decl->n_children; children++) {
+    *ptr++ = decl->childs[children];
   }
 
-  field_decl->n_children++;
-  field_decl->childs = (node **) malloc (field_decl->n_children * sizeof(node*));
-  field_decl->childs[0] = type;
+  decl->n_children++;
+  decl->childs = (node **) malloc (decl->n_children * sizeof(node*));
+  decl->childs[0] = type;
 
-  ptr = save_nodes;
-  for (children = 1; children < field_decl->n_children; children++) {
-    field_decl->childs[children] = *ptr++;
+  ptr = decl_nodes;
+  for (children = 1; children < decl->n_children; children++) {
+    decl->childs[children] = *ptr++;
   }
 }
 
-void ast_fielddecl(node *type, node *field_decl) {
-  if (strcmp(field_decl->childs[0]->type, "FieldDecl") == 0 || strcmp(field_decl->childs[0]->type, "VarDecl") == 0) {
-    printf("filho: %s\n", field_decl->childs[0]->type);
+void ast_decl(node *type, node *decl) {
+  if (strcmp(decl->childs[0]->type, "FieldDecl") == 0 || strcmp(decl->childs[0]->type, "VarDecl") == 0) {
     int i;
-    for (i = 0; i < field_decl->n_children; i++) {
-      ast_fielddecl_aux(type, field_decl->childs[i]);
+    for (i = 0; i < decl->n_children; i++) {
+      ast_decl_aux(type, decl->childs[i]);
     }
   } else {
-    ast_fielddecl_aux(type, field_decl);
+    ast_decl_aux(type, decl);
   }
 }
 
