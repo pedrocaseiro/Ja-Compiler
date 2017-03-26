@@ -119,6 +119,7 @@ int main(int argc, char **argv) {
       yyparse();
       if(!error_flag){
         print_tree(ast, 0);
+        destroy_tree(ast);
       }
     }
   } else {

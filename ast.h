@@ -19,3 +19,4 @@ node* create_and_insert_node(char* nodetype, int to_be_used, int n_children, ...
 void ast_decl(node *typespec, node *declarator);
 void print_node(node* n);
 void print_tree(node* n, int d);
+void destroy_tree(node *n);

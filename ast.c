@@ -102,6 +102,23 @@ node *ast_fix_to_null(node *target_node) {
   return target_node;
 }
 
+
+void destroy_tree(node *n) {
+
+
+  if(n != NULL){
+    int i;
+
+    for (i = 0; i < n->n_children; i++) {
+      destroy_tree(n->childs[i]);
+    }
+    
+    free(n->childs);
+    free(n);
+  }
+}
+
+
 void print_node(node* n) {
   if (strcmp(n->type, "Id") == 0 || strcmp(n->type, "DecLit") == 0) {
     printf("%s(%s)\n", n->type, (char*)n->value);

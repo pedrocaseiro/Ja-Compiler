@@ -141,17 +141,17 @@ Expr: Assignment                                                    {$$ = create
     | IDAux                                                         {;}
     | IDAux DOTLENGTH                                               {;}
     | OCURV Expr CCURV                                              {$$ = $2;}
-    | BOOLLIT                                                       {$$=create_terminal_node("BoolLit", 1, $1);}
-    | DECLIT                                                        {$$=create_terminal_node("DecLit", 1, $1);}
-    | REALLIT                                                       {$$=create_terminal_node("RealLit", 1, $1);}
+    | BOOLLIT                                                       {$$=create_terminal_node("BoolLit", 1, $1);free($1);}
+    | DECLIT                                                        {$$=create_terminal_node("DecLit", 1, $1);free($1);}
+    | REALLIT                                                       {$$=create_terminal_node("RealLit", 1, $1);free($1);}
     | OCURV error CCURV                                             {$$ = NULL;}
 
-Type: BOOL                                                          {$$=create_terminal_node("Bool", 1, $1);}
-    | INT                                                           {$$=create_terminal_node("Int", 1, $1);}
-    | DOUBLE                                                        {$$=create_terminal_node("Double", 1, $1);}
+Type: BOOL                                                          {$$=create_terminal_node("Bool", 1, $1);free($1);}
+    | INT                                                           {$$=create_terminal_node("Int", 1, $1);free($1);}
+    | DOUBLE                                                        {$$=create_terminal_node("Double", 1, $1);free($1);}
 
 
-IDAux: ID                                                            {$$=create_terminal_node("Id", 1, $1);}
+IDAux: ID                                                            {$$=create_terminal_node("Id", 1, $1);free($1);}
 
 %%
 
