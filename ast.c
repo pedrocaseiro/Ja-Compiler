@@ -66,6 +66,7 @@ node *decl_nodes[2048];
 void ast_decl_aux(node *type, node *decl) {
   node **ptr = decl_nodes;
 
+  // save the nodes that are already children of decl in ptr
   int children;
   for (children = 0; children < decl->n_children; children++) {
     *ptr++ = decl->childs[children];
@@ -73,22 +74,23 @@ void ast_decl_aux(node *type, node *decl) {
 
   decl->n_children++;
   decl->childs = (node **) malloc (decl->n_children * sizeof(node*));
+  // we add type as the first child of decl.
+  // by doing this we are losing his first childs
   decl->childs[0] = type;
 
+  // ptr points to the start of the childs list
   ptr = decl_nodes;
+
+  // iterate through the "lost" childs and add them as childs again
   for (children = 1; children < decl->n_children; children++) {
     decl->childs[children] = *ptr++;
   }
 }
 
 void ast_decl(node *type, node *decl) {
-  if (strcmp(decl->childs[0]->type, "FieldDecl") == 0 || strcmp(decl->childs[0]->type, "VarDecl") == 0) {
-    int i;
-    for (i = 0; i < decl->n_children; i++) {
-      ast_decl_aux(type, decl->childs[i]);
-    }
-  } else {
-    ast_decl_aux(type, decl);
+  int i;
+  for (i = 0; i < decl->n_children; i++) {
+    ast_decl_aux(type, decl->childs[i]);
   }
 }
 
@@ -112,7 +114,7 @@ void destroy_tree(node *n) {
     for (i = 0; i < n->n_children; i++) {
       destroy_tree(n->childs[i]);
     }
-    
+
     free(n->childs);
     free(n);
   }

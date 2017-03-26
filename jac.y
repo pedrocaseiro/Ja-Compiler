@@ -82,7 +82,7 @@ CommaTypeId: CommaTypeId COMMA Type IDAux                            {;}
 VarDecl: Type VarDeclL SEMI                                          {if ($2 != NULL) { ast_decl($1, $2); $$ = $2; } else { $$ = $2; } }
 
 VarDeclL: VarDeclL COMMA VarsIds                                     {$$ = create_and_insert_node("VarDecl", 0, 2, $1, $3);}
-        | VarsIds                                                     {$$ = $1;}
+        | VarsIds                                                    {$$ = $1;}
 
 VarsIds: IDAux                                                       { $$ = create_and_insert_node("VarDecl", 1, 1, $1);}
 

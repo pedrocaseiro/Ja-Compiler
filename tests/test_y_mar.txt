@@ -37,8 +37,17 @@ class gcd {
         a = Integer.parseInt(args[0]); // lel
         b = Integer.parseInt(args[1]);
         algorithm(a, b);
-        while(1){
-        
+        if (a == 0)
+            System.out.println(b);
+        else {
+            while (b > 0 )
+              if(a>b){
+                System.out.println(a);
+                System.out.println(a);
+              }
+              else
+              System.out.println(a);
+              System.out.println(a);
         }
     }
 }
