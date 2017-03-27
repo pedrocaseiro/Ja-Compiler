@@ -35,7 +35,7 @@
 %left STAR DIV MOD
 %right NOT UNARY
 
-%type <node> Program Declaration FieldDecl FieldDeclL FieldsIds MethodDecl MethodHeader MethodBody MethodParams VOIDAux VarDeclStatement FormalParams CommaTypeId VarDecl VarDeclL VarsIds StringArray Statement StatementL StatementAndError Assignment MethodInvocation ParseArgs Expr Type CommaExpr IDAux
+%type <node> Program Declaration FieldDecl FieldDeclL FieldsIds StringArray MethodDecl MethodHeader MethodBody MethodParams MethodParamsL VOIDAux VarDeclStatement FormalParams VarDecl VarDeclL VarsIds Statement StatementL StatementAndError Assignment MethodInvocation ParseArgs Expr Type CommaExpr IDAux
 
 %%
 
@@ -46,23 +46,33 @@ Declaration: Declaration FieldDecl                                   {$$ = $2;}
            | Declaration SEMI                                        {;}
            |                                                         {$$ = NULL;}
 
-FieldDecl: PUBLIC STATIC Type FieldDeclL SEMI                        { if ($2 != NULL) { ast_decl($3, $4); $$ = $4; } else { $$ = $4; } }
-         | error SEMI                                                { $$ = NULL; }
+FieldDecl: PUBLIC STATIC Type FieldDeclL SEMI                        {if ($4 != NULL) { ast_decl($3, $4); $$ = $4; } else { $$ = $4; }}
+         | error SEMI                                                {$$ = NULL; }
 
-FieldDeclL: FieldDeclL COMMA FieldsIds                               { $$ = create_and_insert_node("FieldDecl", 0, 2, $1, $3); }
-          | FieldsIds                                                { $$ = $1; }
+FieldDeclL: FieldDeclL COMMA FieldsIds                               {$$ = create_and_insert_node("FieldDecl", 0, 2, $1, $3);}
+          | FieldsIds                                                {$$ = $1;}
 
-FieldsIds: IDAux                                                     { $$ = create_and_insert_node("FieldDecl", 1, 1, $1);}
+FieldsIds: IDAux                                                     {$$ = create_and_insert_node("FieldDecl", 1, 1, $1);}
 
 MethodDecl: PUBLIC STATIC MethodHeader MethodBody                    {$$ = create_and_insert_node("MethodDecl", 1, 2, $3, $4);}
 
-MethodHeader: Type IDAux OCURV MethodParams CCURV                    {$$ = create_and_insert_node("MethodHeader", 1, 3, $1, $2, $4);}
-            | VOIDAux IDAux OCURV MethodParams CCURV                 {$$ = create_and_insert_node("MethodHeader", 1, 3, $1, $2, $4);}
+MethodHeader: Type IDAux OCURV MethodParamsL CCURV                    {$$ = create_and_insert_node("MethodHeader", 1, 3, $1, $2, $4);}
+            | VOIDAux IDAux OCURV MethodParamsL CCURV                 {$$ = create_and_insert_node("MethodHeader", 1, 3, $1, $2, $4);}
+
+MethodParamsL: MethodParams                                           {;}
+             |                                                        {$$ = create_and_insert_node("MethodParams", 1, 0);}
+
 
 VOIDAux: VOID                                                        {$$=create_terminal_node("Void", 1, $1);}
 
-MethodParams: FormalParams                                           {$$ = create_and_insert_node("MethodParams", 1, 1, $1);}
-            |                                                        {$$ = NULL;}
+MethodParams: MethodParams COMMA FormalParams                        { $1->to_be_used = 0; $$ = create_and_insert_node("MethodParams", 1, 2, $1, $3);}
+            | FormalParams                                           { $$ = create_and_insert_node("MethodParams", 1, 1, $1);}
+
+FormalParams: Type IDAux                                             { $$ = create_and_insert_node("ParamDecl", 1, 2, $1, $2);}
+            | StringArray OSQUARE CSQUARE IDAux                      {$$ = create_and_insert_node("ParamDecl", 1, 2, $1, $4);}
+            | Type                                                   { $$ = create_and_insert_node("ParamDecl", 1, 1, $1);}
+
+StringArray: STRING                                                  {$$ = create_and_insert_node("StringArray", 1, 0);}
 
 MethodBody: OBRACE VarDeclStatement CBRACE                           {$$ = create_and_insert_node("MethodBody", 1, 1, $2);}
 
@@ -70,13 +80,6 @@ VarDeclStatement: VarDeclStatement VarDecl                           {$$ = creat
                 | VarDeclStatement Statement                         {$$ = create_and_insert_node("MethodBody", 0, 2, $1, $2);}
                 |                                                    {$$ = NULL;}
 
-FormalParams: Type IDAux CommaTypeId                                 {$$ = create_and_insert_node("ParamDecl", 1, 2, $1, $2);}
-            | StringArray OSQUARE CSQUARE IDAux                      {$$ = create_and_insert_node("ParamDecl", 1, 2, $1, $4);}
-
-StringArray: STRING                                                  {$$ = create_and_insert_node("StringArray", 1, 0);}
-
-CommaTypeId: CommaTypeId COMMA Type IDAux                            {;}
-           |                                                         {$$ = NULL;}
 
 
 VarDecl: Type VarDeclL SEMI                                          {if ($2 != NULL) { ast_decl($1, $2); $$ = $2; } else { $$ = $2; } }
@@ -84,11 +87,11 @@ VarDecl: Type VarDeclL SEMI                                          {if ($2 != 
 VarDeclL: VarDeclL COMMA VarsIds                                     {$$ = create_and_insert_node("VarDecl", 0, 2, $1, $3);}
         | VarsIds                                                    {$$ = $1;}
 
-VarsIds: IDAux                                                       { $$ = create_and_insert_node("VarDecl", 1, 1, $1);}
+VarsIds: IDAux                                                       {$$ = create_and_insert_node("VarDecl", 1, 1, $1);}
 
 Statement: OBRACE StatementL CBRACE                                  {if($2 != NULL && $2->n_children >= 2) {$$ = create_and_insert_node("Block", 1, 1, $2); } else { $$ = $2; }}
          | IF OCURV Expr CCURV Statement ELSE Statement              {$$ = create_and_insert_node("If", 1, 3, $3, $5, $7);}
-         | IF OCURV Expr CCURV Statement %prec IF_NO_ELSE            {node *null_node = create_and_insert_node("Null", 1, 0); $$ = create_and_insert_node("If", 1, 3, $3, $5, null_node);}
+         | IF OCURV Expr CCURV Statement %prec IF_NO_ELSE            {$$ = create_and_insert_node("If", 1, 2, $3, $5);}
          | WHILE OCURV Expr CCURV Statement                          {$$ = create_and_insert_node("While", 1, 2, $3, $5);}
          | DO Statement WHILE OCURV Expr CCURV SEMI                  {$$ = create_and_insert_node("DoWhile", 1, 2, $2, $5);}
          | PRINT OCURV Expr CCURV SEMI                               {$$ = create_and_insert_node("Print", 1, 1, $3);}

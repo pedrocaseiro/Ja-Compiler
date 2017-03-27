@@ -9,8 +9,6 @@ class gcd {
       while (b > 0)
         if (a > b)
           a = a-b;
-        else
-          b = b-a;
       System.out.println(a);
     }
   }

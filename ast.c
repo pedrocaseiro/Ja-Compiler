@@ -88,9 +88,13 @@ void ast_decl_aux(node *type, node *decl) {
 }
 
 void ast_decl(node *type, node *decl) {
-  int i;
-  for (i = 0; i < decl->n_children; i++) {
-    ast_decl_aux(type, decl->childs[i]);
+  if (strcmp(decl->childs[0]->type, "FieldDecl") == 0 || strcmp(decl->childs[0]->type, "VarDecl") == 0 || strcmp(decl->childs[0]->type, "ParamDecl") == 0) {
+    int i;
+    for (i = 0; i < decl->n_children; i++) {
+      ast_decl_aux(type, decl->childs[i]);
+    }
+  } else {
+    ast_decl_aux(type, decl);
   }
 }
 

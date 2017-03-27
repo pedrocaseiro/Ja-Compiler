@@ -1,0 +1,11 @@
+/*
+class gcd{
+  public static int main(int args, int lul, int kappa){
+  }
+}
+*/
+class gcd{
+  public static int main(String[] args){
+
+  }
+}
