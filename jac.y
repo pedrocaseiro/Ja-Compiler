@@ -35,7 +35,7 @@
 %left STAR DIV MOD
 %right NOT UNARY
 
-%type <node> Program Declaration FieldDecl FieldDeclL FieldsIds StringArray MethodDecl MethodHeader MethodBody MethodParams MethodParamsL VOIDAux VarDeclStatement FormalParams VarDecl VarDeclL VarsIds Statement StatementL StatementAndError Assignment MethodInvocation ParseArgs Expr Type CommaExpr IDAux
+%type <node> Program Declaration FieldDecl FieldDeclL FormalParamsStringArray FieldsIds StringArray MethodDecl MethodHeader MethodBody MethodParams MethodParamsL VOIDAux VarDeclStatement FormalParams StrLitAux VarDecl VarDeclL VarsIds Statement StatementL Assignment MethodInvocation ParseArgs Expr Type CommaExpr IDAux
 
 %%
 
@@ -43,7 +43,7 @@ Program: CLASS IDAux OBRACE Declaration CBRACE                       {$$ = ast =
 
 Declaration: Declaration FieldDecl                                   {$$ = $2;}
            | Declaration MethodDecl                                  {$$ = $2;}
-           | Declaration SEMI                                        {;}
+           | Declaration SEMI                                        {$$ = NULL;}
            |                                                         {$$ = NULL;}
 
 FieldDecl: PUBLIC STATIC Type FieldDeclL SEMI                        {if ($4 != NULL) { ast_decl($3, $4); $$ = $4; } else { $$ = $4; }}
@@ -60,17 +60,17 @@ MethodHeader: Type IDAux OCURV MethodParamsL CCURV                    {$$ = crea
             | VOIDAux IDAux OCURV MethodParamsL CCURV                 {$$ = create_and_insert_node("MethodHeader", 1, 3, $1, $2, $4);}
 
 MethodParamsL: MethodParams                                           {;}
+             | FormalParamsStringArray                                {$$ = create_and_insert_node("MethodParams", 1, 1, $1);}
              |                                                        {$$ = create_and_insert_node("MethodParams", 1, 0);}
-
 
 VOIDAux: VOID                                                        {$$=create_terminal_node("Void", 1, $1);}
 
 MethodParams: MethodParams COMMA FormalParams                        { $1->to_be_used = 0; $$ = create_and_insert_node("MethodParams", 1, 2, $1, $3);}
             | FormalParams                                           { $$ = create_and_insert_node("MethodParams", 1, 1, $1);}
 
-FormalParams: Type IDAux                                             { $$ = create_and_insert_node("ParamDecl", 1, 2, $1, $2);}
-            | StringArray OSQUARE CSQUARE IDAux                      {$$ = create_and_insert_node("ParamDecl", 1, 2, $1, $4);}
-            | Type                                                   { $$ = create_and_insert_node("ParamDecl", 1, 1, $1);}
+FormalParamsStringArray: StringArray OSQUARE CSQUARE IDAux           {$$ = create_and_insert_node("ParamDecl", 1, 2, $1, $4);}
+
+FormalParams: Type IDAux                                             {$$ = create_and_insert_node("ParamDecl", 1, 2, $1, $2);}
 
 StringArray: STRING                                                  {$$ = create_and_insert_node("StringArray", 1, 0);}
 
@@ -95,20 +95,17 @@ Statement: OBRACE StatementL CBRACE                                  {if($2 != N
          | WHILE OCURV Expr CCURV Statement                          {$$ = create_and_insert_node("While", 1, 2, $3, $5);}
          | DO Statement WHILE OCURV Expr CCURV SEMI                  {$$ = create_and_insert_node("DoWhile", 1, 2, $2, $5);}
          | PRINT OCURV Expr CCURV SEMI                               {$$ = create_and_insert_node("Print", 1, 1, $3);}
-         | PRINT OCURV STRLIT CCURV SEMI                             {$$ = create_and_insert_node("Print", 1, 1, $3);}
+         | PRINT OCURV StrLitAux CCURV SEMI                          {$$ = create_and_insert_node("Print", 1, 1, $3);}
          | IDAux ASSIGN Expr SEMI                                    {$$ = create_and_insert_node("Assign", 1, 2, $1, $3);}
          | MethodInvocation SEMI                                     {$$ = create_and_insert_node("Call", 1, 1, $1);}
          | ParseArgs SEMI                                            {$$ = create_and_insert_node("ParseArgs", 1, 1, $1);}
-         | SEMI                                                      {;}
+         | SEMI                                                      {$$ = create_terminal_node("Semi", 0, $1);}
          | RETURN Expr SEMI                                          {$$ = create_and_insert_node("Return", 1, 1, $2);}
          | RETURN SEMI                                               {$$ = create_and_insert_node("Return", 1, 0);}
+         | error SEMI                                                {$$ = NULL;}
 
- StatementAndError: Statement                                        { $$ = $1; }
-                  | error SEMI                                       { $$ = NULL; }
-
-StatementL: StatementL StatementAndError                             {if ($1 == NULL && $2 != NULL) { $$ = create_and_insert_node("Block", 0, 1, $2); } else if ($1 != NULL && $2 == NULL) { $$ = create_and_insert_node("Block", 0, 1, $1); } else if ($1 != NULL && $2 != NULL) $$ = create_and_insert_node("Block", 0, 2, $1, $2); else { $$ = NULL; } }
-          | StatementAndError                                        {$$ = create_and_insert_node("Block", 0, 1, $1); }
-
+StatementL: StatementL Statement                                     {$$ = create_and_insert_node("Block", 0, 2, $1, $2);}
+          |                                                          {$$ = NULL;}
 
 Assignment: IDAux ASSIGN Expr                                         {$$ = create_and_insert_node("Assign", 1, 2, $1, $3);}
 
@@ -118,6 +115,8 @@ MethodInvocation: IDAux OCURV Expr CommaExpr CCURV                    {$$ = crea
 
 CommaExpr: CommaExpr COMMA Expr                                       {$$ = create_and_insert_node("Call", 0, 2, $1, $3);}
          |                                                            {$$ = NULL;}
+
+StrLitAux: STRLIT                                                     {$$ = create_terminal_node("StrLit", 1, $1);}
 
 ParseArgs: PARSEINT OCURV IDAux OSQUARE Expr CSQUARE CCURV            {$$ = create_and_insert_node("ParseArgs", 0, 2, $3, $5);}
          | PARSEINT OCURV error CCURV                                 {$$ = NULL;}
@@ -141,20 +140,20 @@ Expr: Assignment                                                    {$$ = create
     | PLUS Expr                                                     {$$ = create_and_insert_node("Plus", 1, 2, $2);}
     | MINUS Expr                                                    {$$ = create_and_insert_node("Minus", 1, 2, $2);}
     | NOT Expr                                                      {$$ = create_and_insert_node("Not", 1, 2, $2);}
-    | IDAux                                                         {;}
-    | IDAux DOTLENGTH                                               {;}
+    | IDAux                                                         {$$ = $1;}
+    | IDAux DOTLENGTH                                               {$$ = create_and_insert_node("Length", 1, 1, $1);}
     | OCURV Expr CCURV                                              {$$ = $2;}
-    | BOOLLIT                                                       {$$=create_terminal_node("BoolLit", 1, $1);free($1);}
-    | DECLIT                                                        {$$=create_terminal_node("DecLit", 1, $1);free($1);}
-    | REALLIT                                                       {$$=create_terminal_node("RealLit", 1, $1);free($1);}
+    | BOOLLIT                                                       {$$=create_terminal_node("BoolLit", 1, $1);}
+    | DECLIT                                                        {$$=create_terminal_node("DecLit", 1, $1);}
+    | REALLIT                                                       {$$=create_terminal_node("RealLit", 1, $1);}
     | OCURV error CCURV                                             {$$ = NULL;}
 
-Type: BOOL                                                          {$$=create_terminal_node("Bool", 1, $1);free($1);}
-    | INT                                                           {$$=create_terminal_node("Int", 1, $1);free($1);}
-    | DOUBLE                                                        {$$=create_terminal_node("Double", 1, $1);free($1);}
+Type: BOOL                                                          {$$=create_terminal_node("Bool", 1, $1);}
+    | INT                                                           {$$=create_terminal_node("Int", 1, $1);}
+    | DOUBLE                                                        {$$=create_terminal_node("Double", 1, $1);}
 
 
-IDAux: ID                                                            {$$=create_terminal_node("Id", 1, $1);free($1);}
+IDAux: ID                                                           {$$=create_terminal_node("Id", 1, $1);}
 
 %%
 

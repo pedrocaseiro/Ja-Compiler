@@ -1,3 +1,5 @@
 class gcd {
-  public static int a;
+  public static int main(int a){
+
+  }
 }

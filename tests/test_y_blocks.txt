@@ -1,0 +1,5 @@
+class gcd{
+  public static void main(int ola){
+    System.out.println("asd");
+  }
+}

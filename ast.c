@@ -3,6 +3,9 @@
 #include "ast.h"
 
 node *merge_nodes[2048];
+node *decl_nodes[2048];
+
+int error_flag = 0;
 
 node* newnode(char* nodetype, int to_be_used) {
   node* new_node = (node*) malloc(sizeof(node));
@@ -60,8 +63,6 @@ node* create_and_insert_node(char* nodetype, int to_be_used, int n_children, ...
   va_end(args);
   return new_node;
 }
-
-node *decl_nodes[2048];
 
 void ast_decl_aux(node *type, node *decl) {
   node **ptr = decl_nodes;
@@ -126,7 +127,7 @@ void destroy_tree(node *n) {
 
 
 void print_node(node* n) {
-  if (strcmp(n->type, "Id") == 0 || strcmp(n->type, "DecLit") == 0) {
+  if (strcmp(n->type, "Id") == 0 || strcmp(n->type, "DecLit") == 0 || strcmp(n->type, "BoolLit") == 0 || strcmp(n->type, "RealLit") == 0 || strcmp(n->type, "StrLit") == 0 || strcmp(n->type, "Reserved") == 0) {
     printf("%s(%s)\n", n->type, (char*)n->value);
   } else {
     printf("%s\n", n->type);
