@@ -35,16 +35,18 @@
 %left STAR DIV MOD
 %right NOT UNARY
 
-%type <node> Program Declaration FieldDecl FieldDeclL FormalParamsStringArray FieldsIds StringArray MethodDecl MethodHeader MethodBody MethodParams MethodParamsL VOIDAux VarDeclStatement FormalParams StrLitAux VarDecl VarDeclL VarsIds Statement StatementL Assignment MethodInvocation ParseArgs Expr Type CommaExpr IDAux
+%type <node> Program DeclarationL DeclarationAux FieldDecl FieldDeclL FormalParamsStringArray FieldsIds StringArray MethodDecl MethodHeader MethodBody MethodParams MethodParamsL VOIDAux VarDeclStatement FormalParams StrLitAux VarDecl VarDeclL VarsIds Statement StatementL Assignment MethodInvocation ParseArgs Expr Type CommaExpr IDAux
 
 %%
 
-Program: CLASS IDAux OBRACE Declaration CBRACE                       {$$ = ast = create_and_insert_node("Program", 1, 2, $2, $4);}
+Program: CLASS IDAux OBRACE DeclarationAux CBRACE                    {$$ = ast = create_and_insert_node("Program", 1, 2, $2, $4);}
 
-Declaration: Declaration FieldDecl                                   {$$ = $2;}
-           | Declaration MethodDecl                                  {$$ = $2;}
-           | Declaration SEMI                                        {$$ = NULL;}
-           |                                                         {$$ = NULL;}
+DeclarationAux: DeclarationAux DeclarationL                          {$$ = create_and_insert_node("Program", 0, 2, $1, $2);}
+              |                                                      {$$ = NULL;}
+
+DeclarationL: FieldDecl                                              {$$ = create_and_insert_node("FieldDeclAux", 0, 1, $1);}
+            | MethodDecl                                             {$$ = create_and_insert_node("MethodDeclAux", 0, 1, $1);}
+            | SEMI                                                   {$$ = NULL;}
 
 FieldDecl: PUBLIC STATIC Type FieldDeclL SEMI                        {if ($4 != NULL) { ast_decl($3, $4); $$ = $4; } else { $$ = $4; }}
          | error SEMI                                                {$$ = NULL; }
@@ -133,13 +135,13 @@ Expr: Assignment                                                    {$$ = create
     | Expr LT Expr                                                  {$$ = create_and_insert_node("Lt", 1, 2, $1, $3);}
     | Expr NEQ Expr                                                 {$$ = create_and_insert_node("Neq", 1, 2, $1, $3);}
     | Expr PLUS Expr                                                {$$ = create_and_insert_node("Add", 1, 2, $1, $3);}
-    | Expr MINUS Expr %prec UNARY                                   {$$ = create_and_insert_node("Sub", 1, 2, $1, $3);}
+    | Expr MINUS Expr                                               {$$ = create_and_insert_node("Sub", 1, 2, $1, $3);}
     | Expr STAR Expr                                                {$$ = create_and_insert_node("Mul", 1, 2, $1, $3);}
     | Expr DIV Expr                                                 {$$ = create_and_insert_node("Div", 1, 2, $1, $3);}
     | Expr MOD Expr                                                 {$$ = create_and_insert_node("Mod", 1, 2, $1, $3);}
-    | PLUS Expr                                                     {$$ = create_and_insert_node("Plus", 1, 2, $2);}
-    | MINUS Expr                                                    {$$ = create_and_insert_node("Minus", 1, 2, $2);}
-    | NOT Expr                                                      {$$ = create_and_insert_node("Not", 1, 2, $2);}
+    | PLUS Expr                                                     {$$ = create_and_insert_node("Plus", 1, 1, $1);}
+    | MINUS Expr %prec UNARY                                        {$$ = create_and_insert_node("Minus", 1, 1, $1);}
+    | NOT Expr                                                      {$$ = create_and_insert_node("Not", 1, 1, $1);}
     | IDAux                                                         {$$ = $1;}
     | IDAux DOTLENGTH                                               {$$ = create_and_insert_node("Length", 1, 1, $1);}
     | OCURV Expr CCURV                                              {$$ = $2;}
@@ -151,7 +153,6 @@ Expr: Assignment                                                    {$$ = create
 Type: BOOL                                                          {$$=create_terminal_node("Bool", 1, $1);}
     | INT                                                           {$$=create_terminal_node("Int", 1, $1);}
     | DOUBLE                                                        {$$=create_terminal_node("Double", 1, $1);}
-
 
 IDAux: ID                                                           {$$=create_terminal_node("Id", 1, $1);}
 
