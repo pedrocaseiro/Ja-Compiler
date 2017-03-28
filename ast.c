@@ -17,10 +17,10 @@ node* newnode(char* nodetype, int to_be_used) {
   return new_node;
 }
 
-node* create_terminal_node(char* nodetype, int to_be_used, char* v) {
+node* create_terminal_node(char* nodetype, int to_be_used, void* v) {
   //printf("Inserting new terminal: %s\n", node_types[nodetype]);
   node* new_terminal_node = newnode(nodetype, to_be_used);
-  new_terminal_node->value = (char *) strdup(v);
+  new_terminal_node->value = v;
 
   return new_terminal_node;
 }

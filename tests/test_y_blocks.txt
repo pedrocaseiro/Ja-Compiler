@@ -1,5 +1,159 @@
-class gcd{
-  public static void main(int ola){
-    System.out.println("asd");
+class teste {
+  ;
+  public static int main (String[] asd) {}
+  ;
+  public static double teste(boolean z) {
+    z = z + 1;
+
   }
+  ;
+  public static boolean ifsANDcenas(int n, double c) {
+    flag = true;
+    if (a > b) {
+      ;
+      print(b);
+      print(a);
+
+    } else {
+      ;;;;;
+
+      print();
+      print(a,b,c);
+
+      if (x > a){};
+
+      System.out.println("asd");
+      System.out.println(a);
+
+    }
+
+    if (a < b)
+      ;
+
+    if (a < b)
+      ;
+    else
+      ;
+
+    if (a < b)
+      a = b;
+    else
+      ;
+
+    if (a < v)
+      a = b;
+    else
+      b = a;
+
+    if (a < v) {
+      a = b;
+
+    } else
+      ;
+
+    if (a < v) {
+      a = b;
+
+    } else {
+      b = a;
+
+    }
+
+    if (a < b) {
+      a = b;
+      b = c;
+
+    } else
+      ;
+
+    if (a < b) {
+      a = b;
+      b = c;
+
+    } else
+      b = a;
+
+    if (a < b) {
+      a = b;
+      b = c;
+
+    } else {
+      b = a;
+      b = c;
+
+    }
+
+    a = -(-(-5));
+
+  }
+  ;
+  public static void whiles(String[] yo) {
+    while (a < b)
+      ;
+    while (a < b) {
+      ;
+
+    }
+    while (a < b) {}
+
+    while(a < b) {
+      a = b;
+
+    }
+
+    while(a < b) {
+      a = b;
+      b = a;
+
+    }
+
+    do
+      ;
+    while(a < b);
+    do {
+      ;
+
+    } while(a < b);
+    do {}
+    while(a < b);
+
+    do {
+      a = b;
+
+    } while(a < b);
+
+    do {
+      a = b;
+      b = a;
+
+    } while(a < b);
+
+  }
+  ;
+  public static void ifprec() {
+    if (a < b)
+      if (b < c)
+        b = c;
+      else
+        a = c;
+
+  }
+  ;
+  public static void last(int FINAL) {
+    {
+      a = b;
+      b = c;
+
+    }
+    int z,x;
+    {
+      print(a);
+
+    }
+
+  }
+  ;
+  ?
+
 }
+

@@ -1,8 +1,5 @@
 class  gcd {
-  public static double a,v,c;
-  public static void main(int a,boolean b,double c) {
-  }
-  public static boolean a,v,c;
   public static boolean main() {
+    a = b + c;
   }
 }
