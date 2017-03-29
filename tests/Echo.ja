@@ -13,7 +13,6 @@ class teste {
             print(b);
             print(a);
         } else {
-            ;;;;;
 
             print();
             print(a,b,c);
@@ -132,4 +131,9 @@ class teste {
     }
     ;
     ?
+    public static int empty(){
+        {{{{{;;;;;}}{{{{;;}}}}}}}
+    }
+
+
 }

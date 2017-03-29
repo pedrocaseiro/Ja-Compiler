@@ -1,4 +1,4 @@
-Line 134, col 5: illegal character (?)
+Line 133, col 5: illegal character (?)
 Program
 ..Id(teste)
 ..MethodDecl
@@ -271,16 +271,25 @@ Program
 ..........Int
 ..........Id(FINAL)
 ....MethodBody
-......Assign
-........Id(a)
-........Id(b)
+......Block
+........Assign
+..........Id(a)
+..........Id(b)
+........Assign
+..........Id(b)
+..........Id(c)
 ......VarDecl
 ........Int
 ........Id(z)
 ......VarDecl
 ........Int
 ........Id(x)
-......Block
-........Call
-..........Id(print)
-..........Id(a)
+......Call
+........Id(print)
+........Id(a)
+..MethodDecl
+....MethodHeader
+......Int
+......Id(empty)
+......MethodParams
+....MethodBody
