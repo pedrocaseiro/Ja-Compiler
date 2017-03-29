@@ -1,8 +1,9 @@
 #include <stdarg.h>
 #include <string.h>
+#include <stdbool.h>
 #include "ast.h"
 
-node *merge_nodes[2048];
+node *transfer_nodes[2048];
 node *decl_nodes[2048];
 
 int error_flag = 0;
@@ -31,12 +32,11 @@ node* create_and_insert_node(char* nodetype, int to_be_used, int n_children, ...
   node *new_node, **tmp;
   int i, nodes = 0;
   va_list args;
+  va_start(args, n_children);
 
   new_node = newnode(nodetype, to_be_used);
 
-  tmp = merge_nodes;
-
-  va_start(args, n_children);
+  tmp = transfer_nodes;
 
   while (n_children--) {
     node *children = va_arg(args, node *);
@@ -56,7 +56,7 @@ node* create_and_insert_node(char* nodetype, int to_be_used, int n_children, ...
 
   if (nodes != 0) {
     new_node->childs = (node **) malloc (nodes * sizeof(node *));
-    memcpy(new_node->childs, merge_nodes, nodes * sizeof(node *));
+    memcpy(new_node->childs, transfer_nodes, nodes * sizeof(node *));
     new_node->n_children = nodes;
   }
 
@@ -99,19 +99,7 @@ void ast_decl(node *type, node *decl) {
   }
 }
 
-node *ast_fix_to_null(node *target_node) {
-  if (target_node == NULL) {
-    return create_and_insert_node("Null", 1, 0);
-  } else if (strcmp(target_node->type, "Block") == 0 && target_node->n_children == 0) {
-    return create_and_insert_node("Null", 1, 0);
-  }
-
-  return target_node;
-}
-
-
 void destroy_tree(node *n) {
-
 
   if(n != NULL){
     int i;
@@ -146,4 +134,26 @@ void print_tree(node* n, int d) {
   for (i = 0; i < n->n_children; i++) {
     print_tree(n->childs[i], d + 1);
   }
+}
+
+bool check_if_expr(node* test_node){
+  if(!strcmp(test_node->type, "Semi") || !strcmp(test_node->type, "Empty") || (strcmp(test_node->type, "Return") && test_node->n_children == 0)){
+    return true;
+  }
+  return false;
+}
+
+
+bool check_if_statement(node* test_node){
+  if(!strcmp(test_node->type, "Semi") || !strcmp(test_node->type, "Empty") || (strcmp(test_node->type, "Return") && test_node->n_children == 0)){
+    return true;
+  }
+  return false;
+}
+
+bool check_while_statement(node* test_node){
+  if(!strcmp(test_node->type, "Semi") || !strcmp(test_node->type, "Empty") || (strcmp(test_node->type, "Return") && test_node->n_children == 0)){
+    return true;
+  }
+  return false;
 }
