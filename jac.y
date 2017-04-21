@@ -2,6 +2,7 @@
   #include <stdio.h>
   #include <string.h>
   #include "ast.h"
+  #include "symbol_table.h"
   void yyerror();
   int yylex();
 

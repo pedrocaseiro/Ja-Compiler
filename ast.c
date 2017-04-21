@@ -19,7 +19,6 @@ node* newnode(char* nodetype, int to_be_used) {
 }
 
 node* create_terminal_node(char* nodetype, int to_be_used, void* v) {
-  //printf("Inserting new terminal: %s\n", node_types[nodetype]);
   node* new_terminal_node = newnode(nodetype, to_be_used);
   new_terminal_node->value = v;
 

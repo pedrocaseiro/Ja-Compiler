@@ -4,6 +4,9 @@
   #include <stdarg.h>
   #include "y.tab.h"
   #include "ast.h"
+  #include "symbol_table.h"
+  #define MAX_SIZE 1024
+
   int yyparse();
   int col = 1;
   int line = 1;
@@ -12,9 +15,8 @@
   static int string_start_col = 0;
   static int string_start_line = 0;
   static int input_flag = 0;
-
+  
   extern node* ast;
-
 %}
 
 %X MULTILINECOMMENT
@@ -120,6 +122,14 @@ int main(int argc, char **argv) {
       if(!error_flag){
         print_tree(ast, 0);
         //destroy_tree(ast);
+      }
+    } else if(!strcmp(argv[1], "-s")){
+      yyparse();
+      if(!error_flag){
+        table_index = 0;
+        table = (symbol_table**)malloc(sizeof(symbol_table*)*MAX_SIZE);
+        build_table(ast);
+        print_table();
       }
     }
   } else {
