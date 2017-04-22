@@ -5,7 +5,7 @@
 
 typedef struct symbol {
   char* name;
-  char** paramtypes;
+  char** params;
   int n_params;
   char* type;
   char* flag;
@@ -17,16 +17,16 @@ typedef struct symbol_table {
   char* name;
   char* type;
   int n_params;
-  char** paramtypes;
-  //struct symbol_table** calls
+  char** params;
 } symbol_table;
 
 symbol_table** table;
 int table_index;
 
+symbol_table** new_table(int);
 symbol* new_symbol(char*, int, char**, char*, char*);
 symbol_table* new_symbol_table(char*, char*, int, char**);
-void build_table(node*);
+void first_traverse(node*);
 void print_table();
 void print_symbol_table(symbol*);
 char* str_to_lower(char*);

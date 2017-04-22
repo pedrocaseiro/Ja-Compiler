@@ -2364,9 +2364,11 @@ int main(int argc, char **argv) {
       yyparse();
       if(!error_flag){
         table_index = 0;
-        table = (symbol_table**)malloc(sizeof(symbol_table*)*MAX_SIZE);
-        build_table(ast);
+        table = new_table(MAX_SIZE);
+        first_traverse(ast);
         print_table();
+        printf("\n");
+        print_tree(ast,0);
       }
     }
   } else {

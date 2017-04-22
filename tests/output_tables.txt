@@ -1,0 +1,145 @@
+===== Class gcd2 Symbol Table =====
+gcd		int
+main	(String[])	void
+gcd	(int,int)	int
+serious	()	void
+nameless	(int)	double
+
+===== Method main(String[]) Symbol Table =====
+return		void
+args		String[]	param
+a		int
+b		int
+
+===== Method gcd(int,int) Symbol Table =====
+return		int
+a		int	param
+b		int	param
+a		double
+b		double
+
+===== Method serious() Symbol Table =====
+return		void
+
+===== Method nameless(int) Symbol Table =====
+return		double
+a		int	param
+aux		int
+b		boolean
+d		double
+
+Program
+..Id(gcd2)
+..FieldDecl
+....Int
+....Id(gcd)
+..MethodDecl
+....MethodHeader
+......Void
+......Id(main)
+......MethodParams
+........ParamDecl
+..........StringArray
+..........Id(args)
+....MethodBody
+......VarDecl
+........Int
+........Id(a)
+......VarDecl
+........Int
+........Id(b)
+......If
+........Geq
+..........Length
+............Id(args)
+..........DecLit(2)
+........Block
+..........Assign
+............Id(a)
+............ParseArgs
+..............Id(args)
+..............DecLit(0)
+..........Assign
+............Id(b)
+............ParseArgs
+..............Id(args)
+..............DecLit(1)
+..........Assign
+............Id(gcd)
+............Call
+..............Id(gcd)
+..............Id(a)
+..............Id(b)
+..........Print
+............Id(gcd)
+........Print
+..........StrLit("Error: two parameters required.")
+..MethodDecl
+....MethodHeader
+......Int
+......Id(gcd)
+......MethodParams
+........ParamDecl
+..........Int
+..........Id(a)
+........ParamDecl
+..........Int
+..........Id(b)
+....MethodBody
+......VarDecl
+........Double
+........Id(a)
+......VarDecl
+........Double
+........Id(b)
+......If
+........Eq
+..........Id(a)
+..........DecLit(0)
+........Return
+..........Id(b)
+........Block
+..........While
+............Gt
+..............Id(b)
+..............DecLit(0)
+............If
+..............Gt
+................Id(a)
+................Id(b)
+..............Assign
+................Id(a)
+................Sub
+..................Id(a)
+..................Id(b)
+..............Assign
+................Id(b)
+................Sub
+..................Id(b)
+..................Id(a)
+..........Return
+............Id(a)
+..MethodDecl
+....MethodHeader
+......Void
+......Id(serious)
+......MethodParams
+....MethodBody
+..MethodDecl
+....MethodHeader
+......Double
+......Id(nameless)
+......MethodParams
+........ParamDecl
+..........Int
+..........Id(a)
+....MethodBody
+......VarDecl
+........Int
+........Id(aux)
+......VarDecl
+........Bool
+........Id(b)
+......VarDecl
+........Double
+........Id(d)
