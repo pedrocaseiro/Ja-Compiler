@@ -24,14 +24,17 @@ symbol_table* new_symbol_table(char* type, char* name, int n_params, char** para
   return st;
 }
 
-char* str_to_lower(char* str) {
+char* str_to_lower(char* s) {
+  printf("str que chega -> %s\n", str);
+  char* str = strdup(s);
   if (str == NULL)
     return NULL;
   if(!strcmp(str, "StringArray")){
     return strdup("String[]");
   }
   if(str[0] >= 'A' && str[0] <= 'Z'){
-    str[0] = str[0] + 32;
+    printf("%c\n", str[0]);
+    str[0] += 32;
   }
   return str;
 }
@@ -59,14 +62,17 @@ void build_table(node* n) {
       build_table(n->childs[i]);
     }
   } else if(!strcmp(n->type, "MethodDecl")){
-    int n_params = n->childs[0]->childs[2]->n_children; //MethodHeader->MethodParams->n_children
+    int n_params = n->childs[0]->childs[2]->n_children;//MethodHeader->MethodParams->n_children
     printf("nº parametros: %d\n", n_params);
     char** params = (char**)malloc(sizeof(char*)*n_params);
     for(int i = 0; i < n_params; i++){
-      params[i] = str_to_lower(n->childs[0]->childs[2]->childs[i]->childs[0]->value); 
+      printf("dentro dos n_params\n");
+      printf("params ->%s\n", n->childs[0]->childs[2]->childs[i]->childs[0]->type);
+      //MethodDecl -> MethodHeader -> MethodParams -> ParamDecl[i] -> type
+      //params[i] = str_to_lower(n->childs[0]->childs[2]->childs[i]->childs[0]->type); 
     }
 
-    insert_symbol(table[0], n->childs[0]->childs[1]->value, n_params, params, str_to_lower(n->childs[0]->childs[0]->type), NULL); 
+    //insert_symbol(table[0], n->childs[0]->childs[1]->value, n_params, params, str_to_lower(n->childs[0]->childs[0]->type), NULL); 
   }
 }
 
