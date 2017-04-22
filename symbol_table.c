@@ -69,10 +69,10 @@ void build_table(node* n) {
       printf("dentro dos n_params\n");
       printf("params ->%s\n", n->childs[0]->childs[2]->childs[i]->childs[0]->type);
       //MethodDecl -> MethodHeader -> MethodParams -> ParamDecl[i] -> type
-      //params[i] = str_to_lower(n->childs[0]->childs[2]->childs[i]->childs[0]->type); 
+      params[i] = str_to_lower(n->childs[0]->childs[2]->childs[i]->childs[0]->type); 
     }
 
-    //insert_symbol(table[0], n->childs[0]->childs[1]->value, n_params, params, str_to_lower(n->childs[0]->childs[0]->type), NULL); 
+    insert_symbol(table[0], n->childs[0]->childs[1]->value, n_params, params, str_to_lower(n->childs[0]->childs[0]->type), NULL); 
   }
 }
 
