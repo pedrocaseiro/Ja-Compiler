@@ -1,0 +1,30 @@
+class gcd {
+  public static int lul;
+
+  public static boolean true(int k) {
+    int x;
+  }
+
+  public static boolean top(int x) {
+    int x;
+    x = 4;
+    double y;
+    y = 3;
+  }
+
+  public static void main(String[] args) {
+    int a, b;
+    a = Integer.parseInt(args[0]);
+    b = Integer.parseInt(args[1]);
+    if (a == 0)
+      System.out.println(b);
+    else {
+      while (b > 0)
+        if (a > b)
+          a = a-b;
+        else
+          b = b-a;
+      System.out.println(a);
+    } 
+  }
+}

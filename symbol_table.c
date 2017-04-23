@@ -63,6 +63,7 @@ void second_traverse(node* n){
   int n_params = n->childs[0]->childs[2]->n_children;//MethodHeader->MethodParams->n_children
   char** params = (char**)malloc(sizeof(char*)*n_params);
   int i;
+
   for(i = 0; i < n_params; i++){
     //MethodDecl -> MethodHeader -> MethodParams -> ParamDecl[i] -> type
     params[i] = str_to_lower(n->childs[0]->childs[2]->childs[i]->childs[0]->type);
@@ -72,6 +73,10 @@ void second_traverse(node* n){
   insert_symbol(table[table_index], strdup("return"), 0, NULL, str_to_lower(n->childs[0]->childs[0]->type), NULL);
   for(i = 0; i < n_params; i++){
     insert_symbol(table[table_index], n->childs[0]->childs[2]->childs[i]->childs[1]->value, 0, NULL, table[table_index]->params[i], strdup("param"));
+    if(!strcmp(n->childs[0]->childs[2]->childs[i]->childs[1]->type, "Id")){
+        printf("%s\n", n->childs[0]->childs[2]->childs[i]->childs[1]->value);
+        n->anotated_type = strdup("int");
+    }
   }
   for(i = 0; i < n->childs[1]->n_children; i++){
     if(!strcmp(n->childs[1]->childs[i]->type, "VarDecl")){
@@ -163,8 +168,13 @@ void parse_reallit_node(node* n){
 }
 
 void parse_id_node(node* n){
-
+  n->anotated_type = strdup("int");
 }
+
+void parse_strlit_node(node* n){
+  n->anotated_type = strdup("String");
+}
+
 
 
 void first_traverse(node* n) {
@@ -199,7 +209,8 @@ void create_an_tree(node *n){
 
   if(!strcmp(n->type, "Program")){
     for(i = 0; i < n->n_children; i++){
-      create_an_tree(n->childs[i]);
+      if(strcmp(n->childs[i]->type,"Id"))
+        create_an_tree(n->childs[i]);
     }
   } else if(!strcmp(n->type, "FieldDecl") || !strcmp(n->type, "MethodHeader") || !strcmp(n->type, "FormalParams") || !strcmp(n->type, "VarDecl")){
 
@@ -286,8 +297,8 @@ void create_an_tree(node *n){
       parse_reallit_node(n);
   } else if(!strcmp(n->type, "DecLit")){
       parse_declit_node(n);
-  } else if(!strcmp(n->type, "Id")){
-      //parse_id_node();
+  } else if(!strcmp(n->type, "StrLit")){
+      parse_strlit_node(n);
   }
 }
 
