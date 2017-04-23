@@ -31,3 +31,16 @@ void print_table();
 void print_symbol_table(symbol*);
 char* str_to_lower(char*);
 void insert_symbol(symbol_table*, char*, int, char**, char*, char*);
+
+void parse_length_node(node*);
+void parse_not_node(node*);
+void parse_logic_nodes(node*);
+void parse_equality_nodes(node*);
+void parse_and_or_nodes(node*);
+void parse_parseargs_node(node*);
+void parse_call_node(node*);
+void parse_declit_node(node*);
+void parse_reallit_node(node*);
+void parse_boollit_node(node*);
+void parse_assign_node(node*);
+void create_an_tree(node*);

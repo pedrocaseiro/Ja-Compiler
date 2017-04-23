@@ -65,21 +65,107 @@ void second_traverse(node* n){
   int i;
   for(i = 0; i < n_params; i++){
     //MethodDecl -> MethodHeader -> MethodParams -> ParamDecl[i] -> type
-    params[i] = str_to_lower(n->childs[0]->childs[2]->childs[i]->childs[0]->type); 
+    params[i] = str_to_lower(n->childs[0]->childs[2]->childs[i]->childs[0]->type);
   }
   table[table_index] = new_symbol_table("Method", n->childs[0]->childs[1]->value, n_params, params);
-  
-  insert_symbol(table[table_index], strdup("return"), 0, NULL, str_to_lower(n->childs[0]->childs[0]->type), NULL); 
+
+  insert_symbol(table[table_index], strdup("return"), 0, NULL, str_to_lower(n->childs[0]->childs[0]->type), NULL);
   for(i = 0; i < n_params; i++){
     insert_symbol(table[table_index], n->childs[0]->childs[2]->childs[i]->childs[1]->value, 0, NULL, table[table_index]->params[i], strdup("param"));
   }
   for(i = 0; i < n->childs[1]->n_children; i++){
     if(!strcmp(n->childs[1]->childs[i]->type, "VarDecl")){
-      insert_symbol(table[table_index], n->childs[1]->childs[i]->childs[1]->value, 0, NULL, str_to_lower(n->childs[1]->childs[i]->childs[0]->type), NULL); 
+      insert_symbol(table[table_index], n->childs[1]->childs[i]->childs[1]->value, 0, NULL, str_to_lower(n->childs[1]->childs[i]->childs[0]->type), NULL);
     }
   }
   table_index++;
 }
+
+void parse_assign_node(node* n){
+  // TODO: detect errors
+  // check if left side variable is defined...
+  // check incompatibility
+  n->anotated_type = n->childs[1]->anotated_type;
+}
+
+// TODO: check if the function we're calling is the right one (there may be multiple methods with the same name, but different parameters). IMPORTANT
+void parse_call_node(node* n){
+  int i;
+  for(i = 1; i < table_index; i++){
+    if(!strcmp(table[i]->name, n->childs[0]->value)){
+      n->anotated_type = table[i]->first->type;
+      break;
+    }
+  }
+}
+
+//TODO: CHECK ERRORS
+void parse_parseargs_node(node* n){
+  n->anotated_type = strdup("int");
+}
+
+//TODO: it only accepts comparisons between 2 booleans
+void parse_and_or_nodes(node* n){
+  n->anotated_type = strdup("boolean");
+}
+
+//TODO: check types compatibility
+void parse_equality_nodes(node* n){
+  n->anotated_type = strdup("boolean");
+}
+
+//TODO: CHECK IF ANY ERROR IS POSSIBLE
+void parse_minus_plus_nodes(node* n){
+  n->anotated_type = n->childs[0]->anotated_type;
+}
+
+
+void parse_logic_nodes(node* n){
+  if(!strcmp(n->childs[0]->anotated_type, "double") || !strcmp(n->childs[1]->anotated_type, "double")){
+    if(!strcmp(n->childs[0]->anotated_type, "int") || !strcmp(n->childs[1]->anotated_type, "int")){
+      n->anotated_type = strdup("double");
+    }else if(!strcmp(n->childs[0]->anotated_type, "double") || !strcmp(n->childs[1]->anotated_type, "double")){
+      n->anotated_type = strdup("double");
+    } else {
+      // ERROR
+    }
+  } else if(!strcmp(n->childs[0]->anotated_type, "int") && !strcmp(n->childs[1]->anotated_type, "int")){
+      n->anotated_type = strdup("int");
+  } else {
+    // ERROR
+  }
+}
+
+//TODO: ERROR TRYING TO NEGATE INT OR DOUBLE
+void parse_not_node(node* n){
+  if(!strcmp(n->childs[0]->anotated_type, "boolean")){
+    n->anotated_type = strdup("boolean");
+  } else {
+    // ERROR
+  }
+}
+
+// ERROS -> trying to do .length of something illegal (5.length); check annotated_type of child[0]
+void parse_length_node(node* n){
+  n->anotated_type = strdup("int");
+}
+
+void parse_declit_node(node* n){
+  n->anotated_type = strdup("int");
+}
+
+void parse_boollit_node(node* n){
+  n->anotated_type = strdup("boolean");
+}
+
+void parse_reallit_node(node* n){
+  n->anotated_type = strdup("double");
+}
+
+void parse_id_node(node* n){
+
+}
+
 
 void first_traverse(node* n) {
   int i = 0;
@@ -99,12 +185,109 @@ void first_traverse(node* n) {
     char** params = (char**)malloc(sizeof(char*)*n_params);
     for(i = 0; i < n_params; i++){
       //MethodDecl -> MethodHeader -> MethodParams -> ParamDecl[i] -> type
-      params[i] = str_to_lower(n->childs[0]->childs[2]->childs[i]->childs[0]->type); 
+      params[i] = str_to_lower(n->childs[0]->childs[2]->childs[i]->childs[0]->type);
     }
 
-    insert_symbol(table[0], n->childs[0]->childs[1]->value, n_params, params, str_to_lower(n->childs[0]->childs[0]->type), NULL); 
+    insert_symbol(table[0], n->childs[0]->childs[1]->value, n_params, params, str_to_lower(n->childs[0]->childs[0]->type), NULL);
   } else if(!strcmp(n->type, "FieldDecl")){
     insert_symbol(table[0], n->childs[1]->value, 0, NULL, str_to_lower(n->childs[0]->type), NULL);
+  }
+}
+
+void create_an_tree(node *n){
+  int i = 0;
+
+  if(!strcmp(n->type, "Program")){
+    for(i = 0; i < n->n_children; i++){
+      create_an_tree(n->childs[i]);
+    }
+  } else if(!strcmp(n->type, "FieldDecl") || !strcmp(n->type, "MethodHeader") || !strcmp(n->type, "FormalParams") || !strcmp(n->type, "VarDecl")){
+
+  } else if(!strcmp(n->type, "MethodDecl")){
+      for(i = 0; i < n->n_children; i++){
+        create_an_tree(n->childs[i]);
+      }
+  } else if(!strcmp(n->type, "MethodBody")){
+      for(i = 0; i < n->n_children; i++){
+        create_an_tree(n->childs[i]);
+      }
+  } else if(!strcmp(n->type, "If")){
+      for(i = 0; i < n->n_children; i++){
+        create_an_tree(n->childs[i]);
+      }
+  } else if(!strcmp(n->type, "While")){
+      for(i = 0; i < n->n_children; i++){
+        create_an_tree(n->childs[i]);
+      }
+  } else if(!strcmp(n->type, "DoWhile")){
+      for(i = 0; i < n->n_children; i++){
+        create_an_tree(n->childs[i]);
+      }
+  } else if(!strcmp(n->type, "Print")){
+      for(i = 0; i < n->n_children; i++){
+        create_an_tree(n->childs[i]);
+      }
+  } else if(!strcmp(n->type, "Assign")){
+      for(i = 0; i < n->n_children; i++){
+        create_an_tree(n->childs[i]);
+      }
+      parse_assign_node(n);
+  } else if(!strcmp(n->type, "Call")){
+      for(i = 0; i < n->n_children; i++){
+        create_an_tree(n->childs[i]);
+      }
+      parse_call_node(n);
+  } else if(!strcmp(n->type, "ParseArgs")){
+      for(i = 0; i < n->n_children; i++){
+        create_an_tree(n->childs[i]);
+      }
+      parse_parseargs_node(n);
+  } else if(!strcmp(n->type, "Return")){
+      for(i = 0; i < n->n_children; i++){
+        create_an_tree(n->childs[i]);
+      }
+  } else if(!strcmp(n->type, "Block")){
+      for(i = 0; i < n->n_children; i++){
+        create_an_tree(n->childs[i]);
+      }
+  } else if(!strcmp(n->type, "And") || !strcmp(n->type, "Or")){
+      for(i = 0; i < n->n_children; i++){
+        create_an_tree(n->childs[i]);
+      }
+      parse_and_or_nodes(n);
+  } else if(!strcmp(n->type, "Eq") || !strcmp(n->type, "Geq") || !strcmp(n->type, "Gt") || !strcmp(n->type, "Leq") || !strcmp(n->type, "Lt") || !strcmp(n->type, "Neq")){
+      for(i = 0; i < n->n_children; i++){
+        create_an_tree(n->childs[i]);
+      }
+      parse_equality_nodes(n);
+  } else if(!strcmp(n->type, "Add") || !strcmp(n->type, "Sub") || !strcmp(n->type, "Mul") || !strcmp(n->type, "Div") || !strcmp(n->type, "Mod")){
+      for(i = 0; i < n->n_children; i++){
+        create_an_tree(n->childs[i]);
+      }
+      parse_logic_nodes(n);
+  } else if(!strcmp(n->type, "Minus") || !strcmp(n->type, "Plus")){
+      for(i = 0; i < n->n_children; i++){
+        create_an_tree(n->childs[i]);
+      }
+      parse_minus_plus_nodes(n);
+  } else if(!strcmp(n->type, "Not")){
+      for(i = 0; i < n->n_children; i++){
+        create_an_tree(n->childs[i]);
+      }
+      parse_not_node(n);
+  } else if(!strcmp(n->type, "Length")){
+      for(i = 0; i < n->n_children; i++){
+        create_an_tree(n->childs[i]);
+      }
+      parse_length_node(n);
+  } else if(!strcmp(n->type, "BoolLit")){
+      parse_boollit_node(n);
+  } else if(!strcmp(n->type, "RealLit")){
+      parse_reallit_node(n);
+  } else if(!strcmp(n->type, "DecLit")){
+      parse_declit_node(n);
+  } else if(!strcmp(n->type, "Id")){
+      //parse_id_node();
   }
 }
 

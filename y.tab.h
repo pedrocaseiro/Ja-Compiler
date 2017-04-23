@@ -84,8 +84,10 @@
      REALLIT = 300,
      STRLIT = 301,
      ID = 302,
-     IF_NO_ELSE = 303,
-     UNARY = 304
+     N_LINE = 303,
+     N_COL = 304,
+     IF_NO_ELSE = 305,
+     UNARY = 306
    };
 #endif
 /* Tokens.  */
@@ -134,8 +136,10 @@
 #define REALLIT 300
 #define STRLIT 301
 #define ID 302
-#define IF_NO_ELSE 303
-#define UNARY 304
+#define N_LINE 303
+#define N_COL 304
+#define IF_NO_ELSE 305
+#define UNARY 306
 
 
 
@@ -145,10 +149,12 @@ typedef union YYSTYPE
 #line 15 "jac.y"
 {
   char* token;
+  int n_line;
+  int n_col;
   struct node *node;
 }
 /* Line 1529 of yacc.c.  */
-#line 152 "y.tab.h"
+#line 158 "y.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

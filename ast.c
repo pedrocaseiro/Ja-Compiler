@@ -11,10 +11,13 @@ int error_flag = 0;
 node* newnode(char* nodetype, int to_be_used) {
   node* new_node = (node*) malloc(sizeof(node));
   new_node->type = nodetype;
+  new_node->anotated_type = NULL;
   new_node->value = NULL;
   new_node->to_be_used = to_be_used;
   new_node->n_children = 0;
   new_node->childs = NULL;
+  new_node->line = 0;
+  new_node->col = 0;
   return new_node;
 }
 
@@ -115,9 +118,17 @@ void destroy_tree(node *n) {
 
 void print_node(node* n) {
   if (strcmp(n->type, "Id") == 0 || strcmp(n->type, "DecLit") == 0 || strcmp(n->type, "BoolLit") == 0 || strcmp(n->type, "RealLit") == 0 || strcmp(n->type, "StrLit") == 0 || strcmp(n->type, "Reserved") == 0) {
-    printf("%s(%s)\n", n->type, (char*)n->value);
+    if(n->anotated_type != NULL){
+      printf("%s(%s) - %s\n", n->type, (char*)n->value, n->anotated_type);
+    } else {
+        printf("%s(%s)\n", n->type, (char*)n->value);
+    }
   } else {
-    printf("%s\n", n->type);
+      if(n->anotated_type != NULL){
+        printf("%s - %s\n", n->type, n->anotated_type);
+      } else {
+          printf("%s\n", n->type);
+      }
   }
 }
 

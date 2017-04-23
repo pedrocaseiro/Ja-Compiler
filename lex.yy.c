@@ -712,7 +712,7 @@ char *yytext;
   static int string_start_col = 0;
   static int string_start_line = 0;
   static int input_flag = 0;
-  
+
   extern node* ast;
 
 
@@ -1078,202 +1078,202 @@ case YY_STATE_EOF(STRINGSTATE):
 case 16:
 YY_RULE_SETUP
 #line 57 "jac.l"
-{col+=yyleng; if(input_flag) { printf("BOOL\n"); } else { yylval.token =(char *) strdup(yytext); return BOOL;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("BOOL\n"); } else { yylval.token =(char *) strdup(yytext); return BOOL;}}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
 #line 58 "jac.l"
-{col+=yyleng; if(input_flag) { printf("BOOLLIT(%s)\n", yytext); } else { yylval.token =(char *) strdup(yytext); return BOOLLIT;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("BOOLLIT(%s)\n", yytext); } else { yylval.token =(char *) strdup(yytext); return BOOLLIT;}}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
 #line 59 "jac.l"
-{col+=yyleng; if(input_flag) { printf("CLASS\n"); } else { yylval.token =(char *) strdup(yytext); return CLASS;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("CLASS\n"); } else { yylval.token =(char *) strdup(yytext); return CLASS;}}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
 #line 60 "jac.l"
-{col+=yyleng; if(input_flag) { printf("DO\n"); } else { yylval.token =(char *) strdup(yytext); return DO;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("DO\n"); } else { yylval.token =(char *) strdup(yytext); return DO;}}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
 #line 61 "jac.l"
-{col+=yyleng; if(input_flag) { printf("DOTLENGTH\n"); } else { yylval.token =(char *) strdup(yytext); return DOTLENGTH;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("DOTLENGTH\n"); } else { yylval.token =(char *) strdup(yytext); return DOTLENGTH;}}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
 #line 62 "jac.l"
-{col+=yyleng; if(input_flag) { printf("DOUBLE\n"); } else { yylval.token =(char *) strdup(yytext); return DOUBLE;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("DOUBLE\n"); } else { yylval.token =(char *) strdup(yytext); return DOUBLE;}}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
 #line 63 "jac.l"
-{col+=yyleng; if(input_flag) { printf("ELSE\n"); } else { yylval.token =(char *) strdup(yytext); return ELSE;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("ELSE\n"); } else { yylval.token =(char *) strdup(yytext); return ELSE;}}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
 #line 64 "jac.l"
-{col+=yyleng; if(input_flag) { printf("IF\n"); } else { yylval.token =(char *) strdup(yytext); return IF;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("IF\n"); } else { yylval.token =(char *) strdup(yytext); return IF;}}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
 #line 65 "jac.l"
-{col+=yyleng; if(input_flag) { printf("INT\n"); } else { yylval.token =(char *) strdup(yytext); return INT;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("INT\n"); } else { yylval.token =(char *) strdup(yytext); return INT;}}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
 #line 66 "jac.l"
-{col+=yyleng; if(input_flag) { printf("PARSEINT\n"); } else { yylval.token =(char *) strdup(yytext); return PARSEINT;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("PARSEINT\n"); } else { yylval.token =(char *) strdup(yytext); return PARSEINT;}}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
 #line 67 "jac.l"
-{col+=yyleng; if(input_flag) { printf("PRINT\n"); } else { yylval.token =(char *) strdup(yytext); return PRINT;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("PRINT\n"); } else { yylval.token =(char *) strdup(yytext); return PRINT;}}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
 #line 68 "jac.l"
-{col+=yyleng; if(input_flag) { printf("PUBLIC\n"); } else { yylval.token =(char *) strdup(yytext); return PUBLIC;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("PUBLIC\n"); } else { yylval.token =(char *) strdup(yytext); return PUBLIC;}}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
 #line 69 "jac.l"
-{col+=yyleng; if(input_flag) { printf("RETURN\n"); } else { yylval.token =(char *) strdup(yytext); return RETURN;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("RETURN\n"); } else { yylval.token =(char *) strdup(yytext); return RETURN;}}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
 #line 70 "jac.l"
-{col+=yyleng; if(input_flag) { printf("STATIC\n"); } else { yylval.token =(char *) strdup(yytext); return STATIC;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("STATIC\n"); } else { yylval.token =(char *) strdup(yytext); return STATIC;}}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
 #line 71 "jac.l"
-{col+=yyleng; if(input_flag) { printf("STRING\n"); } else { yylval.token =(char *) strdup(yytext); return STRING;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("STRING\n"); } else { yylval.token =(char *) strdup(yytext); return STRING;}}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
 #line 72 "jac.l"
-{col+=yyleng; if(input_flag) { printf("VOID\n"); } else { yylval.token =(char *) strdup(yytext); return VOID;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("VOID\n"); } else { yylval.token =(char *) strdup(yytext); return VOID;}}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
 #line 73 "jac.l"
-{col+=yyleng; if(input_flag) { printf("WHILE\n"); } else { yylval.token =(char *) strdup(yytext); return WHILE;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("WHILE\n"); } else { yylval.token =(char *) strdup(yytext); return WHILE;}}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
 #line 74 "jac.l"
-{col+=yyleng; if(input_flag) { printf("OCURV\n"); } else { yylval.token =(char *) strdup(yytext); return OCURV;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("OCURV\n"); } else { yylval.token =(char *) strdup(yytext); return OCURV;}}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
 #line 75 "jac.l"
-{col+=yyleng; if(input_flag) { printf("CCURV\n"); } else { yylval.token =(char *) strdup(yytext); return CCURV;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("CCURV\n"); } else { yylval.token =(char *) strdup(yytext); return CCURV;}}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
 #line 76 "jac.l"
-{col+=yyleng; if(input_flag) { printf("OBRACE\n"); } else { yylval.token =(char *) strdup(yytext); return OBRACE;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("OBRACE\n"); } else { yylval.token =(char *) strdup(yytext); return OBRACE;}}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
 #line 77 "jac.l"
-{col+=yyleng; if(input_flag) { printf("CBRACE\n"); } else { yylval.token =(char *) strdup(yytext); return CBRACE;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("CBRACE\n"); } else { yylval.token =(char *) strdup(yytext); return CBRACE;}}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
 #line 78 "jac.l"
-{col+=yyleng; if(input_flag) { printf("OSQUARE\n"); } else { yylval.token =(char *) strdup(yytext); return OSQUARE;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("OSQUARE\n"); } else { yylval.token =(char *) strdup(yytext); return OSQUARE;}}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
 #line 79 "jac.l"
-{col+=yyleng; if(input_flag) { printf("CSQUARE\n"); } else { yylval.token =(char *) strdup(yytext); return CSQUARE;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("CSQUARE\n"); } else { yylval.token =(char *) strdup(yytext); return CSQUARE;}}
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
 #line 80 "jac.l"
-{col+=yyleng; if(input_flag) { printf("AND\n"); } else { yylval.token =(char *) strdup(yytext); return AND;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("AND\n"); } else { yylval.token =(char *) strdup(yytext); return AND;}}
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
 #line 81 "jac.l"
-{col+=yyleng; if(input_flag) { printf("OR\n"); } else { yylval.token =(char *) strdup(yytext); return OR;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("OR\n"); } else { yylval.token =(char *) strdup(yytext); return OR;}}
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
 #line 82 "jac.l"
-{col+=yyleng; if(input_flag) { printf("LT\n"); } else { yylval.token =(char *) strdup(yytext); return LT;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("LT\n"); } else { yylval.token =(char *) strdup(yytext); return LT;}}
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
 #line 83 "jac.l"
-{col+=yyleng; if(input_flag) { printf("GT\n"); } else { yylval.token =(char *) strdup(yytext); return GT;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("GT\n"); } else { yylval.token =(char *) strdup(yytext); return GT;}}
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
 #line 84 "jac.l"
-{col+=yyleng; if(input_flag) { printf("EQ\n"); } else { yylval.token =(char *) strdup(yytext); return EQ;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("EQ\n"); } else { yylval.token =(char *) strdup(yytext); return EQ;}}
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
 #line 85 "jac.l"
-{col+=yyleng; if(input_flag) { printf("NEQ\n"); } else { yylval.token =(char *) strdup(yytext); return NEQ;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("NEQ\n"); } else { yylval.token =(char *) strdup(yytext); return NEQ;}}
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
 #line 86 "jac.l"
-{col+=yyleng; if(input_flag) { printf("LEQ\n"); } else { yylval.token =(char *) strdup(yytext); return LEQ;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("LEQ\n"); } else { yylval.token =(char *) strdup(yytext); return LEQ;}}
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
 #line 87 "jac.l"
-{col+=yyleng; if(input_flag) { printf("GEQ\n"); } else { yylval.token =(char *) strdup(yytext); return GEQ;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("GEQ\n"); } else { yylval.token =(char *) strdup(yytext); return GEQ;}}
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
 #line 88 "jac.l"
-{col+=yyleng; if(input_flag) { printf("PLUS\n"); } else { yylval.token =(char *) strdup(yytext); return PLUS;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("PLUS\n"); } else { yylval.token =(char *) strdup(yytext); return PLUS;}}
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
 #line 89 "jac.l"
-{col+=yyleng; if(input_flag) { printf("MINUS\n"); } else { yylval.token =(char *) strdup(yytext); return MINUS;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("MINUS\n"); } else { yylval.token =(char *) strdup(yytext); return MINUS;}}
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
 #line 90 "jac.l"
-{col+=yyleng; if(input_flag) { printf("STAR\n"); } else { yylval.token =(char *) strdup(yytext); return STAR;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("STAR\n"); } else { yylval.token =(char *) strdup(yytext); return STAR;}}
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
 #line 91 "jac.l"
-{col+=yyleng; if(input_flag) { printf("DIV\n"); } else { yylval.token =(char *) strdup(yytext); return DIV;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("DIV\n"); } else { yylval.token =(char *) strdup(yytext); return DIV;}}
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
 #line 92 "jac.l"
-{col+=yyleng; if(input_flag) { printf("MOD\n"); } else { yylval.token =(char *) strdup(yytext); return MOD;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("MOD\n"); } else { yylval.token =(char *) strdup(yytext); return MOD;}}
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
 #line 93 "jac.l"
-{col+=yyleng; if(input_flag) { printf("NOT\n"); } else { yylval.token =(char *) strdup(yytext); return NOT;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("NOT\n"); } else { yylval.token =(char *) strdup(yytext); return NOT;}}
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
 #line 94 "jac.l"
-{col+=yyleng; if(input_flag) { printf("ASSIGN\n"); } else { yylval.token =(char *) strdup(yytext); return ASSIGN;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("ASSIGN\n"); } else { yylval.token =(char *) strdup(yytext); return ASSIGN;}}
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
 #line 95 "jac.l"
-{col+=yyleng; if(input_flag) { printf("SEMI\n"); } else { yylval.token =(char *) strdup(yytext); return SEMI;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("SEMI\n"); } else { yylval.token =(char *) strdup(yytext); return SEMI;}}
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
 #line 96 "jac.l"
-{col+=yyleng; if(input_flag) { printf("COMMA\n"); } else { yylval.token =(char *) strdup(yytext); return COMMA;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("COMMA\n"); } else { yylval.token =(char *) strdup(yytext); return COMMA;}}
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
@@ -1310,27 +1310,27 @@ YY_RULE_SETUP
 case 62:
 YY_RULE_SETUP
 #line 103 "jac.l"
-{col+=yyleng; if(input_flag) { printf("RESERVED(%s)\n", yytext); } else { yylval.token =(char *) strdup(yytext); return RESERVED;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("RESERVED(%s)\n", yytext); } else { yylval.token =(char *) strdup(yytext); return RESERVED;}}
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
 #line 104 "jac.l"
-{col+=yyleng; if(input_flag) { printf("DECLIT(%s)\n", yytext); col +=yyleng; } else { yylval.token =(char *) strdup(yytext); return DECLIT;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("DECLIT(%s)\n", yytext); col +=yyleng; } else { yylval.token =(char *) strdup(yytext); return DECLIT;}}
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
 #line 105 "jac.l"
-{col+=yyleng; if(input_flag) { printf("REALLIT(%s)\n", yytext); } else { yylval.token =(char *) strdup(yytext); return REALLIT;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("REALLIT(%s)\n", yytext); } else { yylval.token =(char *) strdup(yytext); return REALLIT;}}
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
 #line 106 "jac.l"
-{col+=yyleng; if(input_flag) { printf("STRLIT(%s)\n", yytext); } else { yylval.token =(char *) strdup(yytext); return STRLIT;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("STRLIT(%s)\n", yytext); } else { yylval.token =(char *) strdup(yytext); return STRLIT;}}
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
 #line 107 "jac.l"
-{col+=yyleng; if(input_flag) { printf("ID(%s)\n", yytext); } else { yylval.token =(char *) strdup(yytext); return ID;}}
+{yylval.n_line = line; yylval.n_col = col; col+=yyleng; if(input_flag) { printf("ID(%s)\n", yytext); } else { yylval.token =(char *) strdup(yytext); return ID;}}
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(COMMENT):
@@ -2368,6 +2368,7 @@ int main(int argc, char **argv) {
         first_traverse(ast);
         print_table();
         printf("\n");
+        create_an_tree(ast);
         print_tree(ast,0);
       }
     }

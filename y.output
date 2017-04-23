@@ -1,6 +1,8 @@
 Terminals which are not used
 
    RESERVED
+   N_LINE
+   N_COL
 
 
 Grammar
@@ -174,76 +176,78 @@ DECLIT (299) 79
 REALLIT (300) 80
 STRLIT (301) 54
 ID (302) 87
-IF_NO_ELSE (303)
-UNARY (304)
+N_LINE (303)
+N_COL (304)
+IF_NO_ELSE (305)
+UNARY (306)
 
 
 Nonterminals, with rules where they appear
 
-$accept (50)
+$accept (52)
     on left: 0
-Program (51)
+Program (53)
     on left: 1, on right: 0
-DeclarationAux (52)
+DeclarationAux (54)
     on left: 2 3, on right: 1 2
-DeclarationL (53)
+DeclarationL (55)
     on left: 4 5 6, on right: 2
-FieldDecl (54)
+FieldDecl (56)
     on left: 7 8, on right: 4
-FieldDeclL (55)
+FieldDeclL (57)
     on left: 9 10, on right: 7 9
-FieldsIds (56)
+FieldsIds (58)
     on left: 11, on right: 9 10
-MethodDecl (57)
+MethodDecl (59)
     on left: 12, on right: 5
-MethodHeader (58)
+MethodHeader (60)
     on left: 13 14, on right: 12
-MethodParamsL (59)
+MethodParamsL (61)
     on left: 15 16 17, on right: 13 14
-VOIDAux (60)
+VOIDAux (62)
     on left: 18, on right: 14
-MethodParams (61)
+MethodParams (63)
     on left: 19 20, on right: 15 19
-FormalParamsStringArray (62)
+FormalParamsStringArray (64)
     on left: 21, on right: 16
-FormalParams (63)
+FormalParams (65)
     on left: 22, on right: 19 20
-StringArray (64)
+StringArray (66)
     on left: 23, on right: 21
-MethodBody (65)
+MethodBody (67)
     on left: 24, on right: 12
-VarDeclStatement (66)
+VarDeclStatement (68)
     on left: 25 26 27, on right: 24 25 26
-VarDecl (67)
+VarDecl (69)
     on left: 28, on right: 25
-VarDeclL (68)
+VarDeclL (70)
     on left: 29 30, on right: 28 29
-VarsIds (69)
+VarsIds (71)
     on left: 31, on right: 29 30
-Statement (70)
+Statement (72)
     on left: 32 33 34 35 36 37 38 39 40 41 42 43 44 45,
     on right: 26 33 34 35 36 46
-StatementL (71)
+StatementL (73)
     on left: 46 47, on right: 32 46
-Assignment (72)
+Assignment (74)
     on left: 48, on right: 39 82
-MethodInvocation (73)
+MethodInvocation (75)
     on left: 49 50 51, on right: 40 57
-CommaExpr (74)
+CommaExpr (76)
     on left: 52 53, on right: 49 52
-StrLitAux (75)
+StrLitAux (77)
     on left: 54, on right: 38
-ParseArgs (76)
+ParseArgs (78)
     on left: 55 56, on right: 41 58
-ExprAux (77)
+ExprAux (79)
     on left: 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74
     75 76 77 78 79 80 81, on right: 59 60 61 62 63 64 65 66 67 68 69
     70 71 72 73 74 83
-Expr (78)
+Expr (80)
     on left: 82 83, on right: 33 34 35 36 37 43 48 49 52 55 77
-Type (79)
+Type (81)
     on left: 84 85 86, on right: 7 13 22 28
-IDAux (80)
+IDAux (82)
     on left: 87, on right: 1 11 13 14 21 22 31 48 49 50 51 55 75 76
 
 

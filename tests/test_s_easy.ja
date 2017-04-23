@@ -1,0 +1,10 @@
+class gcd {
+  public static int gcd(String[] args) {
+    int c;
+  }
+  public static void main(String[] args) {
+    int b;
+    int a;
+    gcd = gcd(a,b);
+  }
+}
