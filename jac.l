@@ -131,7 +131,7 @@ int main(int argc, char **argv) {
         first_traverse(ast);
         print_table();
         printf("\n");
-        //create_an_tree(ast);
+        create_an_tree(ast);
         print_tree(ast,0);
       }
     }

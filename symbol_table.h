@@ -32,6 +32,8 @@ void print_symbol_table(symbol*);
 char* str_to_lower(char*);
 void insert_symbol(symbol_table*, char*, int, char**, char*, char*);
 
+
+void iterate_tree(node*);
 void parse_strlit_node(node*);
 void parse_id_node(node*);
 void parse_length_node(node*);

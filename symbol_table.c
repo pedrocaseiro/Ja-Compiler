@@ -73,17 +73,60 @@ void second_traverse(node* n){
   insert_symbol(table[table_index], strdup("return"), 0, NULL, str_to_lower(n->childs[0]->childs[0]->type), NULL);
   for(i = 0; i < n_params; i++){
     insert_symbol(table[table_index], n->childs[0]->childs[2]->childs[i]->childs[1]->value, 0, NULL, table[table_index]->params[i], strdup("param"));
-    if(!strcmp(n->childs[0]->childs[2]->childs[i]->childs[1]->type, "Id")){
-        printf("%s\n", n->childs[0]->childs[2]->childs[i]->childs[1]->value);
-        n->anotated_type = strdup("int");
-    }
+    /*printf("PARAMS %s %s\n", n->childs[0]->childs[2]->childs[i]->childs[1]->value, n->childs[0]->childs[2]->childs[i]->childs[1]->type);
+    n->childs[0]->childs[2]->childs[i]->childs[1]->anotated_type = strdup("PARAMS"/*n->childs[0]->childs[2]->childs[i]->childs[0]->type);*/
   }
   for(i = 0; i < n->childs[1]->n_children; i++){
     if(!strcmp(n->childs[1]->childs[i]->type, "VarDecl")){
       insert_symbol(table[table_index], n->childs[1]->childs[i]->childs[1]->value, 0, NULL, str_to_lower(n->childs[1]->childs[i]->childs[0]->type), NULL);
+      //printf("VARIAVEL LOCAL %s %s\n", n->childs[1]->childs[i]->childs[1]->value, n->childs[1]->childs[i]->childs[1]->type);
+      //n->childs[1]->childs[i]->childs[1]->anotated_type = strdup("LOCAL"/*n->childs[1]->childs[i]->childs[0]->type);*/
     }
   }
+
+
+  iterate_tree(n->childs[1]);
+
+
   table_index++;
+}
+
+
+void iterate_tree(node *n){
+
+  int i;
+  for (i = 0; i < n->n_children; i++) {
+
+      if(!strcmp(n->childs[i]->type, "Id") && strcmp(n->type, "VarDecl")){
+        symbol* s = (symbol*)malloc(sizeof(symbol));
+
+        s = table[table_index]->first;
+        while(s != NULL){
+          //printf("%s %s\n", s->type, s->name);
+          if(!strcmp(n->childs[i]->value, s->name)){
+            n->childs[i]->anotated_type = strdup(s->type);
+            break;
+          }
+          if(n->childs[i]->anotated_type == NULL){
+            symbol* g = (symbol*)malloc(sizeof(symbol));
+            g = table[0]->first;
+            while(g != NULL){
+              //printf("%s %s\n", s->type, s->name);
+              if(!strcmp(n->childs[i]->value, g->name) && g->params == NULL){
+                n->childs[i]->anotated_type = strdup(g->type);
+                break;
+              }
+
+              g = g->next;
+
+            }
+          }
+          s = s->next;
+
+        }
+      }
+      iterate_tree(n->childs[i]);
+  }
 }
 
 void parse_assign_node(node* n){
@@ -99,8 +142,36 @@ void parse_call_node(node* n){
   for(i = 1; i < table_index; i++){
     if(!strcmp(table[i]->name, n->childs[0]->value)){
       n->anotated_type = table[i]->first->type;
+
+      symbol* g = (symbol*)malloc(sizeof(symbol));
+      g = table[0]->first;
+      while(g != NULL){
+        //printf("%s %s\n", s->type, s->name);
+        if(!strcmp(n->childs[0]->value, g->name) && g->params != NULL){
+          char str[100]="(";
+          if(g->n_params > 0){
+            int j;
+
+            for(j = 0; j < g->n_params; j++){
+
+              strcat(str, g->params[j]);
+              if(j != g->n_params - 1){
+                strcat(str, ",");
+              }
+            }
+            strcat(str, ")");
+          }
+
+          n->childs[0]->anotated_type = strdup(str);
+          break;
+        }
+
+        g = g->next;
+
+      }
       break;
     }
+
   }
 }
 
@@ -129,7 +200,7 @@ void parse_logic_nodes(node* n){
   if(!strcmp(n->childs[0]->anotated_type, "double") || !strcmp(n->childs[1]->anotated_type, "double")){
     if(!strcmp(n->childs[0]->anotated_type, "int") || !strcmp(n->childs[1]->anotated_type, "int")){
       n->anotated_type = strdup("double");
-    }else if(!strcmp(n->childs[0]->anotated_type, "double") || !strcmp(n->childs[1]->anotated_type, "double")){
+    }else if(!strcmp(n->childs[0]->anotated_type, "double") && !strcmp(n->childs[1]->anotated_type, "double")){
       n->anotated_type = strdup("double");
     } else {
       // ERROR
@@ -168,7 +239,10 @@ void parse_reallit_node(node* n){
 }
 
 void parse_id_node(node* n){
-  n->anotated_type = strdup("int");
+  //printf("%s %s\n", n->value, n->type);
+  //printf("%s\n", n->anotated_type);
+  //n->anotated_type = strdup("INT");
+
 }
 
 void parse_strlit_node(node* n){
@@ -178,14 +252,14 @@ void parse_strlit_node(node* n){
 
 
 void first_traverse(node* n) {
-  int i = 0;
+  int i = 0, j;
   if (!strcmp(n->type, "Program")) {
     table[table_index] = new_symbol_table("Class", n->childs[0]->value, 0, NULL);
     table_index++;
-    for(i = 1; i < n -> n_children; i++){
+    for(i = 0; i < n -> n_children; i++){
       first_traverse(n->childs[i]);
     }
-    for(i = 1; i < n -> n_children; i++){
+    for(i = 0; i < n -> n_children; i++){
       if(!strcmp(n->childs[i]->type, "MethodDecl")){
         second_traverse(n->childs[i]);
       }
@@ -201,6 +275,8 @@ void first_traverse(node* n) {
     insert_symbol(table[0], n->childs[0]->childs[1]->value, n_params, params, str_to_lower(n->childs[0]->childs[0]->type), NULL);
   } else if(!strcmp(n->type, "FieldDecl")){
     insert_symbol(table[0], n->childs[1]->value, 0, NULL, str_to_lower(n->childs[0]->type), NULL);
+  /*n->childs[1]->anotated_type = strdup("GLOBAL"/*n->childs[0]->type);
+    printf("VARIAVEL GLOBAL %s %s\n", n->childs[1]->value, n->childs[1]->type);*/
   }
 }
 
@@ -299,7 +375,9 @@ void create_an_tree(node *n){
       parse_declit_node(n);
   } else if(!strcmp(n->type, "StrLit")){
       parse_strlit_node(n);
-  }
+  } /*else if(!strcmp(n->type, "Id")){
+      parse_id_node(n);
+  }*/
 }
 
 
