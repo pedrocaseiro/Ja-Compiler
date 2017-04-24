@@ -66,21 +66,17 @@ void second_traverse(node* n){
 
   for(i = 0; i < n_params; i++){
     //MethodDecl -> MethodHeader -> MethodParams -> ParamDecl[i] -> type
-    params[i] = str_to_lower(n->childs[0]->childs[2]->childs[i]->childs[0]->type);
+    params[i] = str_to_lower(n->childs[0]->childs[2]->childs[i]->childs[0]->token->id);
   }
   table[table_index] = new_symbol_table("Method", n->childs[0]->childs[1]->value, n_params, params);
 
-  insert_symbol(table[table_index], strdup("return"), 0, NULL, str_to_lower(n->childs[0]->childs[0]->type), NULL);
+  insert_symbol(table[table_index], strdup("return"), 0, NULL, str_to_lower(n->childs[0]->childs[0]->token->id), NULL);
   for(i = 0; i < n_params; i++){
     insert_symbol(table[table_index], n->childs[0]->childs[2]->childs[i]->childs[1]->value, 0, NULL, table[table_index]->params[i], strdup("param"));
-    /*printf("PARAMS %s %s\n", n->childs[0]->childs[2]->childs[i]->childs[1]->value, n->childs[0]->childs[2]->childs[i]->childs[1]->type);
-    n->childs[0]->childs[2]->childs[i]->childs[1]->anotated_type = strdup("PARAMS"/*n->childs[0]->childs[2]->childs[i]->childs[0]->type);*/
   }
   for(i = 0; i < n->childs[1]->n_children; i++){
-    if(!strcmp(n->childs[1]->childs[i]->type, "VarDecl")){
-      insert_symbol(table[table_index], n->childs[1]->childs[i]->childs[1]->value, 0, NULL, str_to_lower(n->childs[1]->childs[i]->childs[0]->type), NULL);
-      //printf("VARIAVEL LOCAL %s %s\n", n->childs[1]->childs[i]->childs[1]->value, n->childs[1]->childs[i]->childs[1]->type);
-      //n->childs[1]->childs[i]->childs[1]->anotated_type = strdup("LOCAL"/*n->childs[1]->childs[i]->childs[0]->type);*/
+    if(!strcmp(n->childs[1]->childs[i]->token->id, "VarDecl")){
+      insert_symbol(table[table_index], n->childs[1]->childs[i]->childs[1]->value, 0, NULL, str_to_lower(n->childs[1]->childs[i]->childs[0]->token->id), NULL);
     }
   }
 
@@ -97,12 +93,12 @@ void iterate_tree(node *n){
   int i;
   for (i = 0; i < n->n_children; i++) {
 
-      if(!strcmp(n->childs[i]->type, "Id") && strcmp(n->type, "VarDecl")){
+      if(!strcmp(n->childs[i]->token->id, "Id") && strcmp(n->token->id, "VarDecl")){
         symbol* s = (symbol*)malloc(sizeof(symbol));
 
         s = table[table_index]->first;
         while(s != NULL){
-          //printf("%s %s\n", s->type, s->name);
+          //printf("%s %s\n", s->token->id, s->name);
           if(!strcmp(n->childs[i]->value, s->name)){
             n->childs[i]->anotated_type = strdup(s->type);
             break;
@@ -165,13 +161,10 @@ void parse_call_node(node* n){
           n->childs[0]->anotated_type = strdup(str);
           break;
         }
-
         g = g->next;
-
       }
       break;
     }
-
   }
 }
 
@@ -253,129 +246,127 @@ void parse_strlit_node(node* n){
 
 void first_traverse(node* n) {
   int i = 0, j;
-  if (!strcmp(n->type, "Program")) {
+  if (!strcmp(n->token->id, "Program")) {
     table[table_index] = new_symbol_table("Class", n->childs[0]->value, 0, NULL);
     table_index++;
     for(i = 0; i < n -> n_children; i++){
       first_traverse(n->childs[i]);
     }
     for(i = 0; i < n -> n_children; i++){
-      if(!strcmp(n->childs[i]->type, "MethodDecl")){
+      if(!strcmp(n->childs[i]->token->id, "MethodDecl")){
         second_traverse(n->childs[i]);
       }
     }
-  } else if(!strcmp(n->type, "MethodDecl")){
+  } else if(!strcmp(n->token->id, "MethodDecl")){
     int n_params = n->childs[0]->childs[2]->n_children;//MethodHeader->MethodParams->n_children
     char** params = (char**)malloc(sizeof(char*)*n_params);
     for(i = 0; i < n_params; i++){
-      //MethodDecl -> MethodHeader -> MethodParams -> ParamDecl[i] -> type
-      params[i] = str_to_lower(n->childs[0]->childs[2]->childs[i]->childs[0]->type);
+      //MethodDecl -> MethodHeader -> MethodParams -> ParamDecl[i] -> token->id
+      params[i] = str_to_lower(n->childs[0]->childs[2]->childs[i]->childs[0]->token->id);
     }
 
-    insert_symbol(table[0], n->childs[0]->childs[1]->value, n_params, params, str_to_lower(n->childs[0]->childs[0]->type), NULL);
-  } else if(!strcmp(n->type, "FieldDecl")){
-    insert_symbol(table[0], n->childs[1]->value, 0, NULL, str_to_lower(n->childs[0]->type), NULL);
-  /*n->childs[1]->anotated_type = strdup("GLOBAL"/*n->childs[0]->type);
-    printf("VARIAVEL GLOBAL %s %s\n", n->childs[1]->value, n->childs[1]->type);*/
+    insert_symbol(table[0], n->childs[0]->childs[1]->value, n_params, params, str_to_lower(n->childs[0]->childs[0]->token->id), NULL);
+  } else if(!strcmp(n->token->id, "FieldDecl")){
+    insert_symbol(table[0], n->childs[1]->value, 0, NULL, str_to_lower(n->childs[0]->token->id), NULL);
   }
 }
 
 void create_an_tree(node *n){
   int i = 0;
 
-  if(!strcmp(n->type, "Program")){
+  if(!strcmp(n->token->id, "Program")){
     for(i = 0; i < n->n_children; i++){
-      if(strcmp(n->childs[i]->type,"Id"))
+      if(strcmp(n->childs[i]->token->id,"Id"))
         create_an_tree(n->childs[i]);
     }
-  } else if(!strcmp(n->type, "FieldDecl") || !strcmp(n->type, "MethodHeader") || !strcmp(n->type, "FormalParams") || !strcmp(n->type, "VarDecl")){
+  } else if(!strcmp(n->token->id, "FieldDecl") || !strcmp(n->token->id, "MethodHeader") || !strcmp(n->token->id, "FormalParams") || !strcmp(n->token->id, "VarDecl")){
 
-  } else if(!strcmp(n->type, "MethodDecl")){
+  } else if(!strcmp(n->token->id, "MethodDecl")){
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
       }
-  } else if(!strcmp(n->type, "MethodBody")){
+  } else if(!strcmp(n->token->id, "MethodBody")){
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
       }
-  } else if(!strcmp(n->type, "If")){
+  } else if(!strcmp(n->token->id, "If")){
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
       }
-  } else if(!strcmp(n->type, "While")){
+  } else if(!strcmp(n->token->id, "While")){
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
       }
-  } else if(!strcmp(n->type, "DoWhile")){
+  } else if(!strcmp(n->token->id, "DoWhile")){
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
       }
-  } else if(!strcmp(n->type, "Print")){
+  } else if(!strcmp(n->token->id, "Print")){
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
       }
-  } else if(!strcmp(n->type, "Assign")){
+  } else if(!strcmp(n->token->id, "Assign")){
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
       }
       parse_assign_node(n);
-  } else if(!strcmp(n->type, "Call")){
+  } else if(!strcmp(n->token->id, "Call")){
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
       }
       parse_call_node(n);
-  } else if(!strcmp(n->type, "ParseArgs")){
+  } else if(!strcmp(n->token->id, "ParseArgs")){
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
       }
       parse_parseargs_node(n);
-  } else if(!strcmp(n->type, "Return")){
+  } else if(!strcmp(n->token->id, "Return")){
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
       }
-  } else if(!strcmp(n->type, "Block")){
+  } else if(!strcmp(n->token->id, "Block")){
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
       }
-  } else if(!strcmp(n->type, "And") || !strcmp(n->type, "Or")){
+  } else if(!strcmp(n->token->id, "And") || !strcmp(n->token->id, "Or")){
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
       }
       parse_and_or_nodes(n);
-  } else if(!strcmp(n->type, "Eq") || !strcmp(n->type, "Geq") || !strcmp(n->type, "Gt") || !strcmp(n->type, "Leq") || !strcmp(n->type, "Lt") || !strcmp(n->type, "Neq")){
+  } else if(!strcmp(n->token->id, "Eq") || !strcmp(n->token->id, "Geq") || !strcmp(n->token->id, "Gt") || !strcmp(n->token->id, "Leq") || !strcmp(n->token->id, "Lt") || !strcmp(n->token->id, "Neq")){
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
       }
       parse_equality_nodes(n);
-  } else if(!strcmp(n->type, "Add") || !strcmp(n->type, "Sub") || !strcmp(n->type, "Mul") || !strcmp(n->type, "Div") || !strcmp(n->type, "Mod")){
+  } else if(!strcmp(n->token->id, "Add") || !strcmp(n->token->id, "Sub") || !strcmp(n->token->id, "Mul") || !strcmp(n->token->id, "Div") || !strcmp(n->token->id, "Mod")){
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
       }
       parse_logic_nodes(n);
-  } else if(!strcmp(n->type, "Minus") || !strcmp(n->type, "Plus")){
+  } else if(!strcmp(n->token->id, "Minus") || !strcmp(n->token->id, "Plus")){
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
       }
       parse_minus_plus_nodes(n);
-  } else if(!strcmp(n->type, "Not")){
+  } else if(!strcmp(n->token->id, "Not")){
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
       }
       parse_not_node(n);
-  } else if(!strcmp(n->type, "Length")){
+  } else if(!strcmp(n->token->id, "Length")){
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
       }
       parse_length_node(n);
-  } else if(!strcmp(n->type, "BoolLit")){
+  } else if(!strcmp(n->token->id, "BoolLit")){
       parse_boollit_node(n);
-  } else if(!strcmp(n->type, "RealLit")){
+  } else if(!strcmp(n->token->id, "RealLit")){
       parse_reallit_node(n);
-  } else if(!strcmp(n->type, "DecLit")){
+  } else if(!strcmp(n->token->id, "DecLit")){
       parse_declit_node(n);
-  } else if(!strcmp(n->type, "StrLit")){
+  } else if(!strcmp(n->token->id, "StrLit")){
       parse_strlit_node(n);
-  } /*else if(!strcmp(n->type, "Id")){
+  } /*else if(!strcmp(n->token->id, "Id")){
       parse_id_node(n);
   }*/
 }

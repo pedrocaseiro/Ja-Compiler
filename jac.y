@@ -13,9 +13,7 @@
 %}
 
 %union{
-  char* token;
-  int n_line;
-  int n_col;
+  struct token_struct* token;
   struct node *node;
 }
 
@@ -25,9 +23,6 @@
 %token <token> OSQUARE CSQUARE AND OR LT GT EQ NEQ LEQ GEQ PLUS MINUS STAR DIV MOD NOT
 %token <token> ASSIGN SEMI COMMA RESERVED DECLIT REALLIT STRLIT
 %token <token> ID
-
-%token <n_line> N_LINE;
-%token <n_col> N_COL;
 
 %nonassoc IF_NO_ELSE
 %nonassoc ELSE
@@ -45,7 +40,7 @@
 
 %%
 
-Program: CLASS IDAux OBRACE DeclarationAux CBRACE                    {printf("linha: %d\n", N_LINE); $$ = ast = create_and_insert_node("Program", 1, 2, $2, $4);}
+Program: CLASS IDAux OBRACE DeclarationAux CBRACE                    {$$ = ast = create_and_insert_node("Program", 1, 2, $2, $4);}
 
 DeclarationAux: DeclarationAux DeclarationL                          {$$ = create_and_insert_node("Program", 0, 2, $1, $2);}
               |                                                      {$$ = create_terminal_node("Empty", 0, NULL);}

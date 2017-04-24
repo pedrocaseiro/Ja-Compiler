@@ -3,8 +3,14 @@
 #include <string.h>
 #include <stdbool.h>
 
+typedef struct token_struct {
+	char* id;
+	int line;
+	int col;
+} token_struct;
+
 typedef struct node {
-	char* type;
+	token_struct* token;
 	void* value;
 	char* anotated_type;
 	int n_children;
@@ -16,9 +22,9 @@ typedef struct node {
 
 int error_flag;
 
-
+token_struct* allocate_structure(int, int, char*);
 node* new_node(char* nodetype, int to_be_used);
-node* create_terminal_node(char* nodetype, int to_be_used, void* v);
+node* create_terminal_node(char* nodetype, int to_be_used, token_struct* v);
 node* create_and_insert_node(char* nodetype, int to_be_used, int n_children, ...);
 void ast_decl(node *typespec, node *declarator);
 bool check_if_expr(node* test_node);

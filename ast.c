@@ -8,22 +8,40 @@ node *decl_nodes[2048];
 
 int error_flag = 0;
 
+token_struct* allocate_structure(int line, int col, char* yytext){
+  token_struct* strct = (token_struct*)malloc(sizeof(token_struct));
+  strct->line = line;
+  strct->col = col;
+  strct->id = (char*) strdup(yytext);
+
+  return strct;
+}
+
 node* newnode(char* nodetype, int to_be_used) {
   node* new_node = (node*) malloc(sizeof(node));
-  new_node->type = nodetype;
+  new_node->token = (token_struct*) malloc(sizeof(token_struct));
+  new_node->token->id = nodetype;
+  new_node->token->line = 0;
+  new_node->token->col = 0;
   new_node->anotated_type = NULL;
   new_node->value = NULL;
   new_node->to_be_used = to_be_used;
   new_node->n_children = 0;
   new_node->childs = NULL;
-  new_node->line = 0;
-  new_node->col = 0;
   return new_node;
 }
 
-node* create_terminal_node(char* nodetype, int to_be_used, void* v) {
+node* create_terminal_node(char* nodetype, int to_be_used, token_struct* v) {
   node* new_terminal_node = newnode(nodetype, to_be_used);
-  new_terminal_node->value = v;
+
+  if(v != NULL){
+    new_terminal_node->value = v->id;
+    new_terminal_node->token->line = v->line;
+    new_terminal_node->token->col = v->col;
+  } else {
+    new_terminal_node->value = v;
+  }
+
 
   return new_terminal_node;
 }
@@ -91,7 +109,7 @@ void ast_decl_aux(node *type, node *decl) {
 }
 
 void ast_decl(node *type, node *decl) {
-  if (strcmp(decl->childs[0]->type, "FieldDecl") == 0 || strcmp(decl->childs[0]->type, "VarDecl") == 0 || strcmp(decl->childs[0]->type, "ParamDecl") == 0) {
+  if (strcmp(decl->childs[0]->token->id, "FieldDecl") == 0 || strcmp(decl->childs[0]->token->id, "VarDecl") == 0 || strcmp(decl->childs[0]->token->id, "ParamDecl") == 0) {
     int i;
     for (i = 0; i < decl->n_children; i++) {
       ast_decl_aux(type, decl->childs[i]);
@@ -117,17 +135,17 @@ void destroy_tree(node *n) {
 
 
 void print_node(node* n) {
-  if (strcmp(n->type, "Id") == 0 || strcmp(n->type, "DecLit") == 0 || strcmp(n->type, "BoolLit") == 0 || strcmp(n->type, "RealLit") == 0 || strcmp(n->type, "StrLit") == 0 || strcmp(n->type, "Reserved") == 0) {
+  if (strcmp(n->token->id, "Id") == 0 || strcmp(n->token->id, "DecLit") == 0 || strcmp(n->token->id, "BoolLit") == 0 || strcmp(n->token->id, "RealLit") == 0 || strcmp(n->token->id, "StrLit") == 0 || strcmp(n->token->id, "Reserved") == 0) {
     if(n->anotated_type != NULL){
-      printf("%s(%s) - %s\n", n->type, (char*)n->value, n->anotated_type);
+      printf("%s(%s) - %s\n", n->token->id, (char*)n->value, n->anotated_type);
     } else {
-        printf("%s(%s)\n", n->type, (char*)n->value);
+        printf("%s(%s)\n", n->token->id, (char*)n->value);
     }
   } else {
       if(n->anotated_type != NULL){
-        printf("%s - %s\n", n->type, n->anotated_type);
+        printf("%s - %s\n", n->token->id, n->anotated_type);
       } else {
-          printf("%s\n", n->type);
+          printf("%s\n", n->token->id);
       }
   }
 }
@@ -147,7 +165,7 @@ void print_tree(node* n, int d) {
 }
 
 bool check_if_expr(node* test_node){
-  if(!strcmp(test_node->type, "Semi") || !strcmp(test_node->type, "Empty") || (strcmp(test_node->type, "Return") && test_node->n_children == 0)){
+  if(!strcmp(test_node->token->id, "Semi") || !strcmp(test_node->token->id, "Empty") || (strcmp(test_node->token->id, "Return") && test_node->n_children == 0)){
     return true;
   }
   return false;
@@ -155,14 +173,14 @@ bool check_if_expr(node* test_node){
 
 
 bool check_if_statement(node* test_node){
-  if(!strcmp(test_node->type, "Semi") || !strcmp(test_node->type, "Empty") || (strcmp(test_node->type, "Return") && test_node->n_children == 0)){
+  if(!strcmp(test_node->token->id, "Semi") || !strcmp(test_node->token->id, "Empty") || (strcmp(test_node->token->id, "Return") && test_node->n_children == 0)){
     return true;
   }
   return false;
 }
 
 bool check_while_statement(node* test_node){
-  if(!strcmp(test_node->type, "Semi") || !strcmp(test_node->type, "Empty") || (strcmp(test_node->type, "Return") && test_node->n_children == 0)){
+  if(!strcmp(test_node->token->id, "Semi") || !strcmp(test_node->token->id, "Empty") || (strcmp(test_node->token->id, "Return") && test_node->n_children == 0)){
     return true;
   }
   return false;
