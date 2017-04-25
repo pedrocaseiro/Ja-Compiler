@@ -16,8 +16,6 @@ typedef struct node {
 	int n_children;
 	int to_be_used; // node works as aux and will be used if value = 1. Will not be used if value = 0;
 	struct node** childs;
-	int line;
-	int col;
 } node;
 
 int error_flag;

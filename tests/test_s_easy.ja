@@ -10,4 +10,14 @@ class gcd {
     return a;
   }
 
+  public static void ola(int a) {
+    gcd = gcd(a,b);
+    return a;
+  }
+
+  public static void ola() {
+    gcd = gcd(a,b);
+    return a;
+  }
+
 }

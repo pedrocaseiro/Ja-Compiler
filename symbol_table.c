@@ -159,8 +159,8 @@ void parse_methodheader_node(node* n){
       //check if they have the same parameters
 
       // reconstruct symbol params
-      char str[100];
-      char str2[100];
+      char str[100]="";
+      char str2[100]="";
 
       if(s->n_params > 0){
         int j;
@@ -171,16 +171,17 @@ void parse_methodheader_node(node* n){
           }
         }
       }
+      int i;
       // reconstruct node params
       methodparams = n->childs[2];
-      for(int i = 0; i < methodparams->n_children; i++){
-        strcat(str2, methodparams->childs[1]->value);
-        if(i != methodparams->n_children - 1){
+      for(i = 0; i < n->childs[2]->n_children; i++){
+        strcat(str2,str_to_lower(n->childs[2]->childs[i]->childs[0]->token->id));
+        if(i != n->childs[2]->n_children - 1){
           strcat(str2, ",");
         }
       }
-      printf("str %s\n", str);
-      printf("str2 %s\n", str2);
+      //printf("str %s\n", str);
+      //printf("str2 %s\n", str2);
 
       if(!strcmp(str, str2)){
         count++;
@@ -190,8 +191,9 @@ void parse_methodheader_node(node* n){
   }
 
   if(count > 1){
-    printf("OAL OAS DASFASFAS \n");
+    printf("Line %d, col %d: Symbol %s already defined\n", n->childs[1]->token->line, n->childs[1]->token->col, table[0]->first->name);
   }
+  
 }
 
 
