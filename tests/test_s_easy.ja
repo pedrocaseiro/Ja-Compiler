@@ -1,5 +1,5 @@
 class gcd {
-  public static void ola(int a) {
+  public static void ola(int a, int a) {
     int a;
     return a;
   }

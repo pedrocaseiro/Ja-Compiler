@@ -73,6 +73,7 @@ void second_traverse(node* n){
   insert_symbol(table[table_index], strdup("return"), 0, NULL, str_to_lower(n->childs[0]->childs[0]->token->id), NULL);
   for(i = 0; i < n_params; i++){
     insert_symbol(table[table_index], n->childs[0]->childs[2]->childs[i]->childs[1]->value, 0, NULL, table[table_index]->params[i], strdup("param"));
+    parse_formalparams_node(n->childs[0]->childs[2]->childs[i]);
   }
   for(i = 0; i < n->childs[1]->n_children; i++){
     if(!strcmp(n->childs[1]->childs[i]->token->id, "VarDecl")){
@@ -81,7 +82,6 @@ void second_traverse(node* n){
       parse_vardecl_node(n->childs[1]->childs[i]);
     }
   }
-
 
   iterate_tree(n->childs[1]);
 
@@ -150,18 +150,42 @@ void iterate_tree(node *n){
   }
 }
 
+void parse_formalparams_node(node* n){
+  symbol* s = (symbol*)malloc(sizeof(symbol));
+  s = table[table_index]->first;
+  int i;
+  int count = 0;
+  while(s != NULL){
+    if(s->flag != NULL){
+      if(!(strcmp(n->childs[1]->value, s->name)) && !strcmp(s->flag, "param")){
+        count++;
+      }
+    }
+    s = s->next;
+  }
+
+  if(count > 1){
+    printf("Line %d, col %d: Symbol %s already defined\n", n->childs[1]->token->line, n->childs[1]->token->col, n->childs[1]->value);
+  }
+}
+
 // We check if the variable is not already declared as a parameter
 // We check if in the local table there is a variable with the same name, and flag equal to param
 void parse_vardecl_node(node* n){
   symbol* s = (symbol*)malloc(sizeof(symbol));
   s = table[table_index]->first;
   int i;
+  int count = 0;
   while(s != NULL){
-    if(!(strcmp(n->childs[1]->value, s->name)) && !strcmp(s->flag, "param")){
-      printf("inside if\n");
-      printf("Line %d, col %d: Symbol %s already defined\n", n->childs[1]->token->line, n->childs[1]->token->col, s->name);
+    if(s->flag != NULL){
+      if(!(strcmp(n->childs[1]->value, s->name)) && !strcmp(s->flag, "param")){
+        count++;
+      }
     }
     s = s->next;
+  }
+  if(count > 1){
+    printf("Line %d, col %d: Symbol %s already defined\n", n->childs[1]->token->line, n->childs[1]->token->col, n->childs[1]->value);
   }
 }
 
@@ -208,11 +232,9 @@ void parse_methodheader_node(node* n){
   }
 
   if(count > 1){
-    printf("Line %d, col %d: Symbol %s already defined\n", n->childs[1]->token->line, n->childs[1]->token->col, table[0]->first->name);
+    printf("Line %d, col %d: Symbol %s already defined\n", n->childs[1]->token->line, n->childs[1]->token->col, n->childs[1]->value);
   }
-
 }
-
 
 /*
   In case there are multiple global variable declarations that are equal,
@@ -278,6 +300,7 @@ void parse_call_node(node* n){
     }
   }
 }
+
 
 //TODO: CHECK ERRORS
 void parse_parseargs_node(node* n){
@@ -387,6 +410,7 @@ void create_an_tree(node *n){
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
       }
+      parse_print_node(n);
   } else if(!strcmp(n->token->id, "Assign")){
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
