@@ -83,13 +83,39 @@ void second_traverse(node* n){
 
   iterate_tree(n->childs[1]);
 
-
   table_index++;
 }
 
+void first_traverse(node* n) {
+  int i = 0, j;
+  if (!strcmp(n->token->id, "Program")) {
+    table[table_index] = new_symbol_table("Class", n->childs[0]->value, 0, NULL);
+    table_index++;
+    for(i = 0; i < n -> n_children; i++){
+      first_traverse(n->childs[i]);
+    }
+    for(i = 0; i < n -> n_children; i++){
+      if(!strcmp(n->childs[i]->token->id, "MethodDecl")){
+        second_traverse(n->childs[i]);
+      }
+    }
+  } else if(!strcmp(n->token->id, "MethodDecl")){
+    int n_params = n->childs[0]->childs[2]->n_children;//MethodHeader->MethodParams->n_children
+    char** params = (char**)malloc(sizeof(char*)*n_params);
+    for(i = 0; i < n_params; i++){
+      //MethodDecl -> MethodHeader -> MethodParams -> ParamDecl[i] -> token->id
+      params[i] = str_to_lower(n->childs[0]->childs[2]->childs[i]->childs[0]->token->id);
+    }
+
+    insert_symbol(table[0], n->childs[0]->childs[1]->value, n_params, params, str_to_lower(n->childs[0]->childs[0]->token->id), NULL);
+    parse_methodheader_node(n->childs[0]);
+  } else if(!strcmp(n->token->id, "FieldDecl")){
+    insert_symbol(table[0], n->childs[1]->value, 0, NULL, str_to_lower(n->childs[0]->token->id), NULL);
+    parse_fielddecl_node(n);
+  }
+}
 
 void iterate_tree(node *n){
-
   int i;
   for (i = 0; i < n->n_children; i++) {
 
@@ -112,16 +138,82 @@ void iterate_tree(node *n){
                 n->childs[i]->anotated_type = strdup(g->type);
                 break;
               }
-
               g = g->next;
-
             }
           }
           s = s->next;
-
         }
       }
       iterate_tree(n->childs[i]);
+  }
+}
+
+void parse_methodheader_node(node* n){
+  symbol* s = (symbol*)malloc(sizeof(symbol));
+  node* methodparams = (node*)malloc(sizeof(node));
+  s = table[0]->first;
+  int count = 0;
+  char* name = strdup(s->name);
+  while(s != NULL){
+    if(!strcmp(s->name, n->childs[1]->value) && !strcmp(s->type, str_to_lower(n->childs[0]->token->id))){
+      //check if they have the same parameters
+
+      // reconstruct symbol params
+      char str[100];
+      char str2[100];
+
+      if(s->n_params > 0){
+        int j;
+        for(j = 0; j < s->n_params; j++){
+          strcat(str, s->params[j]);
+          if(j != s->n_params - 1){
+            strcat(str, ",");
+          }
+        }
+      }
+      // reconstruct node params
+      methodparams = n->childs[2];
+      for(int i = 0; i < methodparams->n_children; i++){
+        strcat(str2, methodparams->childs[1]->value);
+        if(i != methodparams->n_children - 1){
+          strcat(str2, ",");
+        }
+      }
+      printf("str %s\n", str);
+      printf("str2 %s\n", str2);
+
+      if(!strcmp(str, str2)){
+        count++;
+      }
+    }
+    s = s->next;
+  }
+
+  if(count > 1){
+    printf("OAL OAS DASFASFAS \n");
+  }
+}
+
+
+/*
+  In case there are multiple global variable declarations that are equal,
+  we need to throw an error;
+  TODO: ASK THE TEACHER IN WHAT TOKENS ARE THE ERRORS SUPPOSED TO TRIGGER
+*/
+void parse_fielddecl_node(node* n){
+  symbol* s = (symbol*)malloc(sizeof(symbol));
+  s = table[0]->first;
+  int count = 0;
+  char* name = strdup(s->name);
+  while(s != NULL){
+    if(!strcmp(s->name, n->childs[1]->value) && s->params == NULL){
+      count++;
+    }
+    s = s->next;
+  }
+
+  if(count > 1){
+    printf("Line %d, col: %d Symbol %s already defined\n", n->childs[1]->token->line, n->childs[1]->token->col, name);
   }
 }
 
@@ -240,35 +332,6 @@ void parse_id_node(node* n){
 
 void parse_strlit_node(node* n){
   n->anotated_type = strdup("String");
-}
-
-
-
-void first_traverse(node* n) {
-  int i = 0, j;
-  if (!strcmp(n->token->id, "Program")) {
-    table[table_index] = new_symbol_table("Class", n->childs[0]->value, 0, NULL);
-    table_index++;
-    for(i = 0; i < n -> n_children; i++){
-      first_traverse(n->childs[i]);
-    }
-    for(i = 0; i < n -> n_children; i++){
-      if(!strcmp(n->childs[i]->token->id, "MethodDecl")){
-        second_traverse(n->childs[i]);
-      }
-    }
-  } else if(!strcmp(n->token->id, "MethodDecl")){
-    int n_params = n->childs[0]->childs[2]->n_children;//MethodHeader->MethodParams->n_children
-    char** params = (char**)malloc(sizeof(char*)*n_params);
-    for(i = 0; i < n_params; i++){
-      //MethodDecl -> MethodHeader -> MethodParams -> ParamDecl[i] -> token->id
-      params[i] = str_to_lower(n->childs[0]->childs[2]->childs[i]->childs[0]->token->id);
-    }
-
-    insert_symbol(table[0], n->childs[0]->childs[1]->value, n_params, params, str_to_lower(n->childs[0]->childs[0]->token->id), NULL);
-  } else if(!strcmp(n->token->id, "FieldDecl")){
-    insert_symbol(table[0], n->childs[1]->value, 0, NULL, str_to_lower(n->childs[0]->token->id), NULL);
-  }
 }
 
 void create_an_tree(node *n){
