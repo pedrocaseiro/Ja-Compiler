@@ -1815,7 +1815,7 @@ yyreduce:
 
   case 60:
 #line 129 "jac.y" /* yacc.c:1646  */
-    {(yyval.node) = create_and_insert_node("And", 1, 2, (yyvsp[-2].node), (yyvsp[0].node));}
+    {(yyval.node) = create_and_insert_node("And", 1, 2, (yyvsp[-2].node), (yyvsp[0].node));(yyval.node)->token->line = (yyvsp[-1].token)->line;(yyval.node)->token->col = (yyvsp[-1].token)->col;}
 #line 1820 "y.tab.c" /* yacc.c:1646  */
     break;
 
