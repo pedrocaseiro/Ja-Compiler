@@ -22,9 +22,17 @@ class gcd {
         return x;
     }
 
-    public static void asd(int c){
+    public static void asd(String[] args){
         int g;
         int h;
+      	boolean o;
+        int y;
+        boolean q;
+        if(o && y && q)
+
+        o = true;
+
+      	a = Integer.parseInt(args[g]);
         g = 0;
         h = 0;
         abc(g, h);

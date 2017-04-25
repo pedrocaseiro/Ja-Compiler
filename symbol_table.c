@@ -266,12 +266,7 @@ void parse_assign_node(node* n){
   // TODO: detect errors
   // check if left side variable is defined...
   // check incompatibility
-  /* Assign
-       Id(b)
-       Sub
-         Id(b)
-         Id(a)
-  */
+
   n->anotated_type = n->childs[1]->anotated_type;
 
   // incompatibility
@@ -373,12 +368,32 @@ void parse_call_node(node* n){
 
 //TODO: CHECK ERRORS
 void parse_parseargs_node(node* n){
+
   n->anotated_type = strdup("int");
+  if(strcmp(n->childs[0]->anotated_type,"String[]")){
+    n->anotated_type = strdup("undef");
+    printf("Line %d, col: %d Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, n->token->id);
+  }
+  if(strcmp(n->childs[1]->anotated_type,"int")){
+    n->anotated_type = strdup("undef");
+    printf("Line %d, col: %d Incompatible type %s in %s statement\n", n->childs[1]->token->line, n->childs[1]->token->col, n->childs[1]->anotated_type, n->token->id);
+  }
+
+
+
 }
 
 //TODO: it only accepts comparisons between 2 booleans
 void parse_and_or_nodes(node* n){
   n->anotated_type = strdup("boolean");
+  if(strcmp(n->childs[0]->anotated_type,"boolean")){
+    n->anotated_type = strdup("undef");
+    printf("Line %d, col: %d Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, n->token->id);
+  }
+  if(strcmp(n->childs[1]->anotated_type,"boolean")){
+    n->anotated_type = strdup("undef");
+    printf("Line %d, col: %d Incompatible type %s in %s statement\n", n->childs[1]->token->line, n->childs[1]->token->col, n->childs[1]->anotated_type, n->token->id);
+  }
 }
 
 //TODO: check types compatibility
