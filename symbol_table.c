@@ -77,6 +77,8 @@ void second_traverse(node* n){
   for(i = 0; i < n->childs[1]->n_children; i++){
     if(!strcmp(n->childs[1]->childs[i]->token->id, "VarDecl")){
       insert_symbol(table[table_index], n->childs[1]->childs[i]->childs[1]->value, 0, NULL, str_to_lower(n->childs[1]->childs[i]->childs[0]->token->id), NULL);
+      // we call it with n as a VarDecl node
+      parse_vardecl_node(n->childs[1]->childs[i]);
     }
   }
 
@@ -148,6 +150,21 @@ void iterate_tree(node *n){
   }
 }
 
+// We check if the variable is not already declared as a parameter
+// We check if in the local table there is a variable with the same name, and flag equal to param
+void parse_vardecl_node(node* n){
+  symbol* s = (symbol*)malloc(sizeof(symbol));
+  s = table[table_index]->first;
+  int i;
+  while(s != NULL){
+    if(!(strcmp(n->childs[1]->value, s->name)) && !strcmp(s->flag, "param")){
+      printf("inside if\n");
+      printf("Line %d, col %d: Symbol %s already defined\n", n->childs[1]->token->line, n->childs[1]->token->col, s->name);
+    }
+    s = s->next;
+  }
+}
+
 void parse_methodheader_node(node* n){
   symbol* s = (symbol*)malloc(sizeof(symbol));
   node* methodparams = (node*)malloc(sizeof(node));
@@ -193,7 +210,7 @@ void parse_methodheader_node(node* n){
   if(count > 1){
     printf("Line %d, col %d: Symbol %s already defined\n", n->childs[1]->token->line, n->childs[1]->token->col, table[0]->first->name);
   }
-  
+
 }
 
 
@@ -341,7 +358,7 @@ void create_an_tree(node *n){
 
   if(!strcmp(n->token->id, "Program")){
     for(i = 0; i < n->n_children; i++){
-      if(strcmp(n->childs[i]->token->id,"Id"))
+      if(strcmp(n->childs[i]->token->id, "Id"))
         create_an_tree(n->childs[i]);
     }
   } else if(!strcmp(n->token->id, "FieldDecl") || !strcmp(n->token->id, "MethodHeader") || !strcmp(n->token->id, "FormalParams") || !strcmp(n->token->id, "VarDecl")){

@@ -1,23 +1,6 @@
 class gcd {
-
-  public static void ola(String[] args) {
-    gcd = gcd(a,b);
-    return a;
-  }
-
-  public static void ola(String[] args) {
-    gcd = gcd(a,b);
-    return a;
-  }
-
   public static void ola(int a) {
-    gcd = gcd(a,b);
+    int a;
     return a;
   }
-
-  public static void ola() {
-    gcd = gcd(a,b);
-    return a;
-  }
-
 }
