@@ -266,38 +266,70 @@ void parse_assign_node(node* n){
 }
 
 // TODO: check if the function we're calling is the right one (there may be multiple methods with the same name, but different parameters). IMPORTANT
+// can be ambiguous
+
+// percorremos tabelas até encontrar com nome igual
+// se for match -> preenchemos árvore
+// se for compativel -> contador++
+// no fim verificar se contador > 1 - se for, ambiguous
+// senão está bem
 void parse_call_node(node* n){
   int i;
+  int j;
+  int k;
+  const char *aux[100];
+  int ambiguous_counter = 0;
   for(i = 1; i < table_index; i++){
-    if(!strcmp(table[i]->name, n->childs[0]->value)){
+    if(!strcmp(table[i]->name, n->childs[0]->value) && ((n->n_children - 1) == table[i]->n_params)){ // same name && same number of params
+      // now we check if all the params match
       n->anotated_type = table[i]->first->type;
 
       symbol* g = (symbol*)malloc(sizeof(symbol));
       g = table[0]->first;
       while(g != NULL){
-        //printf("%s %s\n", s->type, s->name);
         if(!strcmp(n->childs[0]->value, g->name) && g->params != NULL){
           char str[100]="(";
           if(g->n_params > 0){
             int j;
-
             for(j = 0; j < g->n_params; j++){
-
+              aux[j] = g->params[j];
               strcat(str, g->params[j]);
               if(j != g->n_params - 1){
                 strcat(str, ",");
               }
             }
-            strcat(str, ")");
           }
-
+          strcat(str, ")");
           n->childs[0]->anotated_type = strdup(str);
           break;
         }
         g = g->next;
       }
-      break;
+
+      // this counter checks if we had a perfect match
+      int counter = 0;
+      for(k = 1; k < n->n_children; k++){
+        if(!strcmp(n->childs[k]->anotated_type, aux[k-1])){
+          counter++;
+        }
+      }
+
+      int h;
+      int aux_counter = 0;
+      if(counter != n->n_children - 1){ // we didn't have a match, we look for a close one
+        for(h = 1; h < n->n_children; h++){
+          if((!strcmp(n->childs[h]->anotated_type, "int") && !strcmp(aux[h-1], "double")) || (!strcmp(n->childs[h]->anotated_type, "int") && !strcmp(aux[h-1], "int")) || (!strcmp(n->childs[h]->anotated_type, "boolean") && !strcmp(aux[h-1], "boolean")) || (!strcmp(n->childs[h]->anotated_type, "double") && !strcmp(aux[h-1], "double"))){
+            aux_counter++;
+          }
+        }
+        if(aux_counter == n->n_children - 1){
+          ambiguous_counter++;
+        }
+      }
     }
+    }
+    if(ambiguous_counter > 1){
+      printf("Line %d, col: %d Reference to method %s is ambiguous\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->value);
   }
 }
 
@@ -410,7 +442,6 @@ void create_an_tree(node *n){
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
       }
-      parse_print_node(n);
   } else if(!strcmp(n->token->id, "Assign")){
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);

@@ -2368,9 +2368,9 @@ int main(int argc, char **argv) {
         table_index = 0;
         table = new_table(MAX_SIZE);
         first_traverse(ast);
+        create_an_tree(ast);
         print_table();
         printf("\n");
-        create_an_tree(ast);
         print_tree(ast,0);
       }
     }
