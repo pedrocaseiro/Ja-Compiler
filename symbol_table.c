@@ -117,6 +117,7 @@ void first_traverse(node* n) {
   }
 }
 
+// iterate for ID's
 void iterate_tree(node *n){
   int i;
   for (i = 0; i < n->n_children; i++) {
@@ -144,6 +145,9 @@ void iterate_tree(node *n){
             }
           }
           s = s->next;
+        }
+        if(n->childs[i]->anotated_type == NULL){
+          n->childs[i]->anotated_type = strdup("undef");
         }
       }
       iterate_tree(n->childs[i]);
@@ -262,7 +266,40 @@ void parse_assign_node(node* n){
   // TODO: detect errors
   // check if left side variable is defined...
   // check incompatibility
+  /* Assign
+       Id(b)
+       Sub
+         Id(b)
+         Id(a)
+  */
   n->anotated_type = n->childs[1]->anotated_type;
+
+  // incompatibility
+
+  int error_flag = 0;
+  if(!strcmp(n->childs[0]->anotated_type, "boolean") && !strcmp(n->childs[1]->anotated_type, "int")){
+    error_flag = 1;
+  } else if(!strcmp(n->childs[0]->anotated_type, "int") && !strcmp(n->childs[1]->anotated_type, "boolean")){
+      error_flag = 1;
+  } else if(!strcmp(n->childs[0]->anotated_type, "double") && !strcmp(n->childs[1]->anotated_type, "boolean")){
+      error_flag = 1;
+  } else if(!strcmp(n->childs[0]->anotated_type, "boolean") && !strcmp(n->childs[1]->anotated_type, "double")){
+      error_flag = 1;
+  } else if(!strcmp(n->childs[0]->anotated_type, "int") && !strcmp(n->childs[1]->anotated_type, "double")){
+      error_flag = 1;
+  } else if(!strcmp(n->childs[0]->anotated_type, "undef")){
+      printf("Line %d, col: %d Cannot find symbol %s\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->value);
+      error_flag = 1;
+  } else if(!strcmp(n->childs[1]->anotated_type, "undef")){
+      printf("Line %d, col: %d Cannot find symbol %s\n", n->childs[1]->token->line, n->childs[1]->token->col,n->childs[1]->value);
+      error_flag = 1;
+  }
+
+  if(error_flag == 1){
+    n->anotated_type = "undef";
+    // TODO: CHECKAR LINHAS E COLUNAS PERGUNTAR AO STOR
+    printf("Line %d, col: %d Operator %s cannot be applied to types %s, %s\n", n->childs[0]->token->line, n->childs[0]->token->col, n->token->id, n->childs[0]->anotated_type, n->childs[1]->anotated_type);
+  }
 }
 
 // TODO: check if the function we're calling is the right one (there may be multiple methods with the same name, but different parameters). IMPORTANT

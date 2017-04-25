@@ -16,6 +16,9 @@ class gcd {
 
     public static int lol() {
         int x;
+        boolean b;
+        int a;
+        a = p;
         return x;
     }
 
