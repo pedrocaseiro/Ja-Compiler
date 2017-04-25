@@ -28,10 +28,11 @@ class gcd {
       	boolean o;
         int y;
         boolean q;
-        if(o && y && q)
+        if(o || y || q)
 
         o = true;
-
+        g = -9;
+        h = +q;
       	a = Integer.parseInt(args[g]);
         g = 0;
         h = 0;

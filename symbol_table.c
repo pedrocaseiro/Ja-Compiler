@@ -404,6 +404,14 @@ void parse_equality_nodes(node* n){
 //TODO: CHECK IF ANY ERROR IS POSSIBLE
 void parse_minus_plus_nodes(node* n){
   n->anotated_type = n->childs[0]->anotated_type;
+/*
+  if(!strcmp(n->childs[0]->anotated_type, "int"))
+    n->anotated_type = n->childs[0]->anotated_type;
+  else{
+    printf("Line %d, col: %d Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, n->token->id);
+    n->anotated_type = strdup("undef");
+  }*/
+
 }
 
 
