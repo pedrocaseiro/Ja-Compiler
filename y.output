@@ -1,4 +1,4 @@
-Terminals which are not used
+Terminals unused in grammar
 
    RESERVED
 
@@ -10,7 +10,7 @@ Grammar
     1 Program: CLASS IDAux OBRACE DeclarationAux CBRACE
 
     2 DeclarationAux: DeclarationAux DeclarationL
-    3               | /* empty */
+    3               | %empty
 
     4 DeclarationL: FieldDecl
     5             | MethodDecl
@@ -31,7 +31,7 @@ Grammar
 
    15 MethodParamsL: MethodParams
    16              | FormalParamsStringArray
-   17              | /* empty */
+   17              | %empty
 
    18 VOIDAux: VOID
 
@@ -48,7 +48,7 @@ Grammar
 
    25 VarDeclStatement: VarDeclStatement VarDecl
    26                 | VarDeclStatement Statement
-   27                 | /* empty */
+   27                 | %empty
 
    28 VarDecl: Type VarDeclL SEMI
 
@@ -73,7 +73,7 @@ Grammar
    45          | error SEMI
 
    46 StatementL: StatementL Statement
-   47           | /* empty */
+   47           | %empty
 
    48 Assignment: IDAux ASSIGN Expr
 
@@ -82,7 +82,7 @@ Grammar
    51                 | IDAux OCURV error CCURV
 
    52 CommaExpr: CommaExpr COMMA Expr
-   53          | /* empty */
+   53          | %empty
 
    54 StrLitAux: STRLIT
 
@@ -221,8 +221,8 @@ VarDeclL (68)
 VarsIds (69)
     on left: 31, on right: 29 30
 Statement (70)
-    on left: 32 33 34 35 36 37 38 39 40 41 42 43 44 45,
-    on right: 26 33 34 35 36 46
+    on left: 32 33 34 35 36 37 38 39 40 41 42 43 44 45, on right: 26
+    33 34 35 36 46
 StatementL (71)
     on left: 46 47, on right: 32 46
 Assignment (72)
@@ -247,7 +247,7 @@ IDAux (80)
     on left: 87, on right: 1 11 13 14 21 22 31 48 49 50 51 55 75 76
 
 
-state 0
+State 0
 
     0 $accept: . Program $end
 
@@ -256,7 +256,7 @@ state 0
     Program  go to state 2
 
 
-state 1
+State 1
 
     1 Program: CLASS . IDAux OBRACE DeclarationAux CBRACE
 
@@ -265,35 +265,35 @@ state 1
     IDAux  go to state 4
 
 
-state 2
+State 2
 
     0 $accept: Program . $end
 
     $end  shift, and go to state 5
 
 
-state 3
+State 3
 
    87 IDAux: ID .
 
     $default  reduce using rule 87 (IDAux)
 
 
-state 4
+State 4
 
     1 Program: CLASS IDAux . OBRACE DeclarationAux CBRACE
 
     OBRACE  shift, and go to state 6
 
 
-state 5
+State 5
 
     0 $accept: Program $end .
 
     $default  accept
 
 
-state 6
+State 6
 
     1 Program: CLASS IDAux OBRACE . DeclarationAux CBRACE
 
@@ -302,7 +302,7 @@ state 6
     DeclarationAux  go to state 7
 
 
-state 7
+State 7
 
     1 Program: CLASS IDAux OBRACE DeclarationAux . CBRACE
     2 DeclarationAux: DeclarationAux . DeclarationL
@@ -317,14 +317,14 @@ state 7
     MethodDecl    go to state 14
 
 
-state 8
+State 8
 
     8 FieldDecl: error . SEMI
 
     SEMI  shift, and go to state 15
 
 
-state 9
+State 9
 
     7 FieldDecl: PUBLIC . STATIC Type FieldDeclL SEMI
    12 MethodDecl: PUBLIC . STATIC MethodHeader MethodBody
@@ -332,49 +332,49 @@ state 9
     STATIC  shift, and go to state 16
 
 
-state 10
+State 10
 
     1 Program: CLASS IDAux OBRACE DeclarationAux CBRACE .
 
     $default  reduce using rule 1 (Program)
 
 
-state 11
+State 11
 
     6 DeclarationL: SEMI .
 
     $default  reduce using rule 6 (DeclarationL)
 
 
-state 12
+State 12
 
     2 DeclarationAux: DeclarationAux DeclarationL .
 
     $default  reduce using rule 2 (DeclarationAux)
 
 
-state 13
+State 13
 
     4 DeclarationL: FieldDecl .
 
     $default  reduce using rule 4 (DeclarationL)
 
 
-state 14
+State 14
 
     5 DeclarationL: MethodDecl .
 
     $default  reduce using rule 5 (DeclarationL)
 
 
-state 15
+State 15
 
     8 FieldDecl: error SEMI .
 
     $default  reduce using rule 8 (FieldDecl)
 
 
-state 16
+State 16
 
     7 FieldDecl: PUBLIC STATIC . Type FieldDeclL SEMI
    12 MethodDecl: PUBLIC STATIC . MethodHeader MethodBody
@@ -389,35 +389,35 @@ state 16
     Type          go to state 23
 
 
-state 17
+State 17
 
    84 Type: BOOL .
 
     $default  reduce using rule 84 (Type)
 
 
-state 18
+State 18
 
    86 Type: DOUBLE .
 
     $default  reduce using rule 86 (Type)
 
 
-state 19
+State 19
 
    85 Type: INT .
 
     $default  reduce using rule 85 (Type)
 
 
-state 20
+State 20
 
    18 VOIDAux: VOID .
 
     $default  reduce using rule 18 (VOIDAux)
 
 
-state 21
+State 21
 
    12 MethodDecl: PUBLIC STATIC MethodHeader . MethodBody
 
@@ -426,7 +426,7 @@ state 21
     MethodBody  go to state 25
 
 
-state 22
+State 22
 
    14 MethodHeader: VOIDAux . IDAux OCURV MethodParamsL CCURV
 
@@ -435,7 +435,7 @@ state 22
     IDAux  go to state 26
 
 
-state 23
+State 23
 
     7 FieldDecl: PUBLIC STATIC Type . FieldDeclL SEMI
    13 MethodHeader: Type . IDAux OCURV MethodParamsL CCURV
@@ -447,7 +447,7 @@ state 23
     IDAux       go to state 29
 
 
-state 24
+State 24
 
    24 MethodBody: OBRACE . VarDeclStatement CBRACE
 
@@ -456,21 +456,21 @@ state 24
     VarDeclStatement  go to state 30
 
 
-state 25
+State 25
 
    12 MethodDecl: PUBLIC STATIC MethodHeader MethodBody .
 
     $default  reduce using rule 12 (MethodDecl)
 
 
-state 26
+State 26
 
    14 MethodHeader: VOIDAux IDAux . OCURV MethodParamsL CCURV
 
     OCURV  shift, and go to state 31
 
 
-state 27
+State 27
 
     7 FieldDecl: PUBLIC STATIC Type FieldDeclL . SEMI
     9 FieldDeclL: FieldDeclL . COMMA FieldsIds
@@ -479,14 +479,14 @@ state 27
     COMMA  shift, and go to state 33
 
 
-state 28
+State 28
 
    10 FieldDeclL: FieldsIds .
 
     $default  reduce using rule 10 (FieldDeclL)
 
 
-state 29
+State 29
 
    11 FieldsIds: IDAux .
    13 MethodHeader: Type IDAux . OCURV MethodParamsL CCURV
@@ -496,7 +496,7 @@ state 29
     $default  reduce using rule 11 (FieldsIds)
 
 
-state 30
+State 30
 
    24 MethodBody: OBRACE VarDeclStatement . CBRACE
    25 VarDeclStatement: VarDeclStatement . VarDecl
@@ -526,7 +526,7 @@ state 30
     IDAux             go to state 51
 
 
-state 31
+State 31
 
    14 MethodHeader: VOIDAux IDAux OCURV . MethodParamsL CCURV
 
@@ -545,14 +545,14 @@ state 31
     Type                     go to state 58
 
 
-state 32
+State 32
 
     7 FieldDecl: PUBLIC STATIC Type FieldDeclL SEMI .
 
     $default  reduce using rule 7 (FieldDecl)
 
 
-state 33
+State 33
 
     9 FieldDeclL: FieldDeclL COMMA . FieldsIds
 
@@ -562,7 +562,7 @@ state 33
     IDAux      go to state 60
 
 
-state 34
+State 34
 
    13 MethodHeader: Type IDAux OCURV . MethodParamsL CCURV
 
@@ -581,14 +581,14 @@ state 34
     Type                     go to state 58
 
 
-state 35
+State 35
 
    45 Statement: error . SEMI
 
     SEMI  shift, and go to state 62
 
 
-state 36
+State 36
 
    36 Statement: DO . Statement WHILE OCURV Expr CCURV SEMI
 
@@ -610,7 +610,7 @@ state 36
     IDAux             go to state 51
 
 
-state 37
+State 37
 
    33 Statement: IF . OCURV Expr CCURV Statement ELSE Statement
    34          | IF . OCURV Expr CCURV Statement
@@ -618,7 +618,7 @@ state 37
     OCURV  shift, and go to state 64
 
 
-state 38
+State 38
 
    55 ParseArgs: PARSEINT . OCURV IDAux OSQUARE Expr CSQUARE CCURV
    56          | PARSEINT . OCURV error CCURV
@@ -626,7 +626,7 @@ state 38
     OCURV  shift, and go to state 65
 
 
-state 39
+State 39
 
    37 Statement: PRINT . OCURV Expr CCURV SEMI
    38          | PRINT . OCURV StrLitAux CCURV SEMI
@@ -634,7 +634,7 @@ state 39
     OCURV  shift, and go to state 66
 
 
-state 40
+State 40
 
    43 Statement: RETURN . Expr SEMI
    44          | RETURN . SEMI
@@ -658,14 +658,14 @@ state 40
     IDAux             go to state 80
 
 
-state 41
+State 41
 
    35 Statement: WHILE . OCURV Expr CCURV Statement
 
     OCURV  shift, and go to state 81
 
 
-state 42
+State 42
 
    32 Statement: OBRACE . StatementL CBRACE
 
@@ -674,56 +674,56 @@ state 42
     StatementL  go to state 82
 
 
-state 43
+State 43
 
    24 MethodBody: OBRACE VarDeclStatement CBRACE .
 
     $default  reduce using rule 24 (MethodBody)
 
 
-state 44
+State 44
 
    42 Statement: SEMI .
 
     $default  reduce using rule 42 (Statement)
 
 
-state 45
+State 45
 
    25 VarDeclStatement: VarDeclStatement VarDecl .
 
     $default  reduce using rule 25 (VarDeclStatement)
 
 
-state 46
+State 46
 
    26 VarDeclStatement: VarDeclStatement Statement .
 
     $default  reduce using rule 26 (VarDeclStatement)
 
 
-state 47
+State 47
 
    39 Statement: Assignment . SEMI
 
     SEMI  shift, and go to state 83
 
 
-state 48
+State 48
 
    40 Statement: MethodInvocation . SEMI
 
     SEMI  shift, and go to state 84
 
 
-state 49
+State 49
 
    41 Statement: ParseArgs . SEMI
 
     SEMI  shift, and go to state 85
 
 
-state 50
+State 50
 
    28 VarDecl: Type . VarDeclL SEMI
 
@@ -734,7 +734,7 @@ state 50
     IDAux     go to state 88
 
 
-state 51
+State 51
 
    48 Assignment: IDAux . ASSIGN Expr
    49 MethodInvocation: IDAux . OCURV Expr CommaExpr CCURV
@@ -745,21 +745,21 @@ state 51
     ASSIGN  shift, and go to state 90
 
 
-state 52
+State 52
 
    23 StringArray: STRING .
 
     $default  reduce using rule 23 (StringArray)
 
 
-state 53
+State 53
 
    14 MethodHeader: VOIDAux IDAux OCURV MethodParamsL . CCURV
 
     CCURV  shift, and go to state 91
 
 
-state 54
+State 54
 
    15 MethodParamsL: MethodParams .
    19 MethodParams: MethodParams . COMMA FormalParams
@@ -769,28 +769,28 @@ state 54
     $default  reduce using rule 15 (MethodParamsL)
 
 
-state 55
+State 55
 
    16 MethodParamsL: FormalParamsStringArray .
 
     $default  reduce using rule 16 (MethodParamsL)
 
 
-state 56
+State 56
 
    20 MethodParams: FormalParams .
 
     $default  reduce using rule 20 (MethodParams)
 
 
-state 57
+State 57
 
    21 FormalParamsStringArray: StringArray . OSQUARE CSQUARE IDAux
 
     OSQUARE  shift, and go to state 93
 
 
-state 58
+State 58
 
    22 FormalParams: Type . IDAux
 
@@ -799,42 +799,42 @@ state 58
     IDAux  go to state 94
 
 
-state 59
+State 59
 
     9 FieldDeclL: FieldDeclL COMMA FieldsIds .
 
     $default  reduce using rule 9 (FieldDeclL)
 
 
-state 60
+State 60
 
    11 FieldsIds: IDAux .
 
     $default  reduce using rule 11 (FieldsIds)
 
 
-state 61
+State 61
 
    13 MethodHeader: Type IDAux OCURV MethodParamsL . CCURV
 
     CCURV  shift, and go to state 95
 
 
-state 62
+State 62
 
    45 Statement: error SEMI .
 
     $default  reduce using rule 45 (Statement)
 
 
-state 63
+State 63
 
    36 Statement: DO Statement . WHILE OCURV Expr CCURV SEMI
 
     WHILE  shift, and go to state 96
 
 
-state 64
+State 64
 
    33 Statement: IF OCURV . Expr CCURV Statement ELSE Statement
    34          | IF OCURV . Expr CCURV Statement
@@ -857,7 +857,7 @@ state 64
     IDAux             go to state 80
 
 
-state 65
+State 65
 
    55 ParseArgs: PARSEINT OCURV . IDAux OSQUARE Expr CSQUARE CCURV
    56          | PARSEINT OCURV . error CCURV
@@ -868,7 +868,7 @@ state 65
     IDAux  go to state 99
 
 
-state 66
+State 66
 
    37 Statement: PRINT OCURV . Expr CCURV SEMI
    38          | PRINT OCURV . StrLitAux CCURV SEMI
@@ -893,14 +893,14 @@ state 66
     IDAux             go to state 80
 
 
-state 67
+State 67
 
    78 ExprAux: BOOLLIT .
 
     $default  reduce using rule 78 (ExprAux)
 
 
-state 68
+State 68
 
    77 ExprAux: OCURV . Expr CCURV
    81        | OCURV . error CCURV
@@ -924,7 +924,7 @@ state 68
     IDAux             go to state 80
 
 
-state 69
+State 69
 
    72 ExprAux: PLUS . ExprAux
 
@@ -944,7 +944,7 @@ state 69
     IDAux             go to state 106
 
 
-state 70
+State 70
 
    73 ExprAux: MINUS . ExprAux
 
@@ -964,7 +964,7 @@ state 70
     IDAux             go to state 106
 
 
-state 71
+State 71
 
    74 ExprAux: NOT . ExprAux
 
@@ -984,49 +984,49 @@ state 71
     IDAux             go to state 106
 
 
-state 72
+State 72
 
    44 Statement: RETURN SEMI .
 
     $default  reduce using rule 44 (Statement)
 
 
-state 73
+State 73
 
    79 ExprAux: DECLIT .
 
     $default  reduce using rule 79 (ExprAux)
 
 
-state 74
+State 74
 
    80 ExprAux: REALLIT .
 
     $default  reduce using rule 80 (ExprAux)
 
 
-state 75
+State 75
 
    82 Expr: Assignment .
 
     $default  reduce using rule 82 (Expr)
 
 
-state 76
+State 76
 
    57 ExprAux: MethodInvocation .
 
     $default  reduce using rule 57 (ExprAux)
 
 
-state 77
+State 77
 
    58 ExprAux: ParseArgs .
 
     $default  reduce using rule 58 (ExprAux)
 
 
-state 78
+State 78
 
    59 ExprAux: ExprAux . AND ExprAux
    60        | ExprAux . OR ExprAux
@@ -1060,14 +1060,14 @@ state 78
     $default  reduce using rule 83 (Expr)
 
 
-state 79
+State 79
 
    43 Statement: RETURN Expr . SEMI
 
     SEMI  shift, and go to state 122
 
 
-state 80
+State 80
 
    48 Assignment: IDAux . ASSIGN Expr
    49 MethodInvocation: IDAux . OCURV Expr CommaExpr CCURV
@@ -1083,7 +1083,7 @@ state 80
     $default  reduce using rule 75 (ExprAux)
 
 
-state 81
+State 81
 
    35 Statement: WHILE OCURV . Expr CCURV Statement
 
@@ -1105,7 +1105,7 @@ state 81
     IDAux             go to state 80
 
 
-state 82
+State 82
 
    32 Statement: OBRACE StatementL . CBRACE
    46 StatementL: StatementL . Statement
@@ -1129,28 +1129,28 @@ state 82
     IDAux             go to state 51
 
 
-state 83
+State 83
 
    39 Statement: Assignment SEMI .
 
     $default  reduce using rule 39 (Statement)
 
 
-state 84
+State 84
 
    40 Statement: MethodInvocation SEMI .
 
     $default  reduce using rule 40 (Statement)
 
 
-state 85
+State 85
 
    41 Statement: ParseArgs SEMI .
 
     $default  reduce using rule 41 (Statement)
 
 
-state 86
+State 86
 
    28 VarDecl: Type VarDeclL . SEMI
    29 VarDeclL: VarDeclL . COMMA VarsIds
@@ -1159,21 +1159,21 @@ state 86
     COMMA  shift, and go to state 128
 
 
-state 87
+State 87
 
    30 VarDeclL: VarsIds .
 
     $default  reduce using rule 30 (VarDeclL)
 
 
-state 88
+State 88
 
    31 VarsIds: IDAux .
 
     $default  reduce using rule 31 (VarsIds)
 
 
-state 89
+State 89
 
    49 MethodInvocation: IDAux OCURV . Expr CommaExpr CCURV
    50                 | IDAux OCURV . CCURV
@@ -1199,7 +1199,7 @@ state 89
     IDAux             go to state 80
 
 
-state 90
+State 90
 
    48 Assignment: IDAux ASSIGN . Expr
 
@@ -1221,14 +1221,14 @@ state 90
     IDAux             go to state 80
 
 
-state 91
+State 91
 
    14 MethodHeader: VOIDAux IDAux OCURV MethodParamsL CCURV .
 
     $default  reduce using rule 14 (MethodHeader)
 
 
-state 92
+State 92
 
    19 MethodParams: MethodParams COMMA . FormalParams
 
@@ -1240,35 +1240,35 @@ state 92
     Type          go to state 58
 
 
-state 93
+State 93
 
    21 FormalParamsStringArray: StringArray OSQUARE . CSQUARE IDAux
 
     CSQUARE  shift, and go to state 134
 
 
-state 94
+State 94
 
    22 FormalParams: Type IDAux .
 
     $default  reduce using rule 22 (FormalParams)
 
 
-state 95
+State 95
 
    13 MethodHeader: Type IDAux OCURV MethodParamsL CCURV .
 
     $default  reduce using rule 13 (MethodHeader)
 
 
-state 96
+State 96
 
    36 Statement: DO Statement WHILE . OCURV Expr CCURV SEMI
 
     OCURV  shift, and go to state 135
 
 
-state 97
+State 97
 
    33 Statement: IF OCURV Expr . CCURV Statement ELSE Statement
    34          | IF OCURV Expr . CCURV Statement
@@ -1276,56 +1276,56 @@ state 97
     CCURV  shift, and go to state 136
 
 
-state 98
+State 98
 
    56 ParseArgs: PARSEINT OCURV error . CCURV
 
     CCURV  shift, and go to state 137
 
 
-state 99
+State 99
 
    55 ParseArgs: PARSEINT OCURV IDAux . OSQUARE Expr CSQUARE CCURV
 
     OSQUARE  shift, and go to state 138
 
 
-state 100
+State 100
 
    54 StrLitAux: STRLIT .
 
     $default  reduce using rule 54 (StrLitAux)
 
 
-state 101
+State 101
 
    38 Statement: PRINT OCURV StrLitAux . CCURV SEMI
 
     CCURV  shift, and go to state 139
 
 
-state 102
+State 102
 
    37 Statement: PRINT OCURV Expr . CCURV SEMI
 
     CCURV  shift, and go to state 140
 
 
-state 103
+State 103
 
    81 ExprAux: OCURV error . CCURV
 
     CCURV  shift, and go to state 141
 
 
-state 104
+State 104
 
    77 ExprAux: OCURV Expr . CCURV
 
     CCURV  shift, and go to state 142
 
 
-state 105
+State 105
 
    59 ExprAux: ExprAux . AND ExprAux
    60        | ExprAux . OR ExprAux
@@ -1345,7 +1345,7 @@ state 105
     $default  reduce using rule 72 (ExprAux)
 
 
-state 106
+State 106
 
    49 MethodInvocation: IDAux . OCURV Expr CommaExpr CCURV
    50                 | IDAux . OCURV CCURV
@@ -1359,7 +1359,7 @@ state 106
     $default  reduce using rule 75 (ExprAux)
 
 
-state 107
+State 107
 
    59 ExprAux: ExprAux . AND ExprAux
    60        | ExprAux . OR ExprAux
@@ -1379,7 +1379,7 @@ state 107
     $default  reduce using rule 73 (ExprAux)
 
 
-state 108
+State 108
 
    59 ExprAux: ExprAux . AND ExprAux
    60        | ExprAux . OR ExprAux
@@ -1399,7 +1399,7 @@ state 108
     $default  reduce using rule 74 (ExprAux)
 
 
-state 109
+State 109
 
    59 ExprAux: ExprAux AND . ExprAux
 
@@ -1419,7 +1419,7 @@ state 109
     IDAux             go to state 106
 
 
-state 110
+State 110
 
    60 ExprAux: ExprAux OR . ExprAux
 
@@ -1439,7 +1439,7 @@ state 110
     IDAux             go to state 106
 
 
-state 111
+State 111
 
    65 ExprAux: ExprAux LT . ExprAux
 
@@ -1459,7 +1459,7 @@ state 111
     IDAux             go to state 106
 
 
-state 112
+State 112
 
    63 ExprAux: ExprAux GT . ExprAux
 
@@ -1479,7 +1479,7 @@ state 112
     IDAux             go to state 106
 
 
-state 113
+State 113
 
    61 ExprAux: ExprAux EQ . ExprAux
 
@@ -1499,7 +1499,7 @@ state 113
     IDAux             go to state 106
 
 
-state 114
+State 114
 
    66 ExprAux: ExprAux NEQ . ExprAux
 
@@ -1519,7 +1519,7 @@ state 114
     IDAux             go to state 106
 
 
-state 115
+State 115
 
    64 ExprAux: ExprAux LEQ . ExprAux
 
@@ -1539,7 +1539,7 @@ state 115
     IDAux             go to state 106
 
 
-state 116
+State 116
 
    62 ExprAux: ExprAux GEQ . ExprAux
 
@@ -1559,7 +1559,7 @@ state 116
     IDAux             go to state 106
 
 
-state 117
+State 117
 
    67 ExprAux: ExprAux PLUS . ExprAux
 
@@ -1579,7 +1579,7 @@ state 117
     IDAux             go to state 106
 
 
-state 118
+State 118
 
    68 ExprAux: ExprAux MINUS . ExprAux
 
@@ -1599,7 +1599,7 @@ state 118
     IDAux             go to state 106
 
 
-state 119
+State 119
 
    69 ExprAux: ExprAux STAR . ExprAux
 
@@ -1619,7 +1619,7 @@ state 119
     IDAux             go to state 106
 
 
-state 120
+State 120
 
    70 ExprAux: ExprAux DIV . ExprAux
 
@@ -1639,7 +1639,7 @@ state 120
     IDAux             go to state 106
 
 
-state 121
+State 121
 
    71 ExprAux: ExprAux MOD . ExprAux
 
@@ -1659,49 +1659,49 @@ state 121
     IDAux             go to state 106
 
 
-state 122
+State 122
 
    43 Statement: RETURN Expr SEMI .
 
     $default  reduce using rule 43 (Statement)
 
 
-state 123
+State 123
 
    76 ExprAux: IDAux DOTLENGTH .
 
     $default  reduce using rule 76 (ExprAux)
 
 
-state 124
+State 124
 
    35 Statement: WHILE OCURV Expr . CCURV Statement
 
     CCURV  shift, and go to state 156
 
 
-state 125
+State 125
 
    32 Statement: OBRACE StatementL CBRACE .
 
     $default  reduce using rule 32 (Statement)
 
 
-state 126
+State 126
 
    46 StatementL: StatementL Statement .
 
     $default  reduce using rule 46 (StatementL)
 
 
-state 127
+State 127
 
    28 VarDecl: Type VarDeclL SEMI .
 
     $default  reduce using rule 28 (VarDecl)
 
 
-state 128
+State 128
 
    29 VarDeclL: VarDeclL COMMA . VarsIds
 
@@ -1711,21 +1711,21 @@ state 128
     IDAux    go to state 88
 
 
-state 129
+State 129
 
    51 MethodInvocation: IDAux OCURV error . CCURV
 
     CCURV  shift, and go to state 158
 
 
-state 130
+State 130
 
    50 MethodInvocation: IDAux OCURV CCURV .
 
     $default  reduce using rule 50 (MethodInvocation)
 
 
-state 131
+State 131
 
    49 MethodInvocation: IDAux OCURV Expr . CommaExpr CCURV
 
@@ -1734,21 +1734,21 @@ state 131
     CommaExpr  go to state 159
 
 
-state 132
+State 132
 
    48 Assignment: IDAux ASSIGN Expr .
 
     $default  reduce using rule 48 (Assignment)
 
 
-state 133
+State 133
 
    19 MethodParams: MethodParams COMMA FormalParams .
 
     $default  reduce using rule 19 (MethodParams)
 
 
-state 134
+State 134
 
    21 FormalParamsStringArray: StringArray OSQUARE CSQUARE . IDAux
 
@@ -1757,7 +1757,7 @@ state 134
     IDAux  go to state 160
 
 
-state 135
+State 135
 
    36 Statement: DO Statement WHILE OCURV . Expr CCURV SEMI
 
@@ -1779,7 +1779,7 @@ state 135
     IDAux             go to state 80
 
 
-state 136
+State 136
 
    33 Statement: IF OCURV Expr CCURV . Statement ELSE Statement
    34          | IF OCURV Expr CCURV . Statement
@@ -1802,14 +1802,14 @@ state 136
     IDAux             go to state 51
 
 
-state 137
+State 137
 
    56 ParseArgs: PARSEINT OCURV error CCURV .
 
     $default  reduce using rule 56 (ParseArgs)
 
 
-state 138
+State 138
 
    55 ParseArgs: PARSEINT OCURV IDAux OSQUARE . Expr CSQUARE CCURV
 
@@ -1831,35 +1831,35 @@ state 138
     IDAux             go to state 80
 
 
-state 139
+State 139
 
    38 Statement: PRINT OCURV StrLitAux CCURV . SEMI
 
     SEMI  shift, and go to state 164
 
 
-state 140
+State 140
 
    37 Statement: PRINT OCURV Expr CCURV . SEMI
 
     SEMI  shift, and go to state 165
 
 
-state 141
+State 141
 
    81 ExprAux: OCURV error CCURV .
 
     $default  reduce using rule 81 (ExprAux)
 
 
-state 142
+State 142
 
    77 ExprAux: OCURV Expr CCURV .
 
     $default  reduce using rule 77 (ExprAux)
 
 
-state 143
+State 143
 
    59 ExprAux: ExprAux . AND ExprAux
    59        | ExprAux AND ExprAux .
@@ -1891,7 +1891,7 @@ state 143
     $default  reduce using rule 59 (ExprAux)
 
 
-state 144
+State 144
 
    59 ExprAux: ExprAux . AND ExprAux
    60        | ExprAux . OR ExprAux
@@ -1924,7 +1924,7 @@ state 144
     $default  reduce using rule 60 (ExprAux)
 
 
-state 145
+State 145
 
    59 ExprAux: ExprAux . AND ExprAux
    60        | ExprAux . OR ExprAux
@@ -1950,7 +1950,7 @@ state 145
     $default  reduce using rule 65 (ExprAux)
 
 
-state 146
+State 146
 
    59 ExprAux: ExprAux . AND ExprAux
    60        | ExprAux . OR ExprAux
@@ -1976,7 +1976,7 @@ state 146
     $default  reduce using rule 63 (ExprAux)
 
 
-state 147
+State 147
 
    59 ExprAux: ExprAux . AND ExprAux
    60        | ExprAux . OR ExprAux
@@ -2006,7 +2006,7 @@ state 147
     $default  reduce using rule 61 (ExprAux)
 
 
-state 148
+State 148
 
    59 ExprAux: ExprAux . AND ExprAux
    60        | ExprAux . OR ExprAux
@@ -2036,7 +2036,7 @@ state 148
     $default  reduce using rule 66 (ExprAux)
 
 
-state 149
+State 149
 
    59 ExprAux: ExprAux . AND ExprAux
    60        | ExprAux . OR ExprAux
@@ -2062,7 +2062,7 @@ state 149
     $default  reduce using rule 64 (ExprAux)
 
 
-state 150
+State 150
 
    59 ExprAux: ExprAux . AND ExprAux
    60        | ExprAux . OR ExprAux
@@ -2088,7 +2088,7 @@ state 150
     $default  reduce using rule 62 (ExprAux)
 
 
-state 151
+State 151
 
    59 ExprAux: ExprAux . AND ExprAux
    60        | ExprAux . OR ExprAux
@@ -2112,7 +2112,7 @@ state 151
     $default  reduce using rule 67 (ExprAux)
 
 
-state 152
+State 152
 
    59 ExprAux: ExprAux . AND ExprAux
    60        | ExprAux . OR ExprAux
@@ -2136,7 +2136,7 @@ state 152
     $default  reduce using rule 68 (ExprAux)
 
 
-state 153
+State 153
 
    59 ExprAux: ExprAux . AND ExprAux
    60        | ExprAux . OR ExprAux
@@ -2156,7 +2156,7 @@ state 153
     $default  reduce using rule 69 (ExprAux)
 
 
-state 154
+State 154
 
    59 ExprAux: ExprAux . AND ExprAux
    60        | ExprAux . OR ExprAux
@@ -2176,7 +2176,7 @@ state 154
     $default  reduce using rule 70 (ExprAux)
 
 
-state 155
+State 155
 
    59 ExprAux: ExprAux . AND ExprAux
    60        | ExprAux . OR ExprAux
@@ -2196,7 +2196,7 @@ state 155
     $default  reduce using rule 71 (ExprAux)
 
 
-state 156
+State 156
 
    35 Statement: WHILE OCURV Expr CCURV . Statement
 
@@ -2218,21 +2218,21 @@ state 156
     IDAux             go to state 51
 
 
-state 157
+State 157
 
    29 VarDeclL: VarDeclL COMMA VarsIds .
 
     $default  reduce using rule 29 (VarDeclL)
 
 
-state 158
+State 158
 
    51 MethodInvocation: IDAux OCURV error CCURV .
 
     $default  reduce using rule 51 (MethodInvocation)
 
 
-state 159
+State 159
 
    49 MethodInvocation: IDAux OCURV Expr CommaExpr . CCURV
    52 CommaExpr: CommaExpr . COMMA Expr
@@ -2241,21 +2241,21 @@ state 159
     COMMA  shift, and go to state 168
 
 
-state 160
+State 160
 
    21 FormalParamsStringArray: StringArray OSQUARE CSQUARE IDAux .
 
     $default  reduce using rule 21 (FormalParamsStringArray)
 
 
-state 161
+State 161
 
    36 Statement: DO Statement WHILE OCURV Expr . CCURV SEMI
 
     CCURV  shift, and go to state 169
 
 
-state 162
+State 162
 
    33 Statement: IF OCURV Expr CCURV Statement . ELSE Statement
    34          | IF OCURV Expr CCURV Statement .
@@ -2265,42 +2265,42 @@ state 162
     $default  reduce using rule 34 (Statement)
 
 
-state 163
+State 163
 
    55 ParseArgs: PARSEINT OCURV IDAux OSQUARE Expr . CSQUARE CCURV
 
     CSQUARE  shift, and go to state 171
 
 
-state 164
+State 164
 
    38 Statement: PRINT OCURV StrLitAux CCURV SEMI .
 
     $default  reduce using rule 38 (Statement)
 
 
-state 165
+State 165
 
    37 Statement: PRINT OCURV Expr CCURV SEMI .
 
     $default  reduce using rule 37 (Statement)
 
 
-state 166
+State 166
 
    35 Statement: WHILE OCURV Expr CCURV Statement .
 
     $default  reduce using rule 35 (Statement)
 
 
-state 167
+State 167
 
    49 MethodInvocation: IDAux OCURV Expr CommaExpr CCURV .
 
     $default  reduce using rule 49 (MethodInvocation)
 
 
-state 168
+State 168
 
    52 CommaExpr: CommaExpr COMMA . Expr
 
@@ -2322,14 +2322,14 @@ state 168
     IDAux             go to state 80
 
 
-state 169
+State 169
 
    36 Statement: DO Statement WHILE OCURV Expr CCURV . SEMI
 
     SEMI  shift, and go to state 173
 
 
-state 170
+State 170
 
    33 Statement: IF OCURV Expr CCURV Statement ELSE . Statement
 
@@ -2351,35 +2351,35 @@ state 170
     IDAux             go to state 51
 
 
-state 171
+State 171
 
    55 ParseArgs: PARSEINT OCURV IDAux OSQUARE Expr CSQUARE . CCURV
 
     CCURV  shift, and go to state 175
 
 
-state 172
+State 172
 
    52 CommaExpr: CommaExpr COMMA Expr .
 
     $default  reduce using rule 52 (CommaExpr)
 
 
-state 173
+State 173
 
    36 Statement: DO Statement WHILE OCURV Expr CCURV SEMI .
 
     $default  reduce using rule 36 (Statement)
 
 
-state 174
+State 174
 
    33 Statement: IF OCURV Expr CCURV Statement ELSE Statement .
 
     $default  reduce using rule 33 (Statement)
 
 
-state 175
+State 175
 
    55 ParseArgs: PARSEINT OCURV IDAux OSQUARE Expr CSQUARE CCURV .
 

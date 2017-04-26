@@ -104,7 +104,7 @@ Statement: OBRACE StatementL CBRACE                                  {if($2 != N
          | ParseArgs SEMI                                            {$$ = create_and_insert_node("ParseArgs", 1, 1, $1);}
          | SEMI                                                      {$$ = create_terminal_node("Semi", 0, NULL);}
          | RETURN Expr SEMI                                          {$$ = create_and_insert_node("Return", 1, 1, $2);}
-         | RETURN SEMI                                               {$$ = create_and_insert_node("Return", 1, 0);}
+         | RETURN SEMI                                               {$$ = create_and_insert_node("Return", 1, 0);$$->token->line = $2->line;$$->token->col = $2->col;}
          | error SEMI                                                {$$ = create_terminal_node("Error", 0, NULL);}
 
 StatementL: StatementL Statement                                     {$$ = create_and_insert_node("Statement", 0, 2, $1, $2);}
@@ -139,11 +139,11 @@ ExprAux: MethodInvocation                                            {$$ = creat
        | ExprAux STAR ExprAux                                        {$$ = create_and_insert_node("Mul", 1, 2, $1, $3); $$->token->line = $2->line;$$->token->col = $2->col;}
        | ExprAux DIV ExprAux                                         {$$ = create_and_insert_node("Div", 1, 2, $1, $3); $$->token->line = $2->line;$$->token->col = $2->col;}
        | ExprAux MOD ExprAux                                         {$$ = create_and_insert_node("Mod", 1, 2, $1, $3); $$->token->line = $2->line;$$->token->col = $2->col;}
-       | PLUS ExprAux %prec UNARY                                    {$$ = create_and_insert_node("Plus", 1, 1, $2);}
-       | MINUS ExprAux %prec UNARY                                   {$$ = create_and_insert_node("Minus", 1, 1, $2);}
-       | NOT ExprAux                                                 {$$ = create_and_insert_node("Not", 1, 1, $2);}
+       | PLUS ExprAux %prec UNARY                                    {$$ = create_and_insert_node("Plus", 1, 1, $2);$$->token->line = $1->line;$$->token->col = $1->col;}
+       | MINUS ExprAux %prec UNARY                                   {$$ = create_and_insert_node("Minus", 1, 1, $2);$$->token->line = $1->line;$$->token->col = $1->col;}
+       | NOT ExprAux                                                 {$$ = create_and_insert_node("Not", 1, 1, $2);$$->token->line = $1->line;$$->token->col = $1->col;}
        | IDAux                                                       {$$ = $1;}
-       | IDAux DOTLENGTH                                             {$$ = create_and_insert_node("Length", 1, 1, $1);}
+       | IDAux DOTLENGTH                                             {$$ = create_and_insert_node("Length", 1, 1, $1);$$->token->line = $2->line;$$->token->col = $2->col;}
        | OCURV Expr CCURV                                            {$$ = $2;}
        | BOOLLIT                                                     {$$=create_terminal_node("BoolLit", 1, $1);}
        | DECLIT                                                      {$$=create_terminal_node("DecLit", 1, $1);}

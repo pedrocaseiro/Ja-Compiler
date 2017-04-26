@@ -69,6 +69,9 @@ void second_traverse(node* n){
     params[i] = str_to_lower(n->childs[0]->childs[2]->childs[i]->childs[0]->token->id);
   }
   table[table_index] = new_symbol_table("Method", n->childs[0]->childs[1]->value, n_params, params);
+  /*if(!strcmp(n->token->id, "Return")){
+    printf("APANHEI RETURN\n");
+  }*/
 
   insert_symbol(table[table_index], strdup("return"), 0, NULL, str_to_lower(n->childs[0]->childs[0]->token->id), NULL);
   for(i = 0; i < n_params; i++){
@@ -84,6 +87,14 @@ void second_traverse(node* n){
   }
 
   iterate_tree(n->childs[1]);
+
+  for(i=0; i<n->childs[1]->n_children; i++){
+    if(!strcmp(n->childs[1]->childs[i]->token->id, "Return")){
+      symbol* aux = (symbol*)malloc(sizeof(symbol));
+      aux = table[table_index]->first;
+      parse_return_node(n->childs[1]->childs[i], aux->type);
+    }
+  }
 
   table_index++;
 }
@@ -149,7 +160,10 @@ void iterate_tree(node *n){
         if(n->childs[i]->anotated_type == NULL){
           n->childs[i]->anotated_type = strdup("undef");
         }
+
+
       }
+
       iterate_tree(n->childs[i]);
   }
 }
@@ -279,17 +293,17 @@ void parse_assign_node(node* n){
   } else if(!strcmp(n->childs[0]->anotated_type, "int") && !strcmp(n->childs[1]->anotated_type, "double")){
       error_flag = 1;
   } else if(!strcmp(n->childs[0]->anotated_type, "undef") && (n->childs[0]->n_children == 0)){
-      printf("Line %d, col: %d Cannot find symbol %s\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->value);
+      printf("Line %d, col: %d Cannot find symbol %s\n", n->token->line, n->token->col, n->childs[0]->value);
       error_flag = 1;
   } else if(!strcmp(n->childs[1]->anotated_type, "undef") && (n->childs[1]->n_children == 0)){
-      printf("Line %d, col: %d Cannot find symbol %s\n", n->childs[1]->token->line, n->childs[1]->token->col,n->childs[1]->value);
+      printf("Line %d, col: %d Cannot find symbol %s\n", n->token->line, n->token->col,n->childs[1]->value);
       error_flag = 1;
   }
 
   if(error_flag == 1){
     n->anotated_type = "undef";
     // TODO: CHECKAR LINHAS E COLUNAS PERGUNTAR AO STOR
-    printf("Line %d, col: %d Operator %s cannot be applied to types %s, %s\n", n->childs[0]->token->line, n->childs[0]->token->col, n->token->id, n->childs[0]->anotated_type, n->childs[1]->anotated_type);
+    printf("Line %d, col: %d Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, n->token->id, n->childs[0]->anotated_type, n->childs[1]->anotated_type);
   }
 }
 
@@ -359,7 +373,7 @@ void parse_call_node(node* n){
 }
 
 
-//TODO: CHECK ERRORS
+
 void parse_parseargs_node(node* n){
 
   n->anotated_type = strdup("int");
@@ -373,7 +387,7 @@ void parse_parseargs_node(node* n){
   }
 }
 
-//TODO: it only accepts comparisons between 2 booleans
+
 void parse_and_or_nodes(node* n){
   n->anotated_type = strdup("boolean");
   if(strcmp(n->childs[0]->anotated_type,"boolean")){
@@ -413,16 +427,16 @@ void parse_equality_nodes(node* n){
   }
 }
 
-//TODO: CHECK IF ANY ERROR IS POSSIBLE
+
 void parse_minus_plus_nodes(node* n){
   n->anotated_type = n->childs[0]->anotated_type;
-/*
-  if(!strcmp(n->childs[0]->anotated_type, "int"))
+
+  if(!strcmp(n->childs[0]->anotated_type, "int") || !strcmp(n->childs[0]->anotated_type, "double"))
     n->anotated_type = n->childs[0]->anotated_type;
   else{
-    printf("Line %d, col: %d Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, n->token->id);
+    printf("Line %d, col: %d Incompatible type %s in %s statement\n", n->token->line, n->token->col, n->childs[0]->anotated_type, n->token->id);
     n->anotated_type = strdup("undef");
-  }*/
+  }
 
 }
 
@@ -443,18 +457,22 @@ void parse_logic_nodes(node* n){
   }
 }
 
-//TODO: ERROR TRYING TO NEGATE INT OR DOUBLE
+
 void parse_not_node(node* n){
   if(!strcmp(n->childs[0]->anotated_type, "boolean")){
     n->anotated_type = strdup("boolean");
   } else {
-    // ERROR
+    printf("Line %d, col: %d Incompatible type %s in %s statement\n", n->token->line, n->token->col, n->childs[0]->anotated_type, n->token->id);
+    n->anotated_type = strdup("undef");
   }
 }
 
-// ERROS -> trying to do .length of something illegal (5.length); check annotated_type of child[0]
+
 void parse_length_node(node* n){
   n->anotated_type = strdup("int");
+  if(strcmp(n->childs[0]->anotated_type, "String[]")){
+    printf("Line %d, col: %d Incompatible type %s in %s statement\n", n->token->line, n->token->col, n->childs[0]->anotated_type, n->token->id);
+  }
 }
 
 void parse_declit_node(node* n){
@@ -469,16 +487,29 @@ void parse_reallit_node(node* n){
   n->anotated_type = strdup("double");
 }
 
-void parse_id_node(node* n){
-  //printf("%s %s\n", n->value, n->type);
-  //printf("%s\n", n->anotated_type);
-  //n->anotated_type = strdup("INT");
-
-}
 
 void parse_strlit_node(node* n){
   n->anotated_type = strdup("String");
 }
+
+//check if function type is equal to return type
+void parse_return_node(node* n, char* t){
+
+  //caso so seja return;
+  if(n->n_children == 0){
+
+    if(strcmp("void",t)){
+      printf("Line %d, col: %d Incompatible type %s in %s statement\n", n->token->line, n->token->col-6, "void", n->token->id);
+    }
+  } else if(strcmp(n->childs[0]->anotated_type,t) && !strcmp(n->childs[0]->anotated_type, "undef")){
+    printf("Line %d, col: %d Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, n->token->id);
+    printf("Line %d, col: %d Cannot find symbol %s\n", n->childs[0]->token->line, n->childs[0]->token->col,n->childs[0]->value);
+  }
+  else if(strcmp(n->childs[0]->anotated_type,t)){
+    printf("Line %d, col: %d Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, n->token->id);
+  }
+}
+
 
 void create_an_tree(node *n){
   int i = 0;
@@ -575,9 +606,7 @@ void create_an_tree(node *n){
       parse_declit_node(n);
   } else if(!strcmp(n->token->id, "StrLit")){
       parse_strlit_node(n);
-  } /*else if(!strcmp(n->token->id, "Id")){
-      parse_id_node(n);
-  }*/
+  }
 }
 
 
