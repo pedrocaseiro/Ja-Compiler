@@ -263,10 +263,6 @@ void parse_fielddecl_node(node* n){
 }
 
 void parse_assign_node(node* n){
-  // TODO: detect errors
-  // check if left side variable is defined...
-  // check incompatibility
-
   n->anotated_type = n->childs[1]->anotated_type;
 
   // incompatibility
@@ -282,10 +278,10 @@ void parse_assign_node(node* n){
       error_flag = 1;
   } else if(!strcmp(n->childs[0]->anotated_type, "int") && !strcmp(n->childs[1]->anotated_type, "double")){
       error_flag = 1;
-  } else if(!strcmp(n->childs[0]->anotated_type, "undef")){
+  } else if(!strcmp(n->childs[0]->anotated_type, "undef") && (n->childs[0]->n_children == 0)){
       printf("Line %d, col: %d Cannot find symbol %s\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->value);
       error_flag = 1;
-  } else if(!strcmp(n->childs[1]->anotated_type, "undef")){
+  } else if(!strcmp(n->childs[1]->anotated_type, "undef") && (n->childs[1]->n_children == 0)){
       printf("Line %d, col: %d Cannot find symbol %s\n", n->childs[1]->token->line, n->childs[1]->token->col,n->childs[1]->value);
       error_flag = 1;
   }
@@ -296,9 +292,6 @@ void parse_assign_node(node* n){
     printf("Line %d, col: %d Operator %s cannot be applied to types %s, %s\n", n->childs[0]->token->line, n->childs[0]->token->col, n->token->id, n->childs[0]->anotated_type, n->childs[1]->anotated_type);
   }
 }
-
-// TODO: check if the function we're calling is the right one (there may be multiple methods with the same name, but different parameters). IMPORTANT
-// can be ambiguous
 
 // percorremos tabelas até encontrar com nome igual
 // se for match -> preenchemos árvore
@@ -378,9 +371,6 @@ void parse_parseargs_node(node* n){
     n->anotated_type = strdup("undef");
     printf("Line %d, col: %d Incompatible type %s in %s statement\n", n->childs[1]->token->line, n->childs[1]->token->col, n->childs[1]->anotated_type, n->token->id);
   }
-
-
-
 }
 
 //TODO: it only accepts comparisons between 2 booleans
@@ -396,9 +386,31 @@ void parse_and_or_nodes(node* n){
   }
 }
 
-//TODO: check types compatibility
+// Equality nodes >, >=, <, >=, ==, !=
+// we can only compare boolean with bool2ean, int with int, double with int, int with double and double with int
+// it should throw an error when the comparison is between boolean and int, boolean and double, int and boolean, double and boolean, undef and anything, anything and undef
+// TODO: this can be shortened!! Not done yet for readibility purposes
 void parse_equality_nodes(node* n){
   n->anotated_type = strdup("boolean");
+  if(!strcmp(n->childs[0]->anotated_type,"boolean") && !strcmp(n->childs[1]->anotated_type,"int")){
+    n->anotated_type = strdup("undef");
+    printf("Line %d, col: %d Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, n->token->id, n->childs[0]->anotated_type, n->childs[1]->anotated_type);
+  } else if(!strcmp(n->childs[0]->anotated_type,"int") && !strcmp(n->childs[1]->anotated_type,"boolean")){
+    n->anotated_type = strdup("undef");
+    printf("Line %d, col: %d Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, n->token->id, n->childs[0]->anotated_type, n->childs[1]->anotated_type);
+  } else if(!strcmp(n->childs[0]->anotated_type,"boolean") && !strcmp(n->childs[1]->anotated_type,"double")){
+    n->anotated_type = strdup("undef");
+    printf("Line %d, col: %d Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, n->token->id, n->childs[0]->anotated_type, n->childs[1]->anotated_type);
+  } else if(!strcmp(n->childs[0]->anotated_type,"double") && !strcmp(n->childs[1]->anotated_type,"boolean")){
+    n->anotated_type = strdup("undef");
+    printf("Line %d, col: %d Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, n->token->id, n->childs[0]->anotated_type, n->childs[1]->anotated_type);
+  } else if(!strcmp(n->childs[0]->anotated_type,"undef")){
+    n->anotated_type = strdup("undef");
+    printf("Line %d, col: %d Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, n->token->id, n->childs[0]->anotated_type, n->childs[1]->anotated_type);
+  } else if(!strcmp(n->childs[1]->anotated_type,"undef")){
+    n->anotated_type = strdup("undef");
+    printf("Line %d, col: %d Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, n->token->id, n->childs[0]->anotated_type, n->childs[1]->anotated_type);
+  }
 }
 
 //TODO: CHECK IF ANY ERROR IS POSSIBLE

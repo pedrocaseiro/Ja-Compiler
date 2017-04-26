@@ -1,42 +1,9 @@
 class gcd {
-    public static int abc(double a, int b) {
-        int c;
-        return c;
-    }
-
-    public static int abc(int a, double b) {
-        int x;
-        return x;
-    }
-
-    public static int lol() {
-        int x;
-        return x;
-    }
-
-    public static int lol() {
-        int x;
-        boolean b;
-        int a;
-        a = p;
-        return x;
-    }
-
     public static void asd(String[] args){
-        int g;
-        int h;
-      	boolean o;
-        int y;
-        boolean q;
-        if(o || y || q)
-
-        o = true;
-        g = -9;
-        h = +q;
-      	a = Integer.parseInt(args[g]);
-        g = 0;
-        h = 0;
-        abc(g, h);
-        lol();
+      int a;
+      boolean result;
+      a = 5;
+      p = true;
+      result = a == p;
     }
 }

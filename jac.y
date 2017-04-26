@@ -126,19 +126,19 @@ ParseArgs: PARSEINT OCURV IDAux OSQUARE Expr CSQUARE CCURV           {$$ = creat
 
 ExprAux: MethodInvocation                                            {$$ = create_and_insert_node("Call", 1, 1, $1);}
        | ParseArgs                                                   {$$ = create_and_insert_node("ParseArgs", 1, 1, $1);}
-       | ExprAux AND ExprAux                                         {$$ = create_and_insert_node("And", 1, 2, $1, $3);$$->token->line = $2->line;$$->token->col = $2->col;}
-       | ExprAux OR ExprAux                                          {$$ = create_and_insert_node("Or", 1, 2, $1, $3);$$->token->line = $2->line;$$->token->col = $2->col;}
-       | ExprAux EQ ExprAux                                          {$$ = create_and_insert_node("Eq", 1, 2, $1, $3);}
-       | ExprAux GEQ ExprAux                                         {$$ = create_and_insert_node("Geq", 1, 2, $1, $3);}
-       | ExprAux GT ExprAux                                          {$$ = create_and_insert_node("Gt", 1, 2, $1, $3);}
-       | ExprAux LEQ ExprAux                                         {$$ = create_and_insert_node("Leq", 1, 2, $1, $3);}
-       | ExprAux LT ExprAux                                          {$$ = create_and_insert_node("Lt", 1, 2, $1, $3);}
-       | ExprAux NEQ ExprAux                                         {$$ = create_and_insert_node("Neq", 1, 2, $1, $3);}
-       | ExprAux PLUS ExprAux                                        {$$ = create_and_insert_node("Add", 1, 2, $1, $3);}
-       | ExprAux MINUS ExprAux                                       {$$ = create_and_insert_node("Sub", 1, 2, $1, $3);}
-       | ExprAux STAR ExprAux                                        {$$ = create_and_insert_node("Mul", 1, 2, $1, $3);}
-       | ExprAux DIV ExprAux                                         {$$ = create_and_insert_node("Div", 1, 2, $1, $3);}
-       | ExprAux MOD ExprAux                                         {$$ = create_and_insert_node("Mod", 1, 2, $1, $3);}
+       | ExprAux AND ExprAux                                         {$$ = create_and_insert_node("And", 1, 2, $1, $3); $$->token->line = $2->line;$$->token->col = $2->col;}
+       | ExprAux OR ExprAux                                          {$$ = create_and_insert_node("Or", 1, 2, $1, $3); $$->token->line = $2->line;$$->token->col = $2->col;}
+       | ExprAux EQ ExprAux                                          {$$ = create_and_insert_node("Eq", 1, 2, $1, $3); $$->token->line = $2->line;$$->token->col = $2->col;}
+       | ExprAux GEQ ExprAux                                         {$$ = create_and_insert_node("Geq", 1, 2, $1, $3); $$->token->line = $2->line;$$->token->col = $2->col;}
+       | ExprAux GT ExprAux                                          {$$ = create_and_insert_node("Gt", 1, 2, $1, $3); $$->token->line = $2->line;$$->token->col = $2->col;}
+       | ExprAux LEQ ExprAux                                         {$$ = create_and_insert_node("Leq", 1, 2, $1, $3); $$->token->line = $2->line;$$->token->col = $2->col;}
+       | ExprAux LT ExprAux                                          {$$ = create_and_insert_node("Lt", 1, 2, $1, $3); $$->token->line = $2->line;$$->token->col = $2->col;}
+       | ExprAux NEQ ExprAux                                         {$$ = create_and_insert_node("Neq", 1, 2, $1, $3); $$->token->line = $2->line;$$->token->col = $2->col;}
+       | ExprAux PLUS ExprAux                                        {$$ = create_and_insert_node("Add", 1, 2, $1, $3); $$->token->line = $2->line;$$->token->col = $2->col;}
+       | ExprAux MINUS ExprAux                                       {$$ = create_and_insert_node("Sub", 1, 2, $1, $3); $$->token->line = $2->line;$$->token->col = $2->col;}
+       | ExprAux STAR ExprAux                                        {$$ = create_and_insert_node("Mul", 1, 2, $1, $3); $$->token->line = $2->line;$$->token->col = $2->col;}
+       | ExprAux DIV ExprAux                                         {$$ = create_and_insert_node("Div", 1, 2, $1, $3); $$->token->line = $2->line;$$->token->col = $2->col;}
+       | ExprAux MOD ExprAux                                         {$$ = create_and_insert_node("Mod", 1, 2, $1, $3); $$->token->line = $2->line;$$->token->col = $2->col;}
        | PLUS ExprAux %prec UNARY                                    {$$ = create_and_insert_node("Plus", 1, 1, $2);}
        | MINUS ExprAux %prec UNARY                                   {$$ = create_and_insert_node("Minus", 1, 1, $2);}
        | NOT ExprAux                                                 {$$ = create_and_insert_node("Not", 1, 1, $2);}
