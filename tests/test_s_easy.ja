@@ -1,6 +1,12 @@
 class gcd {
 
-    public static int lul(int b){
+    public static int lul(boolean b){
+      int x;
+      int y;
+      boolean z;
+      z = a == b;
+    }
+    public static int lul(boolean b){
       int x;
       int y;
       boolean z;
