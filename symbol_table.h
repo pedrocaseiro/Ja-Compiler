@@ -51,3 +51,4 @@ void parse_reallit_node(node*);
 void parse_boollit_node(node*);
 void parse_assign_node(node*);
 void create_an_tree(node*);
+char* fix(char*);
