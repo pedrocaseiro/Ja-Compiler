@@ -1798,7 +1798,7 @@ yyreduce:
 
   case 40:
 #line 102 "jac.y"
-    {(yyval.node) = create_and_insert_node("Assign", 1, 1, (yyvsp[(1) - (2)].node));}
+    {(yyval.node) = create_and_insert_node("Assign", 0, 1, (yyvsp[(1) - (2)].node));}
     break;
 
   case 41:
@@ -1843,7 +1843,7 @@ yyreduce:
 
   case 49:
 #line 113 "jac.y"
-    {(yyval.node) = create_and_insert_node("Assign", 0, 2, (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node));}
+    {(yyval.node) = create_and_insert_node("Assign", 1, 2, (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); (yyval.node)->token->line = (yyvsp[(2) - (3)].token)->line;(yyval.node)->token->col = (yyvsp[(2) - (3)].token)->col;}
     break;
 
   case 50:
@@ -2013,7 +2013,7 @@ yyreduce:
 
   case 83:
 #line 154 "jac.y"
-    {(yyval.node) = create_and_insert_node("Assign", 1, 1, (yyvsp[(1) - (1)].node));}
+    {(yyval.node) = create_and_insert_node("Assign", 0, 1, (yyvsp[(1) - (1)].node));}
     break;
 
   case 84:

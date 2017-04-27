@@ -99,7 +99,7 @@ Statement: OBRACE StatementL CBRACE                                  {if($2 != N
          | DO Statement WHILE OCURV Expr CCURV SEMI                  {if(check_while_statement($2)){ $2 = create_terminal_node("Block", 1, NULL);} $$ = create_and_insert_node("DoWhile", 1, 2, $2, $5);}
          | PRINT OCURV Expr CCURV SEMI                               {$$ = create_and_insert_node("Print", 1, 1, $3);}
          | PRINT OCURV StrLitAux CCURV SEMI                          {$$ = create_and_insert_node("Print", 1, 1, $3);}
-         | Assignment SEMI                                           {$$ = create_and_insert_node("Assign", 1, 1, $1);}
+         | Assignment SEMI                                           {$$ = create_and_insert_node("Assign", 0, 1, $1);}
          | MethodInvocation SEMI                                     {$$ = create_and_insert_node("Call", 1, 1, $1);}
          | ParseArgs SEMI                                            {$$ = create_and_insert_node("ParseArgs", 1, 1, $1);}
          | SEMI                                                      {$$ = create_terminal_node("Semi", 0, NULL);}
@@ -110,7 +110,7 @@ Statement: OBRACE StatementL CBRACE                                  {if($2 != N
 StatementL: StatementL Statement                                     {$$ = create_and_insert_node("Statement", 0, 2, $1, $2);}
           |                                                          {$$ = create_terminal_node("Empty", 0, NULL);}
 
-Assignment: IDAux ASSIGN Expr                                        {$$ = create_and_insert_node("Assign", 0, 2, $1, $3);}
+Assignment: IDAux ASSIGN Expr                                        {$$ = create_and_insert_node("Assign", 1, 2, $1, $3); $$->token->line = $2->line;$$->token->col = $2->col;}
 
 MethodInvocation: IDAux OCURV Expr CommaExpr CCURV                   {$$ = create_and_insert_node("Call", 0, 3, $1, $3, $4);}
                 | IDAux OCURV CCURV                                  {$$ = create_and_insert_node("Call", 0, 1, $1);}
@@ -151,7 +151,7 @@ ExprAux: MethodInvocation                                            {$$ = creat
        | OCURV error CCURV                                           {$$ = create_terminal_node("Error", 0, NULL);}
 
 
-Expr: Assignment                                                     {$$ = create_and_insert_node("Assign", 1, 1, $1);}
+Expr: Assignment                                                     {$$ = create_and_insert_node("Assign", 0, 1, $1);}
     | ExprAux                                                        {$$ = $1;}
 
 Type: BOOL                                                           {$$=create_terminal_node("Bool", 1, $1);}

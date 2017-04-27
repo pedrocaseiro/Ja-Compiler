@@ -6,4 +6,9 @@ class gcd {
       p = true;
       result = a == p;
     }
+
+    public static int lul(int b, int a){
+      a = b;
+      return a;
+    }
 }
