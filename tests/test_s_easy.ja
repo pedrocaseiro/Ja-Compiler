@@ -1,12 +1,13 @@
 class gcd {
-    public static void asd(String[] args){
-      int a;
-      boolean result;
-      a = 5;
-      p = true;
-      result = a == p;
-    }
 
+    public static void teste(String[] args){
+
+      int b;
+      boolean c;
+      c = Integer.parseInt(args[0]);
+
+
+    }
     public static int lul(int b, int a){
       a = b;
       return a;
