@@ -108,7 +108,7 @@ void first_traverse(node* n) {
       first_traverse(n->childs[i]);
     }
     for(i = 0; i < n -> n_children; i++){
-      if(!strcmp(n->childs[i]->token->id, "MethodDecl")){
+      if(!strcmp(n->childs[i]->token->id, "MethodDecl") && !n->childs[i]->childs[0]->duplicated_method){
         second_traverse(n->childs[i]);
       }
     }
@@ -120,8 +120,9 @@ void first_traverse(node* n) {
       params[i] = str_to_lower(n->childs[0]->childs[2]->childs[i]->childs[0]->token->id);
     }
 
-    insert_symbol(table[0], n->childs[0]->childs[1]->value, n_params, params, str_to_lower(n->childs[0]->childs[0]->token->id), NULL);
-    parse_methodheader_node(n->childs[0]);
+    if(parse_methodheader_node(n->childs[0]))
+      insert_symbol(table[0], n->childs[0]->childs[1]->value, n_params, params, str_to_lower(n->childs[0]->childs[0]->token->id), NULL);
+
   } else if(!strcmp(n->token->id, "FieldDecl")){
     insert_symbol(table[0], n->childs[1]->value, 0, NULL, str_to_lower(n->childs[0]->token->id), NULL);
     parse_fielddecl_node(n);
@@ -195,11 +196,11 @@ void parse_vardecl_node(node* n){
   int i;
   int count = 0;
   while(s != NULL){
-    if(s->flag != NULL){
-      if(!(strcmp(n->childs[1]->value, s->name)) && !strcmp(s->flag, "param")){
-        count++;
-      }
+
+    if(!strcmp(n->childs[1]->value, s->name)){
+      count++;
     }
+
     s = s->next;
   }
   if(count > 1){
@@ -207,12 +208,14 @@ void parse_vardecl_node(node* n){
   }
 }
 
-void parse_methodheader_node(node* n){
+bool parse_methodheader_node(node* n){
   symbol* s = (symbol*)malloc(sizeof(symbol));
   node* methodparams = (node*)malloc(sizeof(node));
   s = table[0]->first;
   int count = 0;
-  char* name = strdup(s->name);
+  if(s!=NULL){
+    char* name = strdup(s->name);
+  }
   while(s != NULL){
     if(!strcmp(s->name, n->childs[1]->value) && !strcmp(s->type, str_to_lower(n->childs[0]->token->id))){
       //check if they have the same parameters
@@ -249,9 +252,13 @@ void parse_methodheader_node(node* n){
     s = s->next;
   }
 
-  if(count > 1){
+  if(count == 1){
     printf("Line %d, col %d: Symbol %s already defined\n", n->childs[1]->token->line, n->childs[1]->token->col, n->childs[1]->value);
+    n->duplicated_method = true;
+
+    return false;
   }
+  return true;
 }
 
 /*
@@ -521,7 +528,7 @@ void create_an_tree(node *n){
     }
   } else if(!strcmp(n->token->id, "FieldDecl") || !strcmp(n->token->id, "MethodHeader") || !strcmp(n->token->id, "FormalParams") || !strcmp(n->token->id, "VarDecl")){
 
-  } else if(!strcmp(n->token->id, "MethodDecl")){
+  } else if(!strcmp(n->token->id, "MethodDecl") && !n->childs[0]->duplicated_method){
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
       }

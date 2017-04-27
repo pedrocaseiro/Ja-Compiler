@@ -15,6 +15,7 @@ typedef struct node {
 	char* anotated_type;
 	int n_children;
 	int to_be_used; // node works as aux and will be used if value = 1. Will not be used if value = 0;
+	bool duplicated_method;
 	struct node** childs;
 } node;
 
