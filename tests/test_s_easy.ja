@@ -1,7 +1,8 @@
 class gcd {
 
     public static int abc(){
-      return;
+      int b;
+      a = b+c;
     }
 
 }

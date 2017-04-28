@@ -492,6 +492,11 @@ void parse_minus_plus_nodes(node* n){
 
 
 void parse_logic_nodes(node* n){
+
+  if(!strcmp(n->childs[0]->anotated_type, "undef"))
+    printf("Line %d, col: %d Cannot find symbol %s\n", n->childs[0]->token->line, n->childs[0]->token->col,n->childs[0]->value);
+  if(!strcmp(n->childs[1]->anotated_type, "undef"))
+    printf("Line %d, col: %d Cannot find symbol %s\n", n->childs[1]->token->line, n->childs[1]->token->col,n->childs[1]->value);
   if(!strcmp(n->childs[0]->anotated_type, "double") || !strcmp(n->childs[1]->anotated_type, "double")){
     if(!strcmp(n->childs[0]->anotated_type, "int") || !strcmp(n->childs[1]->anotated_type, "int")){
       n->anotated_type = strdup("double");
@@ -598,10 +603,12 @@ void create_an_tree(node *n){
         create_an_tree(n->childs[i]);
       }
   } else if(!strcmp(n->token->id, "Assign")){
+
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
       }
       parse_assign_node(n);
+
   } else if(!strcmp(n->token->id, "Call")){
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
@@ -631,6 +638,7 @@ void create_an_tree(node *n){
       }
       parse_equality_nodes(n);
   } else if(!strcmp(n->token->id, "Add") || !strcmp(n->token->id, "Sub") || !strcmp(n->token->id, "Mul") || !strcmp(n->token->id, "Div") || !strcmp(n->token->id, "Mod")){
+
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
       }
@@ -744,6 +752,10 @@ char* fix(char* type){
     return ";";
   } else if(!strcmp(type, "Semi")){
     return ",";
+  } else if(!strcmp(type, "Add")){
+    return "+";
+  } else if(!strcmp(type, "Sub")){
+    return "-";
   }
 
   return type;
