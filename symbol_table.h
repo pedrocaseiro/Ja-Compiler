@@ -33,7 +33,7 @@ char* str_to_lower(char*);
 void insert_symbol(symbol_table*, char*, int, char**, char*, char*);
 
 void parse_return_node(node*, char*);
-void parse_formalparams_node(node*);
+bool parse_formalparams_node(node*);
 void parse_vardecl_node(node*);
 bool parse_methodheader_node(node*);
 void parse_fielddecl_node(node*);

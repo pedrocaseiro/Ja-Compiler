@@ -69,14 +69,12 @@ void second_traverse(node* n){
     params[i] = str_to_lower(n->childs[0]->childs[2]->childs[i]->childs[0]->token->id);
   }
   table[table_index] = new_symbol_table("Method", n->childs[0]->childs[1]->value, n_params, params);
-  /*if(!strcmp(n->token->id, "Return")){
-    printf("APANHEI RETURN\n");
-  }*/
 
   insert_symbol(table[table_index], strdup("return"), 0, NULL, str_to_lower(n->childs[0]->childs[0]->token->id), NULL);
   for(i = 0; i < n_params; i++){
-    insert_symbol(table[table_index], n->childs[0]->childs[2]->childs[i]->childs[1]->value, 0, NULL, table[table_index]->params[i], strdup("param"));
-    parse_formalparams_node(n->childs[0]->childs[2]->childs[i]);
+    if(parse_formalparams_node(n->childs[0]->childs[2]->childs[i]))
+      insert_symbol(table[table_index], n->childs[0]->childs[2]->childs[i]->childs[1]->value, 0, NULL, table[table_index]->params[i], strdup("param"));
+
   }
   for(i = 0; i < n->childs[1]->n_children; i++){
     if(!strcmp(n->childs[1]->childs[i]->token->id, "VarDecl")){
@@ -169,7 +167,7 @@ void iterate_tree(node *n){
   }
 }
 
-void parse_formalparams_node(node* n){
+bool parse_formalparams_node(node* n){
   symbol* s = (symbol*)malloc(sizeof(symbol));
   s = table[table_index]->first;
   int i;
@@ -183,9 +181,11 @@ void parse_formalparams_node(node* n){
     s = s->next;
   }
 
-  if(count > 1){
+  if(count >= 1){
     printf("Line %d, col %d: Symbol %s already defined\n", n->childs[1]->token->line, n->childs[1]->token->col, n->childs[1]->value);
+    return false;
   }
+  return true;
 }
 
 // We check if the variable is not already declared as a parameter

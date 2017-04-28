@@ -1,14 +1,7 @@
 class gcd {
 
-    public static void abc(int a){
+    public static int abc(){
       return;
     }
 
-    public static int lul(boolean b){
-      int x;
-      int y;
-      boolean z;
-      x = !z;
-      x = abc(y);
-    }
 }
