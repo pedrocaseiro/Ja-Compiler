@@ -409,7 +409,19 @@ void parse_call_node(node* n){
     } else if(ambiguous_counter == 0 && counter == 0){
       n->anotated_type = "undef";
       //printf("check %s", strcat(n->childs[0]->value, n->childs[0]->anotated_type));
-      printf("Line %d, col %d: Cannot find symbol %s\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->value);
+      int k;
+      char call_child_types[100]="(";
+      char result_to_print[100]="";
+
+      for(k = 1; k < n->n_children; k++){
+        strcat(call_child_types, n->childs[k]->anotated_type);
+        if(k != n->n_children - 1){
+          strcat(call_child_types, ",");
+        }
+      }
+      strcat(call_child_types, ")");
+      strcat(result_to_print, n->childs[0]->value);
+      printf("Line %d, col %d: Cannot find symbol %s\n", n->childs[0]->token->line, n->childs[0]->token->col, strcat(result_to_print, call_child_types));
     }
 }
 

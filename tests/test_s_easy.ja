@@ -14,7 +14,9 @@ class gcd {
       //b = -(-abc(-x,y));
       //b = !!p+k;
       int x;
-      b = aaa(x,c);
+      b = aaa(x,c,d);
+      b = aaa();
+      b = aaa(c);
 
     }
 
