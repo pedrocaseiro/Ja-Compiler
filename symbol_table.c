@@ -303,12 +303,6 @@ void parse_assign_node(node* n){
       error_flag = 1;
   } else if(!strcmp(n->childs[0]->anotated_type, "int") && !strcmp(n->childs[1]->anotated_type, "double")){
       error_flag = 1;
-  } else if(!strcmp(n->childs[0]->anotated_type, "undef") && (n->childs[0]->n_children == 0)){
-      printf("Line %d, col: %d Cannot find symbol %s\n", n->token->line, n->token->col, n->childs[0]->value);
-      error_flag = 1;
-  } else if(!strcmp(n->childs[1]->anotated_type, "undef") && (n->childs[1]->n_children == 0)){
-      printf("Line %d, col: %d Cannot find symbol %s\n", n->token->line, n->token->col,n->childs[1]->value);
-      error_flag = 1;
   } else if(!strcmp(n->childs[0]->anotated_type, "undef")){
       error_flag = 1;
   } else if(!strcmp(n->childs[1]->anotated_type, "undef")){
@@ -357,8 +351,10 @@ void parse_call_node(node* n){
   int i;
   int j;
   int k;
+  int counter = 0;
   const char *aux[100];
   int ambiguous_counter = 0;
+
   for(i = 1; i < table_index; i++){
     if(!strcmp(table[i]->name, n->childs[0]->value) && ((n->n_children - 1) == table[i]->n_params)){ // same name && same number of params
       // now we check if all the params match
@@ -387,7 +383,7 @@ void parse_call_node(node* n){
       }
 
       // this counter checks if we had a perfect match
-      int counter = 0;
+      counter = 0;
       for(k = 1; k < n->n_children; k++){
         if(!strcmp(n->childs[k]->anotated_type, aux[k-1])){
           counter++;
@@ -410,7 +406,11 @@ void parse_call_node(node* n){
     }
     if(ambiguous_counter > 1){
       printf("Line %d, col: %d Reference to method %s is ambiguous\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->value);
-  }
+    } else if(ambiguous_counter == 0 && counter == 0){
+      n->anotated_type = "undef";
+      //printf("check %s", strcat(n->childs[0]->value, n->childs[0]->anotated_type));
+      printf("Line %d, col %d: Cannot find symbol %s\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->value);
+    }
 }
 
 
@@ -418,6 +418,13 @@ void parse_call_node(node* n){
 void parse_parseargs_node(node* n){
 
   n->anotated_type = strdup("int");
+
+  if(!strcmp(n->childs[0]->anotated_type,"undef")){
+    printf("Line %d, col %d: Cannot find symbol %s\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->value);
+  }
+  if(!strcmp(n->childs[1]->anotated_type,"undef")){
+    printf("Line %d, col %d: Cannot find symbol %s\n", n->childs[1]->token->line, n->childs[1]->token->col, n->childs[1]->value);
+  }
   if(strcmp(n->childs[0]->anotated_type,"String[]")){
     n->anotated_type = strdup("undef");
     printf("Line %d, col: %d Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
@@ -459,14 +466,6 @@ void parse_equality_nodes(node* n){
     printf("Line %d, col: %d Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
   } else if(!strcmp(n->childs[0]->anotated_type,"double") && !strcmp(n->childs[1]->anotated_type,"boolean")){
     n->anotated_type = strdup("undef");
-    printf("Line %d, col: %d Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
-  } else if(!strcmp(n->childs[0]->anotated_type,"undef") && n->childs[0]->n_children == 0){
-    n->anotated_type = strdup("undef");
-    printf("Line %d, col: %d Cannot find symbol %s\n", n->childs[0]->token->line, n->childs[0]->token->col,n->childs[0]->value);
-    printf("Line %d, col: %d Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
-  } else if(!strcmp(n->childs[1]->anotated_type,"undef") && n->childs[1]->n_children == 0){
-    n->anotated_type = strdup("undef");
-    printf("Line %d, col: %d Cannot find symbol %s\n", n->childs[1]->token->line, n->childs[1]->token->col,n->childs[1]->value);
     printf("Line %d, col: %d Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
   } else if(!strcmp(n->childs[0]->anotated_type,"undef")){
     n->anotated_type = strdup("undef");
@@ -533,7 +532,13 @@ void parse_length_node(node* n){
 }
 
 void parse_declit_node(node* n){
-  n->anotated_type = strdup("int");
+  if((int*)n->value >= (int*)2147483648 || (int*)n->value <= (int*)-2147483648){
+    n->anotated_type = strdup("undef");
+    printf("Number 2147483648 out of bounds\n");
+  } else {
+    n->anotated_type = strdup("int");
+  }
+
 }
 
 void parse_boollit_node(node* n){
@@ -556,17 +561,83 @@ void parse_return_node(node* n, char* t){
   if(n->n_children == 0){
 
     if(strcmp("void",t)){
-      printf("Line %d, col: %d Incompatible type %s in %s statement\n", n->token->line, n->token->col-6, "void", fix(n->token->id));
+      printf("Line %d, col: %d Incompatible type %s in %s statement\n", n->token->line, n->token->col, "void", fix(n->token->id));
     }
   } else if(strcmp(n->childs[0]->anotated_type,t) && !strcmp(n->childs[0]->anotated_type, "undef")){
-    printf("Line %d, col: %d Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
     printf("Line %d, col: %d Cannot find symbol %s\n", n->childs[0]->token->line, n->childs[0]->token->col,n->childs[0]->value);
+    printf("Line %d, col: %d Incompatible type %s in %s statement\n", n->token->line, n->token->col, n->childs[0]->anotated_type, fix(n->token->id));
   }
   else if(strcmp(n->childs[0]->anotated_type,t)){
     printf("Line %d, col: %d Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
   }
 }
 
+void check_assign_definition(node* n){
+  if(!strcmp(n->childs[0]->anotated_type, "undef") && n->childs[0]->n_children == 0){
+      printf("Line %d, col: %d Cannot find symbol %s\n", n->token->line, n->token->col, n->childs[0]->value);
+  }
+}
+
+void check_call_definition(node* n){
+  int i;
+  for(i=1; i< n->n_children;i++){
+    if(!strcmp(n->childs[i]->anotated_type, "undef") && (n->childs[i]->n_children == 0)){
+      printf("Line %d, col: %d Cannot find symbol %s\n", n->childs[i]->token->line, n->childs[i]->token->col, n->childs[i]->value);
+    }
+
+  }
+}
+
+void check_and_or_definition(node* n){
+  int i;
+  for(i=0; i< n->n_children;i++){
+    if(!strcmp(n->childs[i]->anotated_type, "undef") && (n->childs[i]->n_children == 0)){
+      printf("Line %d, col: %d Cannot find symbol %s\n", n->childs[i]->token->line, n->childs[i]->token->col, n->childs[i]->value);
+    }
+
+  }
+}
+
+void check_minus_plus_definition(node* n){
+
+  if(!strcmp(n->childs[0]->anotated_type, "undef") && (n->childs[0]->n_children == 0)){
+    printf("Line %d, col: %d Cannot find symbol %s\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->value);
+  }
+
+}
+
+void check_not_definition(node* n){
+
+  if(!strcmp(n->childs[0]->anotated_type, "undef") && (n->childs[0]->n_children == 0)){
+    printf("AQUI mo not\n");
+    printf("Line %d, col: %d Cannot find symbol %s\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->value);
+  }
+
+}
+
+void check_equality_nodes(node* n){
+  if(!strcmp(n->childs[0]->anotated_type,"undef") && n->childs[0]->n_children == 0){
+    printf("Line %d, col: %d Cannot find symbol %s\n", n->childs[0]->token->line, n->childs[0]->token->col,n->childs[0]->value);
+  }
+  if(!strcmp(n->childs[1]->anotated_type,"undef") && n->childs[1]->n_children == 0){
+    printf("Line %d, col: %d Cannot find symbol %s\n", n->childs[1]->token->line, n->childs[1]->token->col,n->childs[1]->value);
+  }
+}
+
+void check_logic_nodes(node* n){
+  if(!strcmp(n->childs[0]->anotated_type,"undef") && n->childs[0]->n_children == 0){
+    printf("Line %d, col: %d Cannot find symbol %s\n", n->childs[0]->token->line, n->childs[0]->token->col,n->childs[0]->value);
+  }
+  if(!strcmp(n->childs[1]->anotated_type,"undef") && n->childs[1]->n_children == 0){
+    printf("Line %d, col: %d Cannot find symbol %s\n", n->childs[1]->token->line, n->childs[1]->token->col,n->childs[1]->value);
+  }
+}
+
+void check_length_nodes(node* n){
+  if(!strcmp(n->childs[0]->anotated_type,"undef") && n->childs[0]->n_children == 0){
+    printf("Line %d, col: %d Cannot find symbol %s\n", n->childs[0]->token->line, n->childs[0]->token->col,n->childs[0]->value);
+  }
+}
 
 void create_an_tree(node *n){
   int i = 0;
@@ -604,6 +675,7 @@ void create_an_tree(node *n){
       }
   } else if(!strcmp(n->token->id, "Assign")){
 
+      check_assign_definition(n);
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
       }
@@ -614,6 +686,7 @@ void create_an_tree(node *n){
         create_an_tree(n->childs[i]);
       }
       parse_call_node(n);
+      check_call_definition(n);
   } else if(!strcmp(n->token->id, "ParseArgs")){
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
@@ -628,35 +701,45 @@ void create_an_tree(node *n){
         create_an_tree(n->childs[i]);
       }
   } else if(!strcmp(n->token->id, "And") || !strcmp(n->token->id, "Or")){
+
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
       }
+      check_and_or_definition(n);
       parse_and_or_nodes(n);
+
   } else if(!strcmp(n->token->id, "Eq") || !strcmp(n->token->id, "Geq") || !strcmp(n->token->id, "Gt") || !strcmp(n->token->id, "Leq") || !strcmp(n->token->id, "Lt") || !strcmp(n->token->id, "Neq")){
+
+
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
       }
+      check_equality_nodes(n);
       parse_equality_nodes(n);
   } else if(!strcmp(n->token->id, "Add") || !strcmp(n->token->id, "Sub") || !strcmp(n->token->id, "Mul") || !strcmp(n->token->id, "Div") || !strcmp(n->token->id, "Mod")){
 
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
       }
+      check_logic_nodes(n);
       parse_logic_nodes(n);
   } else if(!strcmp(n->token->id, "Minus") || !strcmp(n->token->id, "Plus")){
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
       }
+      check_minus_plus_definition(n);
       parse_minus_plus_nodes(n);
   } else if(!strcmp(n->token->id, "Not")){
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
       }
+      check_not_definition(n);
       parse_not_node(n);
   } else if(!strcmp(n->token->id, "Length")){
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
       }
+      check_length_nodes(n);
       parse_length_node(n);
   } else if(!strcmp(n->token->id, "BoolLit")){
       parse_boollit_node(n);
@@ -756,6 +839,12 @@ char* fix(char* type){
     return "+";
   } else if(!strcmp(type, "Sub")){
     return "-";
+  } else if(!strcmp(type, "And")){
+    return "&&";
+  } else if(!strcmp(type, "Or")){
+    return "||";
+  } else if(!strcmp(type, "Length")){
+    return ".length";
   }
 
   return type;

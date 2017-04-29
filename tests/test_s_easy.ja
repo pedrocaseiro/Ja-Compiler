@@ -1,8 +1,22 @@
 class gcd {
 
-    public static int abc(){
-      int b;
-      a = b+c;
+    public static int abc(int a, int b){
+
     }
+
+    public static int cde(String[] args){
+
+      //a = abc(p+h, x);
+      //a = (o+h) && y;
+      int b;
+      boolean c;
+      c = true;
+      //b = -(-abc(-x,y));
+      //b = !!p+k;
+      int x;
+      b = aaa(x,c);
+
+    }
+
 
 }

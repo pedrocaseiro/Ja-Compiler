@@ -103,8 +103,8 @@ Statement: OBRACE StatementL CBRACE                                  {if($2 != N
          | MethodInvocation SEMI                                     {$$ = create_and_insert_node("Call", 1, 1, $1);}
          | ParseArgs SEMI                                            {$$ = create_and_insert_node("ParseArgs", 1, 1, $1);}
          | SEMI                                                      {$$ = create_terminal_node("Semi", 0, NULL);}
-         | RETURN Expr SEMI                                          {$$ = create_and_insert_node("Return", 1, 1, $2);}
-         | RETURN SEMI                                               {$$ = create_and_insert_node("Return", 1, 0);$$->token->line = $2->line;$$->token->col = $2->col;}
+         | RETURN Expr SEMI                                          {$$ = create_and_insert_node("Return", 1, 1, $2);$$->token->line = $1->line;$$->token->col = $1->col;}
+         | RETURN SEMI                                               {$$ = create_and_insert_node("Return", 1, 0);$$->token->line = $1->line;$$->token->col = $1->col;}
          | error SEMI                                                {$$ = create_terminal_node("Error", 0, NULL);}
 
 StatementL: StatementL Statement                                     {$$ = create_and_insert_node("Statement", 0, 2, $1, $2);}
@@ -145,9 +145,9 @@ ExprAux: MethodInvocation                                            {$$ = creat
        | IDAux                                                       {$$ = $1;}
        | IDAux DOTLENGTH                                             {$$ = create_and_insert_node("Length", 1, 1, $1);$$->token->line = $2->line;$$->token->col = $2->col;}
        | OCURV Expr CCURV                                            {$$ = $2;}
-       | BOOLLIT                                                     {$$=create_terminal_node("BoolLit", 1, $1);}
-       | DECLIT                                                      {$$=create_terminal_node("DecLit", 1, $1);}
-       | REALLIT                                                     {$$=create_terminal_node("RealLit", 1, $1);}
+       | BOOLLIT                                                     {$$=create_terminal_node("BoolLit", 1, $1);$$->token->line = $1->line;$$->token->col = $1->col;}
+       | DECLIT                                                      {$$=create_terminal_node("DecLit", 1, $1);$$->token->line = $1->line;$$->token->col = $1->col;}
+       | REALLIT                                                     {$$=create_terminal_node("RealLit", 1, $1);$$->token->line = $1->line;$$->token->col = $1->col;}
        | OCURV error CCURV                                           {$$ = create_terminal_node("Error", 0, NULL);}
 
 
@@ -158,7 +158,7 @@ Type: BOOL                                                           {$$=create_
     | INT                                                            {$$=create_terminal_node("Int", 1, $1);}
     | DOUBLE                                                         {$$=create_terminal_node("Double", 1, $1);}
 
-IDAux: ID                                                            {$$=create_terminal_node("Id", 1, $1);}
+IDAux: ID                                                            {$$=create_terminal_node("Id", 1, $1);$$->token->line = $1->line;$$->token->col = $1->col;}
 
 %%
 

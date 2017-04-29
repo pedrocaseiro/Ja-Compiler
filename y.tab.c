@@ -1719,13 +1719,13 @@ yyreduce:
 
   case 44:
 #line 106 "jac.y" /* yacc.c:1646  */
-    {(yyval.node) = create_and_insert_node("Return", 1, 1, (yyvsp[-1].node));}
+    {(yyval.node) = create_and_insert_node("Return", 1, 1, (yyvsp[-1].node));(yyval.node)->token->line = (yyvsp[-2].token)->line;(yyval.node)->token->col = (yyvsp[-2].token)->col;}
 #line 1724 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 45:
 #line 107 "jac.y" /* yacc.c:1646  */
-    {(yyval.node) = create_and_insert_node("Return", 1, 0);(yyval.node)->token->line = (yyvsp[0].token)->line;(yyval.node)->token->col = (yyvsp[0].token)->col;}
+    {(yyval.node) = create_and_insert_node("Return", 1, 0);(yyval.node)->token->line = (yyvsp[-1].token)->line;(yyval.node)->token->col = (yyvsp[-1].token)->col;}
 #line 1730 "y.tab.c" /* yacc.c:1646  */
     break;
 
@@ -1929,19 +1929,19 @@ yyreduce:
 
   case 79:
 #line 148 "jac.y" /* yacc.c:1646  */
-    {(yyval.node)=create_terminal_node("BoolLit", 1, (yyvsp[0].token));}
+    {(yyval.node)=create_terminal_node("BoolLit", 1, (yyvsp[0].token));(yyval.node)->token->line = (yyvsp[0].token)->line;(yyval.node)->token->col = (yyvsp[0].token)->col;}
 #line 1934 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 80:
 #line 149 "jac.y" /* yacc.c:1646  */
-    {(yyval.node)=create_terminal_node("DecLit", 1, (yyvsp[0].token));}
+    {(yyval.node)=create_terminal_node("DecLit", 1, (yyvsp[0].token));(yyval.node)->token->line = (yyvsp[0].token)->line;(yyval.node)->token->col = (yyvsp[0].token)->col;}
 #line 1940 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 81:
 #line 150 "jac.y" /* yacc.c:1646  */
-    {(yyval.node)=create_terminal_node("RealLit", 1, (yyvsp[0].token));}
+    {(yyval.node)=create_terminal_node("RealLit", 1, (yyvsp[0].token));(yyval.node)->token->line = (yyvsp[0].token)->line;(yyval.node)->token->col = (yyvsp[0].token)->col;}
 #line 1946 "y.tab.c" /* yacc.c:1646  */
     break;
 
@@ -1983,7 +1983,7 @@ yyreduce:
 
   case 88:
 #line 161 "jac.y" /* yacc.c:1646  */
-    {(yyval.node)=create_terminal_node("Id", 1, (yyvsp[0].token));}
+    {(yyval.node)=create_terminal_node("Id", 1, (yyvsp[0].token));(yyval.node)->token->line = (yyvsp[0].token)->line;(yyval.node)->token->col = (yyvsp[0].token)->col;}
 #line 1988 "y.tab.c" /* yacc.c:1646  */
     break;
 
