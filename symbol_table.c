@@ -98,7 +98,7 @@ void second_traverse(node* n){
 }
 
 void first_traverse(node* n) {
-  int i = 0, j;
+  int i = 0;
   if (!strcmp(n->token->id, "Program")) {
     table[table_index] = new_symbol_table("Class", n->childs[0]->value, 0, NULL);
     table_index++;
@@ -170,7 +170,6 @@ void iterate_tree(node *n){
 bool parse_formalparams_node(node* n){
   symbol* s = (symbol*)malloc(sizeof(symbol));
   s = table[table_index]->first;
-  int i;
   int count = 0;
   while(s != NULL){
     if(s->flag != NULL){
@@ -193,7 +192,6 @@ bool parse_formalparams_node(node* n){
 void parse_vardecl_node(node* n){
   symbol* s = (symbol*)malloc(sizeof(symbol));
   s = table[table_index]->first;
-  int i;
   int count = 0;
   while(s != NULL){
 
@@ -213,9 +211,6 @@ bool parse_methodheader_node(node* n){
   node* methodparams = (node*)malloc(sizeof(node));
   s = table[0]->first;
   int count = 0;
-  if(s!=NULL){
-    char* name = strdup(s->name);
-  }
   while(s != NULL){
     if(!strcmp(s->name, n->childs[1]->value) && !strcmp(s->type, str_to_lower(n->childs[0]->token->id))){
       //check if they have the same parameters
@@ -336,8 +331,6 @@ void parse_assign_node(node* n){
   }
 
   if(error_flag == 1){
-    //n->anotated_type = "undef";
-    // TODO: CHECKAR LINHAS E COLUNAS PERGUNTAR AO STOR
     printf("Line %d, col: %d Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
   }
 }
@@ -349,7 +342,6 @@ void parse_assign_node(node* n){
 // senão está bem
 void parse_call_node(node* n){
   int i;
-  int j;
   int k;
   int counter = 0;
   const char *aux[100];
@@ -544,13 +536,9 @@ void parse_length_node(node* n){
 }
 
 void parse_declit_node(node* n){
-  if((int*)n->value >= (int*)2147483648 || (int*)n->value <= (int*)-2147483648){
-    n->anotated_type = strdup("undef");
-    printf("Number 2147483648 out of bounds\n");
-  } else {
-    n->anotated_type = strdup("int");
-  }
-
+  /*if((int*)n->value >= (int*)2147483648 || (int*)n->value <= (int*)-2147483648)
+    printf("Number 2147483648 out of bounds\n");*/
+  n->anotated_type = strdup("int");
 }
 
 void parse_boollit_node(node* n){

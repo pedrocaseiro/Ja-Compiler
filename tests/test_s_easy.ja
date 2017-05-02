@@ -9,16 +9,21 @@ class gcd {
       //a = abc(p+h, x);
       //a = (o+h) && y;
       int b;
-      boolean c;
-      c = true;
+      //boolean c;
+      //c = true;
       //b = -(-abc(-x,y));
       //b = !!p+k;
-      int x;
-      b = aaa(x,c,d);
-      b = aaa();
-      b = aaa(c);
+      //int x;
+      //b = aaa(x,c,d);
+      //b = aaa();
+      //b = aaa(c);
 
+      b = abc(true, 5);
     }
 
+
+    public static int abc(boolean a, int b){
+      int c;
+    }
 
 }
