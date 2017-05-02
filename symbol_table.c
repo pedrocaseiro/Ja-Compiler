@@ -60,6 +60,7 @@ void insert_symbol(symbol_table* st, char* name, int n_params, char** params, ch
 }
 
 void second_traverse(node* n){
+  //printf("type: %s\n", n->token->id);
   int n_params = n->childs[0]->childs[2]->n_children;//MethodHeader->MethodParams->n_children
   char** params = (char**)malloc(sizeof(char*)*n_params);
   int i;
@@ -74,16 +75,18 @@ void second_traverse(node* n){
   for(i = 0; i < n_params; i++){
     if(parse_formalparams_node(n->childs[0]->childs[2]->childs[i]))
       insert_symbol(table[table_index], n->childs[0]->childs[2]->childs[i]->childs[1]->value, 0, NULL, table[table_index]->params[i], strdup("param"));
-
   }
+
   for(i = 0; i < n->childs[1]->n_children; i++){
     if(!strcmp(n->childs[1]->childs[i]->token->id, "VarDecl")){
-      insert_symbol(table[table_index], n->childs[1]->childs[i]->childs[1]->value, 0, NULL, str_to_lower(n->childs[1]->childs[i]->childs[0]->token->id), NULL);
       // we call it with n as a VarDecl node
-      parse_vardecl_node(n->childs[1]->childs[i]);
+      if(parse_vardecl_node(n->childs[1]->childs[i])){
+        insert_symbol(table[table_index], n->childs[1]->childs[i]->childs[1]->value, 0, NULL, str_to_lower(n->childs[1]->childs[i]->childs[0]->token->id), NULL);
+      }
     }
   }
 
+  // we pass method body
   iterate_tree(n->childs[1]);
 
   for(i=0; i<n->childs[1]->n_children; i++){
@@ -106,11 +109,11 @@ void first_traverse(node* n) {
       first_traverse(n->childs[i]);
     }
     for(i = 0; i < n -> n_children; i++){
-      if(!strcmp(n->childs[i]->token->id, "MethodDecl") && !n->childs[i]->childs[0]->duplicated_method){
+      if(!strcmp(n->childs[i]->token->id, "MethodDecl") && n->childs[i]->childs[0]->duplicated_method == 0){
         second_traverse(n->childs[i]);
       }
     }
-  } else if(!strcmp(n->token->id, "MethodDecl")){
+  } else if(!strcmp(n->token->id, "MethodDecl") && n->childs[0]->duplicated_method == 0){
     int n_params = n->childs[0]->childs[2]->n_children;//MethodHeader->MethodParams->n_children
     char** params = (char**)malloc(sizeof(char*)*n_params);
     for(i = 0; i < n_params; i++){
@@ -118,9 +121,9 @@ void first_traverse(node* n) {
       params[i] = str_to_lower(n->childs[0]->childs[2]->childs[i]->childs[0]->token->id);
     }
 
-    if(parse_methodheader_node(n->childs[0]))
+    if(parse_methodheader_node(n->childs[0])){
       insert_symbol(table[0], n->childs[0]->childs[1]->value, n_params, params, str_to_lower(n->childs[0]->childs[0]->token->id), NULL);
-
+    }
   } else if(!strcmp(n->token->id, "FieldDecl")){
     insert_symbol(table[0], n->childs[1]->value, 0, NULL, str_to_lower(n->childs[0]->token->id), NULL);
     parse_fielddecl_node(n);
@@ -131,13 +134,11 @@ void first_traverse(node* n) {
 void iterate_tree(node *n){
   int i;
   for (i = 0; i < n->n_children; i++) {
-
       if(!strcmp(n->childs[i]->token->id, "Id") && strcmp(n->token->id, "VarDecl")){
         symbol* s = (symbol*)malloc(sizeof(symbol));
 
         s = table[table_index]->first;
         while(s != NULL){
-          //printf("%s %s\n", s->token->id, s->name);
           if(!strcmp(n->childs[i]->value, s->name)){
             n->childs[i]->anotated_type = strdup(s->type);
             break;
@@ -146,7 +147,6 @@ void iterate_tree(node *n){
             symbol* g = (symbol*)malloc(sizeof(symbol));
             g = table[0]->first;
             while(g != NULL){
-              //printf("%s %s\n", s->type, s->name);
               if(!strcmp(n->childs[i]->value, g->name) && g->params == NULL){
                 n->childs[i]->anotated_type = strdup(g->type);
                 break;
@@ -159,10 +159,7 @@ void iterate_tree(node *n){
         if(n->childs[i]->anotated_type == NULL){
           n->childs[i]->anotated_type = strdup("undef");
         }
-
-
       }
-
       iterate_tree(n->childs[i]);
   }
 }
@@ -189,21 +186,21 @@ bool parse_formalparams_node(node* n){
 
 // We check if the variable is not already declared as a parameter
 // We check if in the local table there is a variable with the same name, and flag equal to param
-void parse_vardecl_node(node* n){
+bool parse_vardecl_node(node* n){
   symbol* s = (symbol*)malloc(sizeof(symbol));
   s = table[table_index]->first;
   int count = 0;
   while(s != NULL){
-
     if(!strcmp(n->childs[1]->value, s->name)){
       count++;
     }
-
     s = s->next;
   }
-  if(count > 1){
+  if(count == 1){
     printf("Line %d, col %d: Symbol %s already defined\n", n->childs[1]->token->line, n->childs[1]->token->col, n->childs[1]->value);
+    return false;
   }
+  return true;
 }
 
 bool parse_methodheader_node(node* n){
@@ -249,9 +246,10 @@ bool parse_methodheader_node(node* n){
 
   if(count == 1){
     printf("Line %d, col %d: Symbol %s already defined\n", n->childs[1]->token->line, n->childs[1]->token->col, n->childs[1]->value);
-    n->duplicated_method = true;
-
+    n->duplicated_method = 1;
     return false;
+  } else {
+    n->duplicated_method = 0;
   }
   return true;
 }
@@ -397,10 +395,10 @@ void parse_call_node(node* n){
     }
     }
     if(ambiguous_counter > 1){
+      n->anotated_type = "undef";
+      n->childs[0]->anotated_type = "undef";
       printf("Line %d, col: %d Reference to method %s is ambiguous\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->value);
     } else if(ambiguous_counter == 0 && counter == 0){
-      n->anotated_type = "undef";
-      //printf("check %s", strcat(n->childs[0]->value, n->childs[0]->anotated_type));
       int k;
       char call_child_types[100]="(";
       char result_to_print[100]="";
@@ -413,6 +411,8 @@ void parse_call_node(node* n){
       }
       strcat(call_child_types, ")");
       strcat(result_to_print, n->childs[0]->value);
+      n->anotated_type = "undef";
+      n->childs[0]->anotated_type = "undef";
       printf("Line %d, col %d: Cannot find symbol %s\n", n->childs[0]->token->line, n->childs[0]->token->col, strcat(result_to_print, call_child_types));
     }
 }
@@ -649,7 +649,7 @@ void create_an_tree(node *n){
     }
   } else if(!strcmp(n->token->id, "FieldDecl") || !strcmp(n->token->id, "MethodHeader") || !strcmp(n->token->id, "FormalParams") || !strcmp(n->token->id, "VarDecl")){
 
-  } else if(!strcmp(n->token->id, "MethodDecl") && !n->childs[0]->duplicated_method){
+  } else if(!strcmp(n->token->id, "MethodDecl") && n->childs[0]->duplicated_method == 0){
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
       }
@@ -845,6 +845,8 @@ char* fix(char* type){
     return "||";
   } else if(!strcmp(type, "Length")){
     return ".length";
+  } else if(!strcmp(type, "Return")){
+    return "return";
   }
 
   return type;

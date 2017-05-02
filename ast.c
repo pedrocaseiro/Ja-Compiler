@@ -28,7 +28,7 @@ node* newnode(char* nodetype, int to_be_used) {
   new_node->to_be_used = to_be_used;
   new_node->n_children = 0;
   new_node->childs = NULL;
-  new_node->duplicated_method = false;
+  new_node->duplicated_method = 0;
   return new_node;
 }
 
