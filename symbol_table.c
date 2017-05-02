@@ -208,14 +208,17 @@ bool parse_methodheader_node(node* n){
   node* methodparams = (node*)malloc(sizeof(node));
   s = table[0]->first;
   int count = 0;
+  char str[100];
+  char str2[100];
   while(s != NULL){
 
     if(!strcmp(s->name, n->childs[1]->value) && !strcmp(s->type, str_to_lower(n->childs[0]->token->id))){
       //check if they have the same parameters
 
       // reconstruct symbol params
-      char str[100]="";
-      char str2[100]="";
+      strcat(str, "");
+      strcat(str2, "");
+
       if(s->n_params > 0){
         int j;
         for(j = 0; j < s->n_params; j++){
@@ -245,7 +248,7 @@ bool parse_methodheader_node(node* n){
   }
 
   if(count == 1){
-    printf("Line %d, col %d: Symbol %s already defined\n", n->childs[1]->token->line, n->childs[1]->token->col, n->childs[1]->value);
+    printf("Line %d, col %d: Symbol %s(%s) already defined\n", n->childs[1]->token->line, n->childs[1]->token->col, n->childs[1]->value, str);
     n->duplicated_method = 1;
     return false;
   } else {
@@ -353,8 +356,7 @@ void parse_call_node(node* n){
       symbol* g = (symbol*)malloc(sizeof(symbol));
       g = table[0]->first;
       while(g != NULL){
-        if(!strcmp(n->childs[0]->value, g->name) && g->params != NULL){
-
+        if(!strcmp(n->childs[0]->value, g->name) && g->params != NULL && g->n_params == n->n_children-1){
           char str[100]="(";
 
           if(g->n_params > 0){
@@ -383,7 +385,6 @@ void parse_call_node(node* n){
         for(k = 1; k < n->n_children; k++){
           if(!strcmp(n->childs[k]->anotated_type, aux[k-1])){
             counter++;
-
           }
         }
       }
