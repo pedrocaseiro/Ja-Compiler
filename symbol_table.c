@@ -346,6 +346,7 @@ void parse_call_node(node* n){
   int ambiguous_counter = 0;
 
   for(i = 1; i < table_index; i++){
+    counter = 0;
     if(!strcmp(table[i]->name, n->childs[0]->value) && ((n->n_children - 1) == table[i]->n_params)){ // same name && same number of params
       // now we check if all the params match
       n->anotated_type = table[i]->first->type;
@@ -373,10 +374,14 @@ void parse_call_node(node* n){
       }
 
       // this counter checks if we had a perfect match
-      counter = 0;
-      for(k = 1; k < n->n_children; k++){
-        if(!strcmp(n->childs[k]->anotated_type, aux[k-1])){
-          counter++;
+      if(table[i]->n_params == 0){
+        counter++;
+      } else {
+        counter = 0;
+        for(k = 1; k < n->n_children; k++){
+          if(!strcmp(n->childs[k]->anotated_type, aux[k-1])){
+            counter++;
+          }
         }
       }
 
