@@ -209,13 +209,13 @@ bool parse_methodheader_node(node* n){
   s = table[0]->first;
   int count = 0;
   while(s != NULL){
+
     if(!strcmp(s->name, n->childs[1]->value) && !strcmp(s->type, str_to_lower(n->childs[0]->token->id))){
       //check if they have the same parameters
 
       // reconstruct symbol params
       char str[100]="";
       char str2[100]="";
-
       if(s->n_params > 0){
         int j;
         for(j = 0; j < s->n_params; j++){
@@ -346,7 +346,6 @@ void parse_call_node(node* n){
   int ambiguous_counter = 0;
 
   for(i = 1; i < table_index; i++){
-    counter = 0;
     if(!strcmp(table[i]->name, n->childs[0]->value) && ((n->n_children - 1) == table[i]->n_params)){ // same name && same number of params
       // now we check if all the params match
       n->anotated_type = table[i]->first->type;
@@ -355,9 +354,12 @@ void parse_call_node(node* n){
       g = table[0]->first;
       while(g != NULL){
         if(!strcmp(n->childs[0]->value, g->name) && g->params != NULL){
+
           char str[100]="(";
+
           if(g->n_params > 0){
             int j;
+
             for(j = 0; j < g->n_params; j++){
               aux[j] = g->params[j];
               strcat(str, g->params[j]);
@@ -368,7 +370,6 @@ void parse_call_node(node* n){
           }
           strcat(str, ")");
           n->childs[0]->anotated_type = strdup(str);
-          break;
         }
         g = g->next;
       }
@@ -378,9 +379,11 @@ void parse_call_node(node* n){
         counter++;
       } else {
         counter = 0;
+
         for(k = 1; k < n->n_children; k++){
           if(!strcmp(n->childs[k]->anotated_type, aux[k-1])){
             counter++;
+
           }
         }
       }
@@ -418,6 +421,7 @@ void parse_call_node(node* n){
       strcat(result_to_print, n->childs[0]->value);
       n->anotated_type = "undef";
       n->childs[0]->anotated_type = "undef";
+
       printf("Line %d, col %d: Cannot find symbol %s\n", n->childs[0]->token->line, n->childs[0]->token->col, strcat(result_to_print, call_child_types));
     }
 }
@@ -614,7 +618,6 @@ void check_minus_plus_definition(node* n){
 void check_not_definition(node* n){
 
   if(!strcmp(n->childs[0]->anotated_type, "undef") && (n->childs[0]->n_children == 0)){
-    printf("AQUI mo not\n");
     printf("Line %d, col: %d Cannot find symbol %s\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->value);
   }
 
