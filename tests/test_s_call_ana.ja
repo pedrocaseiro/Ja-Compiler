@@ -2,6 +2,7 @@ class gcd2 {
 public static int a(){
 int a; double b;
 boolean d;
+	b(true);
 	b(d,d,d,d);
 	meow(a);
 }
@@ -22,7 +23,7 @@ public static void b(double b, double c){
 }
 public static boolean b(int a, int b){}
 
-public static double b(){;}
+public static double b(boolean x){;}
 public static int b(boolean asd, boolean b, boolean d, boolean o){
 	int a;
 	b(d,d,d,d);

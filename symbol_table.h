@@ -32,6 +32,10 @@ void print_symbol_table(symbol*);
 char* str_to_lower(char*);
 void insert_symbol(symbol_table*, char*, int, char**, char*, char*);
 
+
+void parse_while_node(node*);
+void parse_do_while_node(node*);
+void parse_if_node(node*);
 void parse_return_node(node*);
 bool parse_formalparams_node(node*);
 bool parse_vardecl_node(node*);

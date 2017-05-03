@@ -1,5 +1,10 @@
 class gcd {
+  public static int main(){
+    System.out.println(a);
+    double a;
+  }
+
   public static int a;
-  public static int a(){}
+
 
 }
