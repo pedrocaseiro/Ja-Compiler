@@ -452,11 +452,9 @@ void parse_parseargs_node(node* n){
 void parse_and_or_nodes(node* n){
   n->anotated_type = strdup("boolean");
   if(strcmp(n->childs[0]->anotated_type,"boolean")){
-    n->anotated_type = strdup("undef");
     printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
   }
   if(strcmp(n->childs[1]->anotated_type,"boolean")){
-    n->anotated_type = strdup("undef");
     printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[1]->token->line, n->childs[1]->token->col, n->childs[1]->anotated_type, fix(n->token->id));
   }
 }
@@ -469,22 +467,16 @@ void parse_equality_nodes(node* n){
 
   n->anotated_type = strdup("boolean");
   if(!strcmp(n->childs[0]->anotated_type,"boolean") && !strcmp(n->childs[1]->anotated_type,"int")){
-    n->anotated_type = strdup("undef");
     printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
   } else if(!strcmp(n->childs[0]->anotated_type,"int") && !strcmp(n->childs[1]->anotated_type,"boolean")){
-    n->anotated_type = strdup("undef");
     printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
   } else if(!strcmp(n->childs[0]->anotated_type,"boolean") && !strcmp(n->childs[1]->anotated_type,"double")){
-    n->anotated_type = strdup("undef");
     printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
   } else if(!strcmp(n->childs[0]->anotated_type,"double") && !strcmp(n->childs[1]->anotated_type,"boolean")){
-    n->anotated_type = strdup("undef");
     printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
   } else if(!strcmp(n->childs[0]->anotated_type,"undef")){
-    n->anotated_type = strdup("undef");
     printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
   } else if(!strcmp(n->childs[1]->anotated_type,"undef")){
-    n->anotated_type = strdup("undef");
     printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
   }
 }
@@ -532,7 +524,6 @@ void parse_not_node(node* n){
     n->anotated_type = strdup("boolean");
   } else {
     printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type,fix(n->token->id));
-    n->anotated_type = strdup("undef");
   }
 }
 
@@ -545,7 +536,10 @@ void parse_length_node(node* n){
 }
 
 void parse_declit_node(node* n){
-  /*if((int*)n->value >= (int*)2147483648 || (int*)n->value <= (int*)-2147483648)
+  //printf("%s\n", n->value);
+  //unsigned long long int value = atoi(n->value);
+  //printf("%llu\n", value);
+  /*if(value >= 2147483648 || value <= -2147483648)
     printf("Number 2147483648 out of bounds\n");*/
   n->anotated_type = strdup("int");
 }
@@ -752,10 +746,15 @@ void create_an_tree(node *n){
       check_and_or_definition(n);
       parse_and_or_nodes(n);
   } else if(!strcmp(n->token->id, "Eq") || !strcmp(n->token->id, "Geq") || !strcmp(n->token->id, "Gt") || !strcmp(n->token->id, "Leq") || !strcmp(n->token->id, "Lt") || !strcmp(n->token->id, "Neq")){
-      for(i = 0; i < n->n_children; i++){
+
+      create_an_tree(n->childs[0]);
+      create_an_tree(n->childs[1]);
+      check_equality_nodes(n);
+
+      for(i = 2; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
       }
-      check_equality_nodes(n);
+
       parse_equality_nodes(n);
   } else if(!strcmp(n->token->id, "Add") || !strcmp(n->token->id, "Sub") || !strcmp(n->token->id, "Mul") || !strcmp(n->token->id, "Div") || !strcmp(n->token->id, "Mod")){
       for(i = 0; i < n->n_children; i++){

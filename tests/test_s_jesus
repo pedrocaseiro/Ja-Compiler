@@ -1,48 +1,12 @@
 class gcd {
 
-  public static int fastio(int a, int b, int c, double c, boolean e){
+  public static int main(boolean d){
 
+    boolean a;
+    a = 5 > (3+true);
 
+    int a;
+    a = 2134567890743213497807243147890743;
   }
-
-
-  public static int a;
-
-  public static boolean a;
-
-  public static int b;
-
-  public static int a;
-
-  public static int k(){
-    return false;
-  }
-
-  public static int k(){
-     fastio(1,2,3,4,true);
-  }
-
-  public static int c(String[] args){
-
-    /*a = a.length;
-    int g;
-    boolean u;
-    g = !a;
-    while(u>a){
-      a = true;
-    }*/
-
-    p = pp;
-    System.out.println(args);
-
-    a= 5 && true;
-    double r;
-    r = 5;
-    t = 3;
-    double x;
-  }
-
-  public static boolean a;
-
 
 }
