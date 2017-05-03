@@ -55,6 +55,7 @@ void parse_declit_node(node*);
 void parse_reallit_node(node*);
 void parse_boollit_node(node*);
 void parse_assign_node(node*);
+void parse_print_node(node*);
 
 void check_assign_definition(node*);
 void check_call_definition(node*);

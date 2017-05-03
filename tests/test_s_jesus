@@ -1,18 +1,48 @@
 class gcd {
-  public static int main(){
-    f(true);
-    y(5,5);
-    t(6);
+
+  public static int fastio(int a, int b, int c, double c, boolean e){
+
+
   }
 
-  public static boolean f(boolean h){}
-  public static int f(boolean h){}
 
-  public static boolean y(double h, int y){}
-  public static int y(int h, double t){}
+  public static int a;
 
-  public static boolean t(int y){}
-  public static int t(double t){}
+  public static boolean a;
+
+  public static int b;
+
+  public static int a;
+
+  public static int k(){
+    return false;
+  }
+
+  public static int k(){
+     fastio(1,2,3,4,true);
+  }
+
+  public static int c(String[] args){
+
+    /*a = a.length;
+    int g;
+    boolean u;
+    g = !a;
+    while(u>a){
+      a = true;
+    }*/
+
+    p = pp;
+    System.out.println(args);
+
+    a= 5 && true;
+    double r;
+    r = 5;
+    t = 3;
+    double x;
+  }
+
+  public static boolean a;
 
 
 }
