@@ -364,32 +364,86 @@ void parse_assign_node(node* n){
 // se variavel > 1 -> ambiguous
 
 
-/*
+
 void parse_call_node(node* n){
-  int i, k;
+  int k;
   int counter = 0;
+  int ambiguous_counter = 0;
   int matches = 0;
+  int flag = 0;
   symbol* g = (symbol*)malloc(sizeof(symbol));
   g = table[0]->first;
 
   while(g != NULL){
+    counter = 0;
+    ambiguous_counter = 0;
     if(!strcmp(n->childs[0]->value, g->name) && ((n->n_children - 1) == g->n_params)){
       n->anotated_type = g->type;
       for(k = 0; k < g->n_params; k++){
-        if(!strcmp(n->childs[k+1]->anotated_type, g->params[k])){
+        if(!strcmp(n->childs[k+1]->anotated_type, g->params[k]) ){
           counter++;
+        } else if(!strcmp(n->childs[k+1]->anotated_type, "int") && !strcmp(g->params[k], "double")){
+          ambiguous_counter++;
         }
       }
-    }
-    if(counter == g->n_params){
-      matches++;
-      printf("%d\n", matches);
+      if(counter == g->n_params){
+        flag = 1;
+        matches++;
+        char str[1000]="(";
+        int j;
+        for(j = 0; j < g->n_params; j++){
+          strcat(str, g->params[j]);
+          if(j != g->n_params - 1){
+            strcat(str, ",");
+            }
+        }
+
+        strcat(str, ")");
+        n->childs[0]->anotated_type = strdup(str);
+
+      } else if(counter + ambiguous_counter == g->n_params){
+        matches++;
+        char str[1000]="(";
+        int j;
+        for(j = 0; j < g->n_params; j++){
+          strcat(str, g->params[j]);
+          if(j != g->n_params - 1){
+            strcat(str, ",");
+            }
+        }
+
+        strcat(str, ")");
+        n->childs[0]->anotated_type = strdup(str);
+      }
     }
     g = g->next;
   }
-}*/
 
+  if(matches > 1 && flag == 0){
+    n->anotated_type = "undef";
+    n->childs[0]->anotated_type = "undef";
+    printf("Line %d, col %d: Reference to method %s is ambiguous\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->value);
+  } else if(matches == 0){
+    int k;
+    char call_child_types[1000]="(";
+    char result_to_print[1000]="";
 
+    //mandar print correto
+    for(k = 1; k < n->n_children; k++){
+      strcat(call_child_types, n->childs[k]->anotated_type);
+      if(k != n->n_children - 1){
+        strcat(call_child_types, ",");
+      }
+    }
+    strcat(call_child_types, ")");
+    strcat(result_to_print, n->childs[0]->value);
+    n->anotated_type = "undef";
+    n->childs[0]->anotated_type = "undef";
+    printf("Line %d, col %d: Cannot find symbol %s\n", n->childs[0]->token->line, n->childs[0]->token->col, strcat(result_to_print, call_child_types));
+  }
+}
+
+/*
 void parse_call_node(node* n){
   int i;
   int k;
@@ -475,7 +529,7 @@ void parse_call_node(node* n){
     }
 }
 
-
+*/
 void parse_parseargs_node(node* n){
 
   n->anotated_type = strdup("int");

@@ -1,5 +1,5 @@
 class CallingMethodsInSameClass {
-  /*public static int f;
+  public static int f;
   public static boolean f;
   public static boolean f(int a){}
 	public static void main(String[] args) {
@@ -35,13 +35,6 @@ class CallingMethodsInSameClass {
 
   public static int f(){
     return;
-  }*/
-
-  public static int f;
-  public static int main(String[] args){
-    f(5);
-    return 0;
   }
-  public static int f(int a){}
 
 }

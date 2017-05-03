@@ -1,0 +1,218 @@
+Line 11, col 22: Symbol printOne() already defined
+Line 19, col 21: Symbol a already defined
+Line 20, col 46: Symbol a already defined
+Line 29, col 37: Symbol a already defined
+Line 29, col 51: Symbol c already defined
+Line 29, col 61: Symbol c already defined
+Line 29, col 71: Symbol a already defined
+Line 29, col 78: Symbol c already defined
+Line 33, col 37: Symbol a already defined
+Line 33, col 51: Symbol c already defined
+Line 33, col 61: Symbol c already defined
+Line 33, col 71: Symbol a already defined
+Line 33, col 78: Symbol c already defined
+Line 33, col 21: Symbol m(int,double,int,int,double,double,int) already defined
+Line 35, col 51: Symbol b already defined
+Line 35, col 61: Symbol a already defined
+Line 35, col 71: Symbol c already defined
+Line 35, col 78: Symbol a already defined
+Line 35, col 21: Symbol m(int,double,int,int,double,double,int) already defined
+Line 25, col 8: Incompatible type int in if statement
+Line 30, col 14: Incompatible type double in return statement
+Line 31, col 5: Incompatible type void in return statement
+===== Class CallingMethodsInSameClass Symbol Table =====
+a		int
+main	(String[])	void
+printOne	()	void
+printTwo	()	void
+printTree	(int,double)	void
+a	()	int
+m	(int,double,int,int,double,double,int)	int
+
+===== Method main(String[]) Symbol Table =====
+return		void
+args		String[]	param
+
+===== Method printOne() Symbol Table =====
+return		void
+
+===== Method printTwo() Symbol Table =====
+return		void
+
+===== Method printTree(int,double) Symbol Table =====
+return		void
+a		int	param
+
+===== Method a() Symbol Table =====
+return		int
+
+===== Method m(int,double,int,int,double,double,int) Symbol Table =====
+return		int
+a		int	param
+c		int	param
+
+Program
+..Id(CallingMethodsInSameClass)
+..FieldDecl
+....Int
+....Id(a)
+..MethodDecl
+....MethodHeader
+......Void
+......Id(main)
+......MethodParams
+........ParamDecl
+..........StringArray
+..........Id(args)
+....MethodBody
+......Call - void
+........Id(printOne) - ()
+......Call - void
+........Id(printOne) - ()
+......Call - void
+........Id(printTwo) - ()
+..MethodDecl
+....MethodHeader
+......Void
+......Id(printOne)
+......MethodParams
+....MethodBody
+......Print
+........StrLit("Hello World") - String
+..MethodDecl
+....MethodHeader
+......Void
+......Id(printOne)
+......MethodParams
+....MethodBody
+......Print
+........StrLit("Hello World")
+..MethodDecl
+....MethodHeader
+......Void
+......Id(printTwo)
+......MethodParams
+....MethodBody
+......Call - void
+........Id(printOne) - ()
+......Call - void
+........Id(printOne) - ()
+..FieldDecl
+....Int
+....Id(a)
+..MethodDecl
+....MethodHeader
+......Void
+......Id(printTree)
+......MethodParams
+........ParamDecl
+..........Int
+..........Id(a)
+........ParamDecl
+..........Double
+..........Id(a)
+....MethodBody
+......Call - void
+........Id(printOne) - ()
+......Call - void
+........Id(printTwo) - ()
+..MethodDecl
+....MethodHeader
+......Int
+......Id(a)
+......MethodParams
+....MethodBody
+......If
+........DecLit(5) - int
+........Block
+........Block
+..MethodDecl
+....MethodHeader
+......Int
+......Id(m)
+......MethodParams
+........ParamDecl
+..........Int
+..........Id(a)
+........ParamDecl
+..........Double
+..........Id(a)
+........ParamDecl
+..........Int
+..........Id(c)
+........ParamDecl
+..........Int
+..........Id(c)
+........ParamDecl
+..........Double
+..........Id(c)
+........ParamDecl
+..........Double
+..........Id(a)
+........ParamDecl
+..........Int
+..........Id(c)
+....MethodBody
+......Return
+........Add - double
+..........DecLit(5) - int
+..........RealLit(5.5) - double
+......Return
+..MethodDecl
+....MethodHeader
+......Int
+......Id(m)
+......MethodParams
+........ParamDecl
+..........Int
+..........Id(a)
+........ParamDecl
+..........Double
+..........Id(a)
+........ParamDecl
+..........Int
+..........Id(c)
+........ParamDecl
+..........Int
+..........Id(c)
+........ParamDecl
+..........Double
+..........Id(c)
+........ParamDecl
+..........Double
+..........Id(a)
+........ParamDecl
+..........Int
+..........Id(c)
+....MethodBody
+..MethodDecl
+....MethodHeader
+......Int
+......Id(m)
+......MethodParams
+........ParamDecl
+..........Int
+..........Id(a)
+........ParamDecl
+..........Double
+..........Id(b)
+........ParamDecl
+..........Int
+..........Id(c)
+........ParamDecl
+..........Int
+..........Id(b)
+........ParamDecl
+..........Double
+..........Id(a)
+........ParamDecl
+..........Double
+..........Id(c)
+........ParamDecl
+..........Int
+..........Id(a)
+....MethodBody
+......Return
+........Add
+..........DecLit(5)
+..........RealLit(5.5)

@@ -1,0 +1,195 @@
+Line 25, col 22: Symbol b() already defined
+===== Class gcd2 Symbol Table =====
+a	()	int
+meow	()	int
+meow	(double)	void
+b	(int,double)	void
+b	()	double
+b	(double,int)	void
+b	(double,double)	void
+b	(int,int)	boolean
+b	(boolean,boolean,boolean,boolean)	int
+
+===== Method a() Symbol Table =====
+return		int
+a		int
+b		double
+d		boolean
+
+===== Method meow() Symbol Table =====
+return		int
+
+===== Method meow(double) Symbol Table =====
+return		void
+a		double	param
+lol		int
+
+===== Method b(int,double) Symbol Table =====
+return		void
+b		int	param
+c		double	param
+
+===== Method b() Symbol Table =====
+return		double
+
+===== Method b(double,int) Symbol Table =====
+return		void
+b		double	param
+c		int	param
+
+===== Method b(double,double) Symbol Table =====
+return		void
+b		double	param
+c		double	param
+
+===== Method b(int,int) Symbol Table =====
+return		boolean
+a		int	param
+b		int	param
+
+===== Method b(boolean,boolean,boolean,boolean) Symbol Table =====
+return		int
+asd		boolean	param
+b		boolean	param
+d		boolean	param
+o		boolean	param
+a		int
+
+Program
+..Id(gcd2)
+..MethodDecl
+....MethodHeader
+......Int
+......Id(a)
+......MethodParams
+....MethodBody
+......VarDecl
+........Int
+........Id(a)
+......VarDecl
+........Double
+........Id(b)
+......VarDecl
+........Bool
+........Id(d)
+......Call - int
+........Id(b) - (boolean,boolean,boolean,boolean)
+........Id(d) - boolean
+........Id(d) - boolean
+........Id(d) - boolean
+........Id(d) - boolean
+......Call - void
+........Id(meow) - (double)
+........Id(a) - int
+..MethodDecl
+....MethodHeader
+......Int
+......Id(meow)
+......MethodParams
+....MethodBody
+..MethodDecl
+....MethodHeader
+......Void
+......Id(meow)
+......MethodParams
+........ParamDecl
+..........Double
+..........Id(a)
+....MethodBody
+......VarDecl
+........Int
+........Id(lol)
+..MethodDecl
+....MethodHeader
+......Void
+......Id(b)
+......MethodParams
+........ParamDecl
+..........Int
+..........Id(b)
+........ParamDecl
+..........Double
+..........Id(c)
+....MethodBody
+..MethodDecl
+....MethodHeader
+......Double
+......Id(b)
+......MethodParams
+....MethodBody
+..MethodDecl
+....MethodHeader
+......Void
+......Id(b)
+......MethodParams
+........ParamDecl
+..........Double
+..........Id(b)
+........ParamDecl
+..........Int
+..........Id(c)
+....MethodBody
+..MethodDecl
+....MethodHeader
+......Void
+......Id(b)
+......MethodParams
+........ParamDecl
+..........Double
+..........Id(b)
+........ParamDecl
+..........Double
+..........Id(c)
+....MethodBody
+..MethodDecl
+....MethodHeader
+......Bool
+......Id(b)
+......MethodParams
+........ParamDecl
+..........Int
+..........Id(a)
+........ParamDecl
+..........Int
+..........Id(b)
+....MethodBody
+..MethodDecl
+....MethodHeader
+......Double
+......Id(b)
+......MethodParams
+....MethodBody
+..MethodDecl
+....MethodHeader
+......Int
+......Id(b)
+......MethodParams
+........ParamDecl
+..........Bool
+..........Id(asd)
+........ParamDecl
+..........Bool
+..........Id(b)
+........ParamDecl
+..........Bool
+..........Id(d)
+........ParamDecl
+..........Bool
+..........Id(o)
+....MethodBody
+......VarDecl
+........Int
+........Id(a)
+......Call - int
+........Id(b) - (boolean,boolean,boolean,boolean)
+........Id(d) - boolean
+........Id(d) - boolean
+........Id(d) - boolean
+........Id(d) - boolean
+......Call - void
+........Id(meow) - (double)
+........Id(a) - int
+......Call - int
+........Id(a) - ()
+......Call - double
+........Id(b) - ()
