@@ -1,6 +1,6 @@
 class gcd {
 
-    public static int abc(int a, int b){
+    public static int abc(boolean a, double b){
 
     }
 
@@ -18,7 +18,7 @@ class gcd {
       //b = aaa();
       //b = aaa(c);
 
-      b = abc(true, 5);
+      b = abc(true, 5.4);
     }
 
 

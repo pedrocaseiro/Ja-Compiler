@@ -387,7 +387,7 @@ void parse_call_node(node* n){
         }
       }
       if(counter == g->n_params){
-        flag = 1;
+        flag ++;
         matches++;
         char str[1000]="(";
         int j;
@@ -419,7 +419,7 @@ void parse_call_node(node* n){
     g = g->next;
   }
 
-  if(matches > 1 && flag == 0){
+  if((matches > 1 && flag == 0) || (flag > 1)){
     n->anotated_type = "undef";
     n->childs[0]->anotated_type = "undef";
     printf("Line %d, col %d: Reference to method %s is ambiguous\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->value);

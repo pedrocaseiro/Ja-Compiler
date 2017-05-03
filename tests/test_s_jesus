@@ -1,14 +1,18 @@
 class gcd {
-
-
   public static int main(){
-    f(f(5));
+    f(true);
+    y(5,5);
+    t(6);
   }
 
-  public static int f(double a){
-    return 5;
-  }
+  public static boolean f(boolean h){}
+  public static int f(boolean h){}
 
+  public static boolean y(double h, int y){}
+  public static int y(int h, double t){}
+
+  public static boolean t(int y){}
+  public static int t(double t){}
 
 
 }
