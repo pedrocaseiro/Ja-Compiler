@@ -17,6 +17,7 @@ typedef struct node {
 	int to_be_used; // node works as aux and will be used if value = 1. Will not be used if value = 0;
 	int duplicated_method; // 0 is false, 1 is true
 	struct node** childs;
+	int table_index;
 } node;
 
 int error_flag;

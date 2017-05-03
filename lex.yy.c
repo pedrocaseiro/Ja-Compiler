@@ -2376,6 +2376,10 @@ int main(int argc, char **argv) {
     }
   } else {
     yyparse();
+    table_index = 0;
+    table = new_table(MAX_SIZE);
+    first_traverse(ast);
+    create_an_tree(ast);
   }
   yylex_destroy();
   return 0;

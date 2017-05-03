@@ -88,12 +88,20 @@ void second_traverse(node* n){
 
   // we pass method body
   iterate_tree(n->childs[1]);
+  /*
+  for(i=0; i<n->childs[1]->n_children; i++){
+    if(!strcmp(n->childs[1]->childs[i]->token->id, "Return")){
+      printf("%s\n", n->childs[1]->childs[i]->childs[0]->anotated_type);
+      symbol* aux = (symbol*)malloc(sizeof(symbol));
+      //aux is the type the function should return
+      aux = table[table_index]->first;
+      parse_return_node(n->childs[1]->childs[i], aux->type);
+    }
+  }*/
 
   for(i=0; i<n->childs[1]->n_children; i++){
     if(!strcmp(n->childs[1]->childs[i]->token->id, "Return")){
-      symbol* aux = (symbol*)malloc(sizeof(symbol));
-      aux = table[table_index]->first;
-      parse_return_node(n->childs[1]->childs[i], aux->type);
+      n->childs[1]->childs[i]->table_index = table_index;
     }
   }
 
@@ -212,7 +220,7 @@ bool parse_methodheader_node(node* n){
   char str2[100];
   while(s != NULL){
 
-    if(!strcmp(s->name, n->childs[1]->value) && !strcmp(s->type, str_to_lower(n->childs[0]->token->id))){
+    if(!strcmp(s->name, n->childs[1]->value) && !strcmp(s->type, str_to_lower(n->childs[0]->token->id)) && s->params != NULL){
       //check if they have the same parameters
 
       // reconstruct symbol params
@@ -260,7 +268,6 @@ bool parse_methodheader_node(node* n){
 /*
   In case there are multiple global variable declarations that are equal,
   we need to throw an error;
-  TODO: ASK THE TEACHER IN WHAT TOKENS ARE THE ERRORS SUPPOSED TO TRIGGER
 */
 void parse_fielddecl_node(node* n){
   symbol* s = (symbol*)malloc(sizeof(symbol));
@@ -268,7 +275,7 @@ void parse_fielddecl_node(node* n){
   int count = 0;
   char* name = strdup(s->name);
   while(s != NULL){
-    if(!strcmp(s->name, n->childs[1]->value) && s->params == NULL){
+    if(!strcmp(s->name, n->childs[1]->value) && s->params != NULL){
       count++;
     }
     s = s->next;
@@ -349,7 +356,7 @@ void parse_call_node(node* n){
   int ambiguous_counter = 0;
 
   for(i = 1; i < table_index; i++){
-    if(!strcmp(table[i]->name, n->childs[0]->value) && ((n->n_children - 1) == table[i]->n_params)){ // same name && same number of params
+    if(!strcmp(table[i]->name, n->childs[0]->value) && ((n->n_children - 1) == table[i]->n_params) && table[i]->params != NULL ){ // same name && same number of params
       // now we check if all the params match
       n->anotated_type = table[i]->first->type;
 
@@ -564,23 +571,28 @@ void parse_strlit_node(node* n){
   n->anotated_type = strdup("String");
 }
 
-//check if function type is equal to return type
-void parse_return_node(node* n, char* t){
-
-  //caso so seja return;
+void parse_return_node(node* n){
+  // empty return
+  char* t = table[n->table_index]->first->type;
   if(n->n_children == 0){
-
-    if(strcmp("void",t)){
+    // if it is not void
+    if(strcmp(t, "void")){
+      // TODO: always void?
       printf("Line %d, col: %d Incompatible type %s in %s statement\n", n->token->line, n->token->col, "void", fix(n->token->id));
     }
-  } else if(strcmp(n->childs[0]->anotated_type,t) && !strcmp(n->childs[0]->anotated_type, "undef")){
-    printf("Line %d, col: %d Cannot find symbol %s\n", n->childs[0]->token->line, n->childs[0]->token->col,n->childs[0]->value);
-    printf("Line %d, col: %d Incompatible type %s in %s statement\n", n->token->line, n->token->col, n->childs[0]->anotated_type, fix(n->token->id));
-  }
-  else if(strcmp(n->childs[0]->anotated_type,t)){
-    printf("Line %d, col: %d Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
+  } else if(n->n_children > 0){
+    // types are different
+    if(strcmp(n->childs[0]->anotated_type, t) && (strcmp(t, "double") && strcmp(n->childs[0]->anotated_type, "int"))){
+      printf("Line %d, col: %d Incompatible type %s in %s statement\n", n->token->line, n->token->col, n->childs[0]->anotated_type, fix(n->token->id));
+    }
+    if (!strcmp(n->childs[0]->anotated_type, "undef")){
+      printf("Line %d, col: %d Cannot find symbol %s\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->value);
+      printf("Line %d, col: %d Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
+    }
   }
 }
+
+
 
 void check_assign_definition(node* n){
   if(!strcmp(n->childs[0]->anotated_type, "undef") && n->childs[0]->n_children == 0){
@@ -701,10 +713,6 @@ void create_an_tree(node *n){
         create_an_tree(n->childs[i]);
       }
       parse_parseargs_node(n);
-  } else if(!strcmp(n->token->id, "Return")){
-      for(i = 0; i < n->n_children; i++){
-        create_an_tree(n->childs[i]);
-      }
   } else if(!strcmp(n->token->id, "Block")){
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
@@ -758,6 +766,11 @@ void create_an_tree(node *n){
       parse_declit_node(n);
   } else if(!strcmp(n->token->id, "StrLit")){
       parse_strlit_node(n);
+  } else if(!strcmp(n->token->id, "Return")){
+      for(i = 0; i < n->n_children; i++){
+        create_an_tree(n->childs[i]);
+      }
+      parse_return_node(n);
   }
 }
 

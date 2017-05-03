@@ -1,9 +1,14 @@
-class CallingMethodsInSameClass
-{
+class CallingMethodsInSameClass {
+  /*public static int f;
+  public static boolean f;
+  public static boolean f(int a){}
 	public static void main(String[] args) {
 		printOne();
 		printOne();
 		printTwo();
+    f(5);
+    f();
+    printThree(5, 6);
 	}
 
 	public static void printOne() {
@@ -17,5 +22,26 @@ class CallingMethodsInSameClass
 	public static void printTwo() {
 		printOne();
 		printOne(5);
+    printThree(5, 5);
 	}
+
+  public static void printThree(int a, int b) {
+
+  }
+
+  public static boolean f(){
+    return a;
+  }
+
+  public static int f(){
+    return;
+  }*/
+
+  public static int f;
+  public static int main(String[] args){
+    f(5);
+    return 0;
+  }
+  public static int f(int a){}
+
 }
