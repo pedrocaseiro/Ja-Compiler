@@ -40,7 +40,7 @@ void parse_return_node(node*);
 bool parse_formalparams_node(node*);
 bool parse_vardecl_node(node*);
 bool parse_methodheader_node(node*);
-void parse_fielddecl_node(node*);
+bool parse_fielddecl_node(node*);
 void iterate_tree(node*);
 void parse_strlit_node(node*);
 void parse_length_node(node*);

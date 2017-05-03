@@ -1,10 +1,12 @@
 class gcd {
   public static int main(){
-    System.out.println(a);
-    double a;
+    f(true);
   }
 
-  public static int a;
+  public static boolean f(boolean h){}
+  public static int f(boolean h){}
+
+  public static int f(int h){}
 
 
 }

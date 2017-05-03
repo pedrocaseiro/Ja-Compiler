@@ -1,0 +1,28 @@
+class abcde {
+    public static int fib(int n) {
+        int a, b, c;
+        a = 0;
+        b = 1;
+
+        if (n == 0)
+            return a;
+
+        int i;
+        i = 2;
+
+        while(i <= n) {
+            c = a + b;
+            a = b;
+            b = c;
+            i = i + 1;
+        }
+        return b;
+    }
+
+    public static void main (String[] args) {
+        int n;
+        n = 9;
+
+        System.out.println(fib(n));
+    }
+}

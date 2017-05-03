@@ -1,6 +1,6 @@
 class gcd{
 
   public static int g(String[] args){
-    return 5.5;
+  
   }
 }

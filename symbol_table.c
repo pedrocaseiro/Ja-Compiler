@@ -60,7 +60,6 @@ void insert_symbol(symbol_table* st, char* name, int n_params, char** params, ch
 }
 
 void second_traverse(node* n){
-  //printf("type: %s\n", n->token->id);
   int n_params = n->childs[0]->childs[2]->n_children;//MethodHeader->MethodParams->n_children
   char** params = (char**)malloc(sizeof(char*)*n_params);
   int i;
@@ -83,11 +82,13 @@ void second_traverse(node* n){
       if(parse_vardecl_node(n->childs[1]->childs[i])){
         insert_symbol(table[table_index], n->childs[1]->childs[i]->childs[1]->value, 0, NULL, str_to_lower(n->childs[1]->childs[i]->childs[0]->token->id), NULL);
       }
+    } else {
+      // we pass method body
+      iterate_tree(n->childs[1]->childs[i]);
     }
   }
 
-  // we pass method body
-  iterate_tree(n->childs[1]);
+
   /*
   for(i=0; i<n->childs[1]->n_children; i++){
     if(!strcmp(n->childs[1]->childs[i]->token->id, "Return")){
@@ -133,8 +134,9 @@ void first_traverse(node* n) {
       insert_symbol(table[0], n->childs[0]->childs[1]->value, n_params, params, str_to_lower(n->childs[0]->childs[0]->token->id), NULL);
     }
   } else if(!strcmp(n->token->id, "FieldDecl")){
-    insert_symbol(table[0], n->childs[1]->value, 0, NULL, str_to_lower(n->childs[0]->token->id), NULL);
-    parse_fielddecl_node(n);
+    if(parse_fielddecl_node(n)){
+      insert_symbol(table[0], n->childs[1]->value, 0, NULL, str_to_lower(n->childs[0]->token->id), NULL);
+    }
   }
 }
 
@@ -269,11 +271,14 @@ bool parse_methodheader_node(node* n){
   In case there are multiple global variable declarations that are equal,
   we need to throw an error;
 */
-void parse_fielddecl_node(node* n){
+bool parse_fielddecl_node(node* n){
   symbol* s = (symbol*)malloc(sizeof(symbol));
   s = table[0]->first;
   int count = 0;
-  char* name = strdup(s->name);
+  char* name;
+  if(s!=NULL){
+     name = strdup(s->name);
+  }
   while(s != NULL){
     if(!strcmp(s->name, n->childs[1]->value) && s->params == NULL){
       count++;
@@ -281,9 +286,11 @@ void parse_fielddecl_node(node* n){
     s = s->next;
   }
 
-  if(count > 1){
+  if(count == 1){
     printf("Line %d, col %d: Symbol %s already defined\n", n->childs[1]->token->line, n->childs[1]->token->col, name);
+    return false;
   }
+  return true;
 }
 
 void parse_assign_node(node* n){
@@ -348,6 +355,41 @@ void parse_assign_node(node* n){
 // se for compativel -> contador++
 // no fim verificar se contador > 1 - se for, ambiguous
 // senão está bem
+
+
+// percorres as tabelas todas e vês se há alguma com nome igual e nº parametros iguais
+// na tabela local ver se parametros batem certo
+// se baterem, acabou
+// se não baterem, vemos se são compativeis -> se forem variavel++;
+// se variavel > 1 -> ambiguous
+
+
+/*
+void parse_call_node(node* n){
+  int i, k;
+  int counter = 0;
+  int matches = 0;
+  symbol* g = (symbol*)malloc(sizeof(symbol));
+  g = table[0]->first;
+
+  while(g != NULL){
+    if(!strcmp(n->childs[0]->value, g->name) && ((n->n_children - 1) == g->n_params)){
+      n->anotated_type = g->type;
+      for(k = 0; k < g->n_params; k++){
+        if(!strcmp(n->childs[k+1]->anotated_type, g->params[k])){
+          counter++;
+        }
+      }
+    }
+    if(counter == g->n_params){
+      matches++;
+      printf("%d\n", matches);
+    }
+    g = g->next;
+  }
+}*/
+
+
 void parse_call_node(node* n){
   int i;
   int k;
@@ -368,7 +410,6 @@ void parse_call_node(node* n){
 
           if(g->n_params > 0){
             int j;
-
             for(j = 0; j < g->n_params; j++){
               aux[j] = g->params[j];
               strcat(str, g->params[j]);
@@ -388,19 +429,19 @@ void parse_call_node(node* n){
         counter++;
       } else {
         counter = 0;
-
         for(k = 1; k < n->n_children; k++){
           if(!strcmp(n->childs[k]->anotated_type, aux[k-1])){
+            // equal parameter
             counter++;
           }
         }
       }
-
       int h;
       int aux_counter = 0;
       if(counter != n->n_children - 1){ // we didn't have a match, we look for a close one
         for(h = 1; h < n->n_children; h++){
-          if((!strcmp(n->childs[h]->anotated_type, "int") && !strcmp(aux[h-1], "double")) || (!strcmp(n->childs[h]->anotated_type, "int") && !strcmp(aux[h-1], "int")) || (!strcmp(n->childs[h]->anotated_type, "boolean") && !strcmp(aux[h-1], "boolean")) || (!strcmp(n->childs[h]->anotated_type, "double") && !strcmp(aux[h-1], "double"))){
+          if((!strcmp(n->childs[h]->anotated_type, "int") && !strcmp(aux[h-1], "double")) || (!strcmp(n->childs[h]->anotated_type, "int") && !strcmp(aux[h-1], "int")) || (!strcmp(n->childs[h]->anotated_type, "boolean") && !strcmp(aux[h-1], "boolean"))
+              || (!strcmp(n->childs[h]->anotated_type, "double") && !strcmp(aux[h-1], "double"))){
             aux_counter++;
           }
         }
@@ -433,7 +474,6 @@ void parse_call_node(node* n){
       printf("Line %d, col %d: Cannot find symbol %s\n", n->childs[0]->token->line, n->childs[0]->token->col, strcat(result_to_print, call_child_types));
     }
 }
-
 
 
 void parse_parseargs_node(node* n){
