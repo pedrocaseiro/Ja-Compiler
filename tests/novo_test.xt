@@ -1,0 +1,16 @@
+class gcd {
+
+
+
+  public static boolean func(double i){}
+
+  public static int func(boolean i){}
+
+  public static int main(String[] args){
+
+    func(2.2);
+
+  }
+
+
+}
