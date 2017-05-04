@@ -7,9 +7,9 @@ class gcd4 {
 
 		//main(3, 3);
 		//asd(3, false);
-		
+
 		boolean x;
-		x = true;	
+		x = true;
 		//asd(3, x);
 
 		if(x*3)

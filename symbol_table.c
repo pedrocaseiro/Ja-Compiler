@@ -166,6 +166,14 @@ void iterate_tree(node *n){
         if(n->childs[i]->anotated_type == NULL){
           n->childs[i]->anotated_type = strdup("undef");
         }
+      } else if(!strcmp(n->childs[i]->token->id, "BoolLit")){
+          parse_boollit_node(n->childs[i]);
+      } else if(!strcmp(n->childs[i]->token->id, "RealLit")){
+          parse_reallit_node(n->childs[i]);
+      } else if(!strcmp(n->childs[i]->token->id, "DecLit")){
+          parse_declit_node(n->childs[i]);
+      } else if(!strcmp(n->childs[i]->token->id, "StrLit")){
+          parse_strlit_node(n->childs[i]);
       }
       iterate_tree(n->childs[i]);
   }
@@ -803,14 +811,6 @@ void create_an_tree(node *n){
       }
       check_length_nodes(n);
       parse_length_node(n);
-  } else if(!strcmp(n->token->id, "BoolLit")){
-      parse_boollit_node(n);
-  } else if(!strcmp(n->token->id, "RealLit")){
-      parse_reallit_node(n);
-  } else if(!strcmp(n->token->id, "DecLit")){
-      parse_declit_node(n);
-  } else if(!strcmp(n->token->id, "StrLit")){
-      parse_strlit_node(n);
   } else if(!strcmp(n->token->id, "Return")){
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
