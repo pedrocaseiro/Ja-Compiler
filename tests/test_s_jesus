@@ -2,11 +2,7 @@ class gcd {
 
   public static int main(boolean d){
 
-    boolean a;
-    a = 5 > (3+true);
-
-    int a;
-    a = 2134567890743213497807243147890743;
+    
   }
 
 }

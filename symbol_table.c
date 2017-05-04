@@ -100,6 +100,7 @@ void second_traverse(node* n){
 
 void first_traverse(node* n) {
   int i = 0;
+  int k = 0;
   if (!strcmp(n->token->id, "Program")) {
     table[table_index] = new_symbol_table("Class", n->childs[0]->value, 0, NULL);
     table_index++;
@@ -117,8 +118,15 @@ void first_traverse(node* n) {
     for(i = 0; i < n_params; i++){
       //MethodDecl -> MethodHeader -> MethodParams -> ParamDecl[i] -> token->id
       params[i] = str_to_lower(n->childs[0]->childs[2]->childs[i]->childs[0]->token->id);
-    }
 
+        for(k = 0; k < i; k++){
+          if(!strcmp(n->childs[0]->childs[2]->childs[i]->childs[1]->value, n->childs[0]->childs[2]->childs[k]->childs[1]->value)){
+            printf("Line %d, col %d: Symbol %s already defined\n", n->childs[0]->childs[2]->childs[i]->childs[1]->token->line, n->childs[0]->childs[2]->childs[i]->childs[1]->token->col, n->childs[0]->childs[2]->childs[k]->childs[1]->value);
+            break;
+          }
+        }
+    }
+    // checks if method exists or not
     if(parse_methodheader_node(n->childs[0])){
       insert_symbol(table[0], n->childs[0]->childs[1]->value, n_params, params, str_to_lower(n->childs[0]->childs[0]->token->id), NULL);
     }
@@ -176,8 +184,7 @@ bool parse_formalparams_node(node* n){
     s = s->next;
   }
 
-  if(count >= 1){
-    printf("Line %d, col %d: Symbol %s already defined\n", n->childs[1]->token->line, n->childs[1]->token->col, n->childs[1]->value);
+  if(count == 1){
     return false;
   }
   return true;
@@ -211,7 +218,7 @@ bool parse_methodheader_node(node* n){
   char str2[1000] = {0}; // TODO: MUDAR ISTO
   while(s != NULL){
 
-    if(!strcmp(s->name, n->childs[1]->value) && !strcmp(s->type, str_to_lower(n->childs[0]->token->id)) && s->params != NULL){
+    if(!strcmp(s->name, n->childs[1]->value) && s->params != NULL){
       //check if they have the same parameters
 
       // reconstruct symbol params
@@ -301,6 +308,8 @@ void parse_assign_node(node* n){
   } else if(!strcmp(n->childs[0]->anotated_type, "undef")){
       error_flag = 1;
   } else if(!strcmp(n->childs[1]->anotated_type, "undef")){
+      error_flag = 1;
+  } else if(!strcmp(n->childs[0]->anotated_type, "String[]") && !strcmp(n->childs[1]->anotated_type, "String[]")){
       error_flag = 1;
   }
 
@@ -595,8 +604,10 @@ void parse_do_while_node(node* n){
 }
 
 void parse_print_node(node* n){
-  if(!strcmp(n->childs[0]->anotated_type, "String[]") || !strcmp(n->childs[0]->anotated_type, "undef") || !strcmp(n->childs[0]->anotated_type, "void")){
+  if((n->childs[0]->n_children == 0) && (!strcmp(n->childs[0]->anotated_type, "String[]") || !strcmp(n->childs[0]->anotated_type, "undef") || !strcmp(n->childs[0]->anotated_type, "void"))){
     printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
+  } else if((n->childs[0]->n_children > 0) && (!strcmp(n->childs[0]->anotated_type, "String[]") || !strcmp(n->childs[0]->anotated_type, "undef") || !strcmp(n->childs[0]->anotated_type, "void"))){
+      printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[0]->childs[0]->token->line, n->childs[0]->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
   }
 }
 
