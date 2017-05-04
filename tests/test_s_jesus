@@ -1,8 +1,9 @@
 class gcd {
-
-  public static int main(boolean d){
-
-    
+  public static int kappa;
+  public static double kappa;
+  public static int main(int a, int b, double c, int b, boolean a){
+    int a;
+    System.out.println(5);
   }
 
 }

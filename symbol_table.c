@@ -112,13 +112,12 @@ void first_traverse(node* n) {
         second_traverse(n->childs[i]);
       }
     }
-  } else if(!strcmp(n->token->id, "MethodDecl") && n->childs[0]->duplicated_method == 0){
+  } else if(!strcmp(n->token->id, "MethodDecl")){
     int n_params = n->childs[0]->childs[2]->n_children;//MethodHeader->MethodParams->n_children
     char** params = (char**)malloc(sizeof(char*)*n_params);
     for(i = 0; i < n_params; i++){
       //MethodDecl -> MethodHeader -> MethodParams -> ParamDecl[i] -> token->id
       params[i] = str_to_lower(n->childs[0]->childs[2]->childs[i]->childs[0]->token->id);
-
         for(k = 0; k < i; k++){
           if(!strcmp(n->childs[0]->childs[2]->childs[i]->childs[1]->value, n->childs[0]->childs[2]->childs[k]->childs[1]->value)){
             printf("Line %d, col %d: Symbol %s already defined\n", n->childs[0]->childs[2]->childs[i]->childs[1]->token->line, n->childs[0]->childs[2]->childs[i]->childs[1]->token->col, n->childs[0]->childs[2]->childs[k]->childs[1]->value);
@@ -450,11 +449,11 @@ void parse_parseargs_node(node* n){
     printf("Line %d, col %d: Cannot find symbol %s\n", n->childs[1]->token->line, n->childs[1]->token->col, n->childs[1]->value);
   }
   if(strcmp(n->childs[0]->anotated_type,"String[]")){//verificar
-    n->anotated_type = strdup("undef");
+    //n->anotated_type = strdup("undef");
     printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
   }
   if(strcmp(n->childs[1]->anotated_type,"int")){
-    n->anotated_type = strdup("undef");
+    //n->anotated_type = strdup("undef");
     printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[1]->token->line, n->childs[1]->token->col, n->childs[1]->anotated_type, fix(n->token->id));
   }
 }
@@ -694,6 +693,7 @@ void create_an_tree(node *n){
   } else if(!strcmp(n->token->id, "FieldDecl") || !strcmp(n->token->id, "MethodHeader") || !strcmp(n->token->id, "FormalParams") || !strcmp(n->token->id, "VarDecl")){
 
   } else if(!strcmp(n->token->id, "MethodDecl") && n->childs[0]->duplicated_method == 0){
+
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
       }
