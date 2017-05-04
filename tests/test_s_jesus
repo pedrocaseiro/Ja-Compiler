@@ -1,6 +1,8 @@
 class gcd {
 
   public static int main(int a){
-    a = ola(ola(x,y,ola(l,k)));
+    boolean b;
+    boolean c;
+    a = b+c;
   }
 }
