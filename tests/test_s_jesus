@@ -1,6 +1,11 @@
 class gcd {
+
+  public static void test(int y){
+    
+  }
+
+
   public static int main(String[] args){
-  boolean a;
-  a = -a;
+
   }
 }

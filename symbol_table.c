@@ -505,7 +505,7 @@ void parse_minus_plus_nodes(node* n){
   if(!strcmp(n->childs[0]->anotated_type, "int") || !strcmp(n->childs[0]->anotated_type, "double"))
     n->anotated_type = n->childs[0]->anotated_type;
   else{
-    printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
+    printf("Line %d, col %d: Operator %s cannot be applied to type %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type);
     n->anotated_type = strdup("undef");
   }
 
