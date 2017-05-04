@@ -227,7 +227,7 @@ bool parse_methodheader_node(node* n){
   while(s != NULL){
     if(!strcmp(s->name, n->childs[1]->value) && n->childs[2]->n_children == s->n_params && s->is_method == 1){
       //check if they have the same parameters
-      
+
       // reconstruct symbol params
       strcpy(str, "");
       strcpy(str2, "");
@@ -467,10 +467,10 @@ void parse_parseargs_node(node* n){
 void parse_and_or_nodes(node* n){
   n->anotated_type = strdup("boolean");
   if(strcmp(n->childs[0]->anotated_type,"boolean")){
-    printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->childs[0]->token->line, n->childs[0]->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
+    printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
   }
   if(strcmp(n->childs[1]->anotated_type,"boolean")){
-    printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->childs[1]->token->line, n->childs[1]->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
+    printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
   }
 }
 
@@ -479,7 +479,6 @@ void parse_and_or_nodes(node* n){
 // it should throw an error when the comparison is between boolean and int, boolean and double, int and boolean, double and boolean, undef and anything, anything and undef
 // TODO: this can be shortened!! Not done yet for readibility purposes
 void parse_equality_nodes(node* n){
-
   n->anotated_type = strdup("boolean");
   if(!strcmp(n->childs[0]->anotated_type,"boolean") && !strcmp(n->childs[1]->anotated_type,"int")){
     printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
@@ -492,7 +491,7 @@ void parse_equality_nodes(node* n){
   } else if(!strcmp(n->childs[0]->anotated_type,"boolean") && !strcmp(n->childs[1]->anotated_type,"boolean")){
     printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
   }
-    if(!strcmp(n->childs[0]->anotated_type,"undef")){
+  if(!strcmp(n->childs[0]->anotated_type,"undef")){
     printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
   } if(!strcmp(n->childs[1]->anotated_type,"undef")){
     printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
@@ -733,7 +732,7 @@ void create_an_tree(node *n){
   } else if(!strcmp(n->token->id, "While")){
       create_an_tree(n->childs[0]);
       parse_while_node(n);
-      for(i = 0; i < n->n_children; i++){
+      for(i = 1; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
       }
 
@@ -774,13 +773,13 @@ void create_an_tree(node *n){
         create_an_tree(n->childs[i]);
       }
   } else if(!strcmp(n->token->id, "And") || !strcmp(n->token->id, "Or")){
+
+      check_and_or_definition(n);
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
       }
-      check_and_or_definition(n);
       parse_and_or_nodes(n);
   } else if(!strcmp(n->token->id, "Eq") || !strcmp(n->token->id, "Geq") || !strcmp(n->token->id, "Gt") || !strcmp(n->token->id, "Leq") || !strcmp(n->token->id, "Lt") || !strcmp(n->token->id, "Neq")){
-
       create_an_tree(n->childs[0]);
       create_an_tree(n->childs[1]);
       check_equality_nodes(n);
@@ -788,7 +787,6 @@ void create_an_tree(node *n){
       for(i = 2; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
       }
-
       parse_equality_nodes(n);
   } else if(!strcmp(n->token->id, "Add") || !strcmp(n->token->id, "Sub") || !strcmp(n->token->id, "Mul") || !strcmp(n->token->id, "Div") || !strcmp(n->token->id, "Mod")){
       for(i = 0; i < n->n_children; i++){
@@ -797,10 +795,12 @@ void create_an_tree(node *n){
       check_logic_nodes(n);
       parse_logic_nodes(n);
   } else if(!strcmp(n->token->id, "Minus") || !strcmp(n->token->id, "Plus")){
-      for(i = 0; i < n->n_children; i++){
+      create_an_tree(n->childs[0]);
+      check_minus_plus_definition(n);
+
+      for(i = 1; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
       }
-      check_minus_plus_definition(n);
       parse_minus_plus_nodes(n);
   } else if(!strcmp(n->token->id, "Not")){
       create_an_tree(n->childs[0]);
@@ -808,7 +808,6 @@ void create_an_tree(node *n){
       for(i = 1; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
       }
-
       parse_not_node(n);
   } else if(!strcmp(n->token->id, "Length")){
       for(i = 0; i < n->n_children; i++){

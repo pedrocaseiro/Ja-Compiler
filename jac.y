@@ -125,7 +125,7 @@ ParseArgs: PARSEINT OCURV IDAux OSQUARE Expr CSQUARE CCURV           {$$ = creat
          | PARSEINT OCURV error CCURV                                {$$ = create_terminal_node("Error", 0, NULL);}
 
 ExprAux: MethodInvocation                                            {$$ = create_and_insert_node("Call", 1, 1, $1); $$->token->line = $$->childs[0]->token->line; $$->token->col=$$->childs[0]->token->col;}
-       | ParseArgs                                                   {$$ = create_and_insert_node("ParseArgs", 1, 1, $1); $$->token->line = $$->childs[0]->token->line; $$->token->col=$$->childs[0]->token->col;}
+       | ParseArgs                                                   {$$ = create_and_insert_node("ParseArgs", 1, 1, $1); }
        | ExprAux AND ExprAux                                         {$$ = create_and_insert_node("And", 1, 2, $1, $3); $$->token->line = $2->line;$$->token->col = $2->col;}
        | ExprAux OR ExprAux                                          {$$ = create_and_insert_node("Or", 1, 2, $1, $3); $$->token->line = $2->line;$$->token->col = $2->col;}
        | ExprAux EQ ExprAux                                          {$$ = create_and_insert_node("Eq", 1, 2, $1, $3); $$->token->line = $2->line;$$->token->col = $2->col;}

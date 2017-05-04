@@ -1,6 +1,6 @@
 class gcd {
   public static int main(String[] args){
-    boolean b;
-    b = true;
+  boolean a;
+  a = -a;
   }
 }
