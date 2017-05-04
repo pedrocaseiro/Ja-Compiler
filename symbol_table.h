@@ -9,6 +9,7 @@ typedef struct symbol {
   int n_params;
   char* type;
   char* flag;
+  int is_method; // 0 is not method, 1 is method
   struct symbol* next;
 } symbol;
 
@@ -24,13 +25,13 @@ symbol_table** table;
 int table_index;
 
 symbol_table** new_table(int);
-symbol* new_symbol(char*, int, char**, char*, char*);
+symbol* new_symbol(char*, int, char**, char*, char*, int);
 symbol_table* new_symbol_table(char*, char*, int, char**);
 void first_traverse(node*);
 void print_table();
 void print_symbol_table(symbol*);
 char* str_to_lower(char*);
-void insert_symbol(symbol_table*, char*, int, char**, char*, char*);
+void insert_symbol(symbol_table*, char*, int, char**, char*, char*, int);
 
 
 void parse_while_node(node*);

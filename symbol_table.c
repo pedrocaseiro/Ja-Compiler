@@ -8,7 +8,7 @@ symbol_table** new_table(int size) {
   return (symbol_table**)malloc(sizeof(symbol_table)*size);
 }
 
-symbol* new_symbol(char* name, int n_params, char** params, char* type, char* flag) {
+symbol* new_symbol(char* name, int n_params, char** params, char* type, char* flag, int is_method) {
   symbol* s = (symbol*)malloc(sizeof(symbol));
   s->name = name;
   s->params = params;
@@ -16,6 +16,7 @@ symbol* new_symbol(char* name, int n_params, char** params, char* type, char* fl
   s->type = type;
   s->flag = flag;
   s->next = NULL;
+  s->is_method=is_method; // not a method
   return s;
 }
 
@@ -45,17 +46,17 @@ char* str_to_lower(char* s) {
   return str;
 }
 
-void insert_symbol(symbol_table* st, char* name, int n_params, char** params, char* type, char* flag) {
+void insert_symbol(symbol_table* st, char* name, int n_params, char** params, char* type, char* flag, int is_method) {
   symbol* first_symbol = st->first;
   if (first_symbol == NULL) {
-    st->first = new_symbol(name, n_params, params, type, flag);
+    st->first = new_symbol(name, n_params, params, type, flag, is_method);
     return;
   }
 
   while(first_symbol->next != NULL) {
     first_symbol = first_symbol->next;
   }
-  first_symbol->next = new_symbol(name, n_params, params, type, flag);
+  first_symbol->next = new_symbol(name, n_params, params, type, flag, is_method);
 
 }
 
@@ -70,17 +71,17 @@ void second_traverse(node* n){
   }
   table[table_index] = new_symbol_table("Method", n->childs[0]->childs[1]->value, n_params, params);
 
-  insert_symbol(table[table_index], strdup("return"), 0, NULL, str_to_lower(n->childs[0]->childs[0]->token->id), NULL);
+  insert_symbol(table[table_index], strdup("return"), 0, NULL, str_to_lower(n->childs[0]->childs[0]->token->id), NULL, 0);
   for(i = 0; i < n_params; i++){
     if(parse_formalparams_node(n->childs[0]->childs[2]->childs[i]))
-      insert_symbol(table[table_index], n->childs[0]->childs[2]->childs[i]->childs[1]->value, 0, NULL, table[table_index]->params[i], strdup("param"));
+      insert_symbol(table[table_index], n->childs[0]->childs[2]->childs[i]->childs[1]->value, 0, NULL, table[table_index]->params[i], strdup("param"), 0);
   }
 
   for(i = 0; i < n->childs[1]->n_children; i++){
     if(!strcmp(n->childs[1]->childs[i]->token->id, "VarDecl")){
       // we call it with n as a VarDecl node
       if(parse_vardecl_node(n->childs[1]->childs[i])){
-        insert_symbol(table[table_index], n->childs[1]->childs[i]->childs[1]->value, 0, NULL, str_to_lower(n->childs[1]->childs[i]->childs[0]->token->id), NULL);
+        insert_symbol(table[table_index], n->childs[1]->childs[i]->childs[1]->value, 0, NULL, str_to_lower(n->childs[1]->childs[i]->childs[0]->token->id), NULL, 0);
       }
     } else {
       // we pass method body
@@ -127,11 +128,11 @@ void first_traverse(node* n) {
     }
     // checks if method exists or not
     if(parse_methodheader_node(n->childs[0])){
-      insert_symbol(table[0], n->childs[0]->childs[1]->value, n_params, params, str_to_lower(n->childs[0]->childs[0]->token->id), NULL);
+      insert_symbol(table[0], n->childs[0]->childs[1]->value, n_params, params, str_to_lower(n->childs[0]->childs[0]->token->id), NULL, 1);
     }
   } else if(!strcmp(n->token->id, "FieldDecl")){
     if(parse_fielddecl_node(n)){
-      insert_symbol(table[0], n->childs[1]->value, 0, NULL, str_to_lower(n->childs[0]->token->id), NULL);
+      insert_symbol(table[0], n->childs[1]->value, 0, NULL, str_to_lower(n->childs[0]->token->id), NULL, 0);
     }
   }
 }
@@ -216,8 +217,7 @@ bool parse_methodheader_node(node* n){
   char str[1000] = {0}; // TODO: não fazer 100 à mão!!!!!
   char str2[1000] = {0}; // TODO: MUDAR ISTO
   while(s != NULL){
-
-    if(!strcmp(s->name, n->childs[1]->value) && s->params != NULL){
+    if(!strcmp(s->name, n->childs[1]->value) && n->childs[2]->n_children == s->n_params && s->is_method == 1){
       //check if they have the same parameters
 
       // reconstruct symbol params
@@ -573,8 +573,16 @@ void parse_return_node(node* n){
       printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->token->line, n->token->col, "void", fix(n->token->id));
     }
   } else if(n->n_children > 0){
+    if((n->childs[0]->n_children == 0) && !strcmp(n->childs[0]->anotated_type, "void")){
+      printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
+    } else if((n->childs[0]->n_children > 0) && !strcmp(n->childs[0]->anotated_type, "void")){
+      printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[0]->childs[0]->token->line, n->childs[0]->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
+    }
+
     // types are different
-    if(strcmp(n->childs[0]->anotated_type, t) && (strcmp(t, "double") && strcmp(n->childs[0]->anotated_type, "int"))){
+    if((n->childs[0]->n_children == 0) && strcmp(n->childs[0]->anotated_type, t) && (strcmp(t, "double") && strcmp(n->childs[0]->anotated_type, "int"))){
+      printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
+    } else if((n->childs[0]->n_children > 0) && strcmp(n->childs[0]->anotated_type, t) && (strcmp(t, "double") && strcmp(n->childs[0]->anotated_type, "int"))){
       printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
     }
     if (!strcmp(n->childs[0]->anotated_type, "undef") && n->childs[0]->n_children == 0){//verificar isto
@@ -616,6 +624,7 @@ void check_assign_definition(node* n){
   if(!strcmp(n->childs[0]->anotated_type, "undef") && n->childs[0]->n_children == 0){
       printf("Line %d, col %d: Cannot find symbol %s\n", n->token->line, n->token->col, n->childs[0]->value);
   }
+  //TODO: VALGRIND AQUI
   if(!strcmp(n->childs[1]->anotated_type, "undef") && n->childs[1]->n_children == 0){
       printf("Line %d, col %d: Cannot find symbol %s\n", n->token->line, n->token->col, n->childs[1]->value);
   }
