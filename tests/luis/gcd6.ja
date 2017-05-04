@@ -1,0 +1,14 @@
+class gcd6 {
+
+	public static int main(int a, double b) {
+
+	}
+
+	public static int main(int a, double b) {
+
+	}
+
+	public static int test() {
+		kkk(3, 3);
+	}
+}

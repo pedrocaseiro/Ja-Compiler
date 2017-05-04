@@ -1,0 +1,72 @@
+Line 13, col 6: Operator ! cannot be applied to type int
+===== Class gcd5 Symbol Table =====
+main	(int,double)	void
+main	(int,int)	void
+caller	()	void
+a		int
+
+===== Method main(int,double) Symbol Table =====
+return		void
+a		int	param
+d		double	param
+
+===== Method main(int,int) Symbol Table =====
+return		void
+a		int	param
+d		int	param
+
+===== Method caller() Symbol Table =====
+return		void
+a		double
+
+Program
+..Id(gcd5)
+..MethodDecl
+....MethodHeader
+......Void
+......Id(main)
+......MethodParams
+........ParamDecl
+..........Int
+..........Id(a)
+........ParamDecl
+..........Double
+..........Id(d)
+....MethodBody
+..MethodDecl
+....MethodHeader
+......Void
+......Id(main)
+......MethodParams
+........ParamDecl
+..........Int
+..........Id(a)
+........ParamDecl
+..........Int
+..........Id(d)
+....MethodBody
+..MethodDecl
+....MethodHeader
+......Void
+......Id(caller)
+......MethodParams
+....MethodBody
+......Call - void
+........Id(main) - (int,int)
+........DecLit(1) - int
+........DecLit(1) - int
+......Print
+........Id(a) - int
+......If
+........Not - boolean
+..........Id(a) - int
+........Block
+........Block
+......VarDecl
+........Double
+........Id(a)
+......Print
+........Id(a) - double
+..FieldDecl
+....Int
+....Id(a)

@@ -1,0 +1,169 @@
+Line 6, col 11: Symbol b already defined
+Line 7, col 13: Symbol b already defined
+Line 8, col 3: Cannot find symbol asd(double,boolean,double)
+Line 9, col 10: Cannot find symbol z
+Line 9, col 10: Incompatible type undef in return statement
+Line 13, col 3: Cannot find symbol main(double)
+Line 18, col 3: Cannot find symbol asd(double,double,boolean)
+Line 22, col 3: Cannot find symbol asd()
+Line 23, col 10: Cannot find symbol main()
+Line 23, col 10: Incompatible type undef in return statement
+Line 27, col 3: Cannot find symbol zxczxc()
+===== Class gcd3 Symbol Table =====
+asd		int
+a		double
+b		double
+c		double
+main	(boolean)	double
+asd	(double,double,double)	int
+asd	(boolean,double,double)	boolean
+asd	(int,int,int)	void
+asd	(int,int,double)	double
+
+===== Method main(boolean) Symbol Table =====
+return		double
+b		boolean	param
+a		double
+
+===== Method asd(double,double,double) Symbol Table =====
+return		int
+a		double	param
+b		double	param
+c		double	param
+
+===== Method asd(boolean,double,double) Symbol Table =====
+return		boolean
+a		boolean	param
+b		double	param
+c		double	param
+asd		int
+
+===== Method asd(int,int,int) Symbol Table =====
+return		void
+a		int	param
+b		int	param
+c		int	param
+
+===== Method asd(int,int,double) Symbol Table =====
+return		double
+a		int	param
+b		int	param
+c		double	param
+
+Program
+..Id(gcd3)
+..FieldDecl
+....Int
+....Id(asd)
+..FieldDecl
+....Double
+....Id(a)
+..FieldDecl
+....Double
+....Id(b)
+..FieldDecl
+....Double
+....Id(c)
+..MethodDecl
+....MethodHeader
+......Double
+......Id(main)
+......MethodParams
+........ParamDecl
+..........Bool
+..........Id(b)
+....MethodBody
+......VarDecl
+........Bool
+........Id(b)
+......VarDecl
+........Double
+........Id(a)
+......VarDecl
+........Double
+........Id(b)
+......Call - undef
+........Id(asd) - undef
+........Id(a) - double
+........Id(b) - boolean
+........Id(c) - double
+......Return
+........Id(z) - undef
+..MethodDecl
+....MethodHeader
+......Int
+......Id(asd)
+......MethodParams
+........ParamDecl
+..........Double
+..........Id(a)
+........ParamDecl
+..........Double
+..........Id(b)
+........ParamDecl
+..........Double
+..........Id(c)
+....MethodBody
+......Call - undef
+........Id(main) - undef
+........Id(a) - double
+..MethodDecl
+....MethodHeader
+......Bool
+......Id(asd)
+......MethodParams
+........ParamDecl
+..........Bool
+..........Id(a)
+........ParamDecl
+..........Double
+..........Id(b)
+........ParamDecl
+..........Double
+..........Id(c)
+....MethodBody
+......VarDecl
+........Int
+........Id(asd)
+......Call - undef
+........Id(asd) - undef
+........Id(c) - double
+........Id(b) - double
+........Id(a) - boolean
+..MethodDecl
+....MethodHeader
+......Void
+......Id(asd)
+......MethodParams
+........ParamDecl
+..........Int
+..........Id(a)
+........ParamDecl
+..........Int
+..........Id(b)
+........ParamDecl
+..........Int
+..........Id(c)
+....MethodBody
+......Call - undef
+........Id(asd) - undef
+......Return
+........Call - undef
+..........Id(main) - undef
+..MethodDecl
+....MethodHeader
+......Double
+......Id(asd)
+......MethodParams
+........ParamDecl
+..........Int
+..........Id(a)
+........ParamDecl
+..........Int
+..........Id(b)
+........ParamDecl
+..........Double
+..........Id(c)
+....MethodBody
+......Call - undef
+........Id(zxczxc) - undef

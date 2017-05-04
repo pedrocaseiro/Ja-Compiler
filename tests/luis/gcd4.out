@@ -1,0 +1,94 @@
+Line 6, col 22: Cannot find symbol zxc
+Line 6, col 22: Incompatible type undef in System.out.println statement
+Line 15, col 7: Operator * cannot be applied to types boolean, int
+Line 15, col 7: Incompatible type undef in if statement
+Line 20, col 11: Incompatible type double in return statement
+===== Class gcd4 Symbol Table =====
+a		double
+main	(boolean,double)	void
+printOne	()	void
+main	(int,boolean)	int
+
+===== Method main(boolean,double) Symbol Table =====
+return		void
+b		boolean	param
+a1		double	param
+x		boolean
+
+===== Method printOne() Symbol Table =====
+return		void
+
+===== Method main(int,boolean) Symbol Table =====
+return		int
+x1		int	param
+z		boolean	param
+
+Program
+..Id(gcd4)
+..FieldDecl
+....Double
+....Id(a)
+..MethodDecl
+....MethodHeader
+......Void
+......Id(main)
+......MethodParams
+........ParamDecl
+..........Bool
+..........Id(b)
+........ParamDecl
+..........Double
+..........Id(a1)
+....MethodBody
+......Print
+........Id(zxc) - undef
+......VarDecl
+........Bool
+........Id(x)
+......Assign - boolean
+........Id(x) - boolean
+........BoolLit(true) - boolean
+......If
+........Mul - undef
+..........Id(x) - boolean
+..........DecLit(3) - int
+........Print
+..........StrLit("haha") - String
+........Block
+......Call - void
+........Id(printOne) - ()
+......Assign - double
+........Id(a) - double
+........Add - int
+..........DecLit(4) - int
+..........DecLit(3) - int
+......Return
+........Add - double
+..........DecLit(3) - int
+..........RealLit(3.5) - double
+..MethodDecl
+....MethodHeader
+......Void
+......Id(printOne)
+......MethodParams
+....MethodBody
+......Print
+........StrLit("Hello World") - String
+......Call - void
+........Id(main) - (boolean,double)
+........BoolLit(false) - boolean
+........RealLit(3.14) - double
+..MethodDecl
+....MethodHeader
+......Int
+......Id(main)
+......MethodParams
+........ParamDecl
+..........Int
+..........Id(x1)
+........ParamDecl
+..........Bool
+..........Id(z)
+....MethodBody
+......Call - void
+........Id(printOne) - ()

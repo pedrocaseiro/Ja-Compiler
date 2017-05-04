@@ -1,0 +1,29 @@
+class gcd3 {
+	public static int asd;
+	public static double a, b, c;
+
+	public static double main(boolean b) {
+		boolean b;
+		double a, b;
+		asd(a, b, c);
+		return z;
+	}
+
+	public static int asd(double a, double b, double c) {
+		main(a);	
+	}
+
+	public static boolean asd(boolean a, double b, double c) {
+		int asd;
+		asd(c, b, a);
+	}
+
+	public static void asd(int a, int b, int c) {
+		asd();
+		return main();
+	}
+
+	public static double asd(int a, int b, double c) {
+		zxczxc();
+	}
+}

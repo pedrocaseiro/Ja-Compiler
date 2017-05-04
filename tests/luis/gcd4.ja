@@ -1,0 +1,40 @@
+class gcd4 {
+	public static double a;
+
+	public static void main(boolean b, double a1) {
+		//System.out.println(a);
+		System.out.println(zxc);
+
+		//main(3, 3);
+		//asd(3, false);
+		
+		boolean x;
+		x = true;	
+		//asd(3, x);
+
+		if(x*3)
+
+		System.out.println("haha");
+		printOne();
+		a = 4+3;
+		return 3+3.5;
+	}
+
+	public static void printOne() {
+    	System.out.println("Hello World");
+    	main(false, 3.14);
+  	}
+
+	public static int main (int x1, boolean z) {
+		printOne();
+		/*int x;
+		int y;
+		x = 3;
+		y = 4;
+		main(3, 3.5);
+		if (x == 3.5) {
+
+		}
+		k = 3.4;*/
+	}
+}
