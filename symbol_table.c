@@ -227,10 +227,10 @@ bool parse_methodheader_node(node* n){
   while(s != NULL){
     if(!strcmp(s->name, n->childs[1]->value) && n->childs[2]->n_children == s->n_params && s->is_method == 1){
       //check if they have the same parameters
-
+      
       // reconstruct symbol params
-      strcat(str, "");
-      strcat(str2, "");
+      strcpy(str, "");
+      strcpy(str2, "");
 
       if(s->n_params > 0){
         int j;
@@ -261,7 +261,7 @@ bool parse_methodheader_node(node* n){
   }
 
   if(count == 1){
-    printf("Line %d, col %d: Symbol %s(%s) already defined\n", n->childs[1]->token->line, n->childs[1]->token->col, n->childs[1]->value, str);
+    printf("Line %d, col %d: Symbol %s(%s) already defined\n", n->childs[1]->token->line, n->childs[1]->token->col, n->childs[1]->value, str2);
     n->duplicated_method = 1;
     return false;
   } else {
@@ -376,7 +376,7 @@ void parse_call_node(node* n){
   while(g != NULL){
     counter = 0;
     ambiguous_counter = 0;
-    if(!strcmp(n->childs[0]->value, g->name) && ((n->n_children - 1) == g->n_params) && g->params != NULL){
+    if(!strcmp(n->childs[0]->value, g->name) && ((n->n_children - 1) == g->n_params) && g->is_method == 1){
 
       for(k = 0; k < g->n_params; k++){
         if(!strcmp(n->childs[k+1]->anotated_type, g->params[k]) ){
@@ -386,6 +386,7 @@ void parse_call_node(node* n){
         }
       }
       if(counter == g->n_params){
+
         n->anotated_type = g->type;
         flag ++;
         matches++;
@@ -455,12 +456,10 @@ void parse_parseargs_node(node* n){
     printf("Line %d, col %d: Cannot find symbol %s\n", n->childs[1]->token->line, n->childs[1]->token->col, n->childs[1]->value);
   }
   if(strcmp(n->childs[0]->anotated_type,"String[]")){//verificar
-    //n->anotated_type = strdup("undef");
-    printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
+    printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->childs[0]->token->line, n->childs[0]->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
   }
   if(strcmp(n->childs[1]->anotated_type,"int")){
-    //n->anotated_type = strdup("undef");
-    printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[1]->token->line, n->childs[1]->token->col, n->childs[1]->anotated_type, fix(n->token->id));
+    printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->childs[1]->token->line, n->childs[1]->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
   }
 }
 
@@ -468,10 +467,10 @@ void parse_parseargs_node(node* n){
 void parse_and_or_nodes(node* n){
   n->anotated_type = strdup("boolean");
   if(strcmp(n->childs[0]->anotated_type,"boolean")){
-    printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
+    printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->childs[0]->token->line, n->childs[0]->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
   }
   if(strcmp(n->childs[1]->anotated_type,"boolean")){
-    printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[1]->token->line, n->childs[1]->token->col, n->childs[1]->anotated_type, fix(n->token->id));
+    printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->childs[1]->token->line, n->childs[1]->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
   }
 }
 
@@ -507,7 +506,7 @@ void parse_minus_plus_nodes(node* n){
   if(!strcmp(n->childs[0]->anotated_type, "int") || !strcmp(n->childs[0]->anotated_type, "double"))
     n->anotated_type = n->childs[0]->anotated_type;
   else{
-    printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->token->line, n->token->col, n->childs[0]->anotated_type, fix(n->token->id));
+    printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
     n->anotated_type = strdup("undef");
   }
 
@@ -537,15 +536,15 @@ void parse_logic_nodes(node* n){
 void parse_not_node(node* n){
   n->anotated_type = strdup("boolean");
   if(strcmp(n->childs[0]->anotated_type, "boolean")){
-    printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type,fix(n->token->id));
+    printf("Line %d, col %d: Operator %s cannot be applied to type %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type);
   }
 }
 
 
 void parse_length_node(node* n){
   n->anotated_type = strdup("int");
-  if(strcmp(n->childs[0]->anotated_type, "String[]") || strcmp(n->childs[0]->anotated_type, "StrLit")){
-    printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
+  if(strcmp(n->childs[0]->anotated_type, "String[]")){
+    printf("Line %d, col %d: Operator %s cannot be applied to type %s\n", n->childs[0]->token->line, n->childs[0]->token->col, fix(n->token->id), n->childs[0]->anotated_type);
   }
 }
 
@@ -619,6 +618,12 @@ void parse_do_while_node(node* n){
 }
 
 void parse_print_node(node* n){
+
+  if(!strcmp(n->childs[0]->anotated_type, "undef")){
+    printf("Line %d, col %d: Cannot find symbol %s\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->value);
+  }
+
+
   if((n->childs[0]->n_children == 0) && (!strcmp(n->childs[0]->anotated_type, "String[]") || !strcmp(n->childs[0]->anotated_type, "undef") || !strcmp(n->childs[0]->anotated_type, "void"))){
     printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
   } else if((n->childs[0]->n_children > 0) && (!strcmp(n->childs[0]->anotated_type, "String[]") || !strcmp(n->childs[0]->anotated_type, "undef") || !strcmp(n->childs[0]->anotated_type, "void"))){

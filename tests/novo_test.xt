@@ -1,16 +1,19 @@
 class gcd {
 
-
-
-  public static boolean func(double i){}
-
-  public static int func(boolean i){}
-
-  public static int main(String[] args){
-
-    func(2.2);
-
+  public static int func(){
+    int a;
+    int b;
+    func(a,b);
   }
+
+  public static double func(int a, int g){}
+
+
+  public static double func(double i, int a){}
+
+
+  public static int func(int i, int c){}
+
 
 
 }
