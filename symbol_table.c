@@ -356,8 +356,6 @@ void parse_assign_node(node* n){
 // se não baterem, vemos se são compativeis -> se forem variavel++;
 // se variavel > 1 -> ambiguous
 
-
-
 void parse_call_node(node* n){
   int k;
   int counter = 0;
@@ -920,7 +918,7 @@ char* fix(char* type){
     return "if";
   } else if(!strcmp(type, "While")){
     return "while";
-  } else if(!strcmp(type, "Do While")){
+  } else if(!strcmp(type, "DoWhile")){
     return "do";
   } else if(!strcmp(type, "Print")){
     return "System.out.println";

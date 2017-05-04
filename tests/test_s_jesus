@@ -1,8 +1,9 @@
 class gcd {
-
-  public static int main(int a){
-    boolean b;
-    boolean c;
-    a = b+c;
+  public static int main(String[] args){
+    int b;
+    b = 0;
+    do{
+      b = b + 1;
+    }while(f());
   }
 }
