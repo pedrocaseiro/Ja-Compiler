@@ -1,8 +1,6 @@
 class gcd {
 
-  public static int kappa(int a){}
-  public static int kappa(int a, int a){}
-  public static int kappa(int a, int a){}
-
-
+  public static int main(int a){
+    a = ola(ola(x,y,ola(l,k)));
+  }
 }
