@@ -363,7 +363,6 @@ void parse_assign_node(node* n){
   }
 }
 */
-
 // percorremos tabelas até encontrar com nome igual
 // se for match -> preenchemos árvore
 // se for compativel -> contador++
@@ -399,6 +398,8 @@ void parse_call_node(node* n){
           counter++;
         } else if(!strcmp(n->childs[k+1]->anotated_type, "int") && !strcmp(g->params[k], "double")){
           double_int_counter++;
+        } else {
+          break;
         }
       }
       if(counter == g->n_params){
@@ -414,8 +415,7 @@ void parse_call_node(node* n){
         }
 
         strcat(str, ")");
-
-
+        break;
       } else if(counter + double_int_counter == g->n_params){
         n->anotated_type = g->type;
         double_int_matches++;
@@ -663,12 +663,14 @@ void parse_declit_node(node* n){
   }
 }
 
-void parse_boollit_node(node* n){
-  n->anotated_type = strdup("boolean");
-}
-
+// count the number of zeros until e or \n
+//
 void parse_reallit_node(node* n){
   n->anotated_type = strdup("double");
+}
+
+void parse_boollit_node(node* n){
+  n->anotated_type = strdup("boolean");
 }
 
 
@@ -682,11 +684,21 @@ void parse_return_node(node* n){
   if(n->n_children == 0){
     // if it is not void
     if(strcmp(t, "void")){
-      // TODO: always void?
       printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->token->line, n->token->col, "void", fix(n->token->id));
     }
   } else if(n->n_children > 0){
-    if((n->childs[0]->n_children == 0) && !strcmp(n->childs[0]->anotated_type, "void")){
+    if(!strcmp(t, "double")){
+      if(strcmp(n->childs[0]->anotated_type, "int") && strcmp(n->childs[0]->anotated_type, "double")){
+        printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
+      }
+    } else if(!strcmp(t, "void")){
+      printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
+    } else if(strcmp(n->childs[0]->anotated_type, t)){
+      printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
+    }
+
+
+    /*if((n->childs[0]->n_children == 0) && !strcmp(n->childs[0]->anotated_type, "void")){
       printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
     } else if((n->childs[0]->n_children > 0) && !strcmp(n->childs[0]->anotated_type, "void")){
       printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[0]->childs[0]->token->line, n->childs[0]->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
@@ -701,7 +713,7 @@ void parse_return_node(node* n){
     if (n->childs[0]->n_children == 0 && !strcmp(n->childs[0]->anotated_type, "undef")){//verificar isto
       printf("Line %d, col %d: Cannot find symbol %s\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->value);
       printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
-    }
+    }*/
   }
 }
 
@@ -752,15 +764,14 @@ void check_assign_definition(node* n){
   }
 }
 
-void check_call_definition(node* n){
+/*void check_call_definition(node* n){
   int i;
   for(i=1; i< n->n_children;i++){
     if((n->childs[i]->n_children == 0) && !strcmp(n->childs[i]->anotated_type, "undef")){
       printf("Line %d, col %d: Cannot find symbol %s\n", n->childs[i]->token->line, n->childs[i]->token->col, n->childs[i]->value);
     }
-
   }
-}
+}*/
 
 void check_and_or_definition(node* n){
   int i;
@@ -874,10 +885,10 @@ void create_an_tree(node *n){
       }
       parse_assign_node(n);
   } else if(!strcmp(n->token->id, "Call")){
-
-      create_an_tree(n->childs[0]);
-      check_call_definition(n);
-      for(i = 1; i < n->n_children; i++){
+      //create_an_tree(n->childs[0]);
+      //check_call_definition(n);
+      // TODO: a 1
+      for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
       }
       parse_call_node(n);

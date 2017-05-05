@@ -1,14 +1,10 @@
 class gcd {
-  public static void func(double a, int y){}
 
-  public static void func(int a, int y){}
-
-  public static void func(int a, double y){}
-
-  public static int main(String[] args){
-    boolean a;
-    System.out.println(func(3,3.3));
-    func(4, 3);
-    Integer.parseInt(args[p]);
+  public static int main(){
+    return 5.5;
   }
+  public static int func(double a, int y){
+    return main();
+  }
+
 }
