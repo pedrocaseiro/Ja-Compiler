@@ -6,7 +6,7 @@ class gcd {
     func(a,b);
   }
 
-  public static double func(int a, int g){}
+  public static double func(double i, int a){}
 
 
   public static double func(double i, int a){}

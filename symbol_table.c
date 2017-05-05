@@ -377,6 +377,103 @@ void parse_assign_node(node* n){
 // se não baterem, vemos se são compativeis -> se forem variavel++;
 // se variavel > 1 -> ambiguous
 
+
+void parse_call_node(node* n){
+  int k=0;
+  int counter = 0;
+  int double_int_counter = 0;
+  int matches = 0;
+  int double_int_matches = 0;
+  symbol* g = (symbol*)malloc(sizeof(symbol));
+  g = table[0]->first;
+  char str[1000]="(";
+  char str2[1000]="(";
+
+  while(g != NULL){
+    counter = 0;
+    double_int_counter = 0;
+    if(!strcmp(n->childs[0]->value, g->name) && ((n->n_children - 1) == g->n_params) && g->is_method == 1){
+
+      for(k = 0; k < g->n_params; k++){
+        if(!strcmp(n->childs[k+1]->anotated_type, g->params[k]) ){
+          counter++;
+        } else if(!strcmp(n->childs[k+1]->anotated_type, "int") && !strcmp(g->params[k], "double")){
+          double_int_counter++;
+        }
+      }
+      if(counter == g->n_params){
+        n->anotated_type = g->type;
+        matches++;
+        strcpy(str,"(");
+        int j;
+        for(j = 0; j < g->n_params; j++){
+          strcat(str, g->params[j]);
+          if(j != g->n_params - 1){
+            strcat(str, ",");
+            }
+        }
+
+        strcat(str, ")");
+
+
+      } else if(counter + double_int_counter == g->n_params){
+        n->anotated_type = g->type;
+        double_int_matches++;
+        strcpy(str2,"(");
+        int j;
+        for(j = 0; j < g->n_params; j++){
+          strcat(str2, g->params[j]);
+          if(j != g->n_params - 1){
+            strcat(str2, ",");
+            }
+        }
+
+        strcat(str2, ")");
+
+      }
+    }
+    g = g->next;
+  }
+
+  if(matches == 1){//one perfect match found
+    n->childs[0]->anotated_type = strdup(str);
+    return;
+  } else if( matches == 0){//perfect match not found
+
+    if(double_int_matches == 1){//one compatible match found
+      n->childs[0]->anotated_type = strdup(str2);
+      return;
+
+    } else if(double_int_matches == 0){//0 matches found
+        char call_child_types[1000]="(";
+        char result_to_print[1000]="";
+        int h=1;
+        //mandar print correto
+        for(h = 1; h < n->n_children; h++){
+          strcat(call_child_types, n->childs[h]->anotated_type);
+          if(h != n->n_children - 1){
+            strcat(call_child_types, ",");
+          }
+        }
+        strcat(call_child_types, ")");
+        strcat(result_to_print, n->childs[0]->value);
+
+
+        n->anotated_type = "undef";
+        n->childs[0]->anotated_type = "undef";
+        printf("Line %d, col %d: Cannot find symbol %s\n", n->childs[0]->token->line, n->childs[0]->token->col, strcat(result_to_print, call_child_types));
+    } else{//ambiguous
+      n->anotated_type = "undef";
+      n->childs[0]->anotated_type = "undef";
+      printf("Line %d, col %d: Reference to method %s is ambiguous\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->value);
+    }
+  }
+
+
+}
+
+
+/*
 void parse_call_node(node* n){
   int k;
   int counter = 0;
@@ -455,7 +552,7 @@ void parse_call_node(node* n){
     printf("Line %d, col %d: Cannot find symbol %s\n", n->childs[0]->token->line, n->childs[0]->token->col, strcat(result_to_print, call_child_types));
   }
 }
-
+*/
 void parse_parseargs_node(node* n){
 
   n->anotated_type = strdup("int");
@@ -466,11 +563,11 @@ void parse_parseargs_node(node* n){
   if(n->childs[1]->n_children == 0 && !strcmp(n->childs[1]->anotated_type,"undef")){
     printf("Line %d, col %d: Cannot find symbol %s\n", n->childs[1]->token->line, n->childs[1]->token->col, n->childs[1]->value);
   }
-  if(strcmp(n->childs[0]->anotated_type,"String[]")){//verificar
-    printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->childs[0]->token->line, n->childs[0]->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
+  if(strcmp(n->childs[0]->anotated_type,"String[]")){//TODO: alterar linhas
+    printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col-17, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
   }
-  if(strcmp(n->childs[1]->anotated_type,"int")){
-    printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->childs[1]->token->line, n->childs[1]->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
+  if(strcmp(n->childs[1]->anotated_type,"int")){//TODO: alterar linhas
+    printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col-17, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
   }
 }
 
