@@ -480,6 +480,11 @@ void parse_and_or_nodes(node* n){
 // TODO: this can be shortened!! Not done yet for readibility purposes
 void parse_equality_nodes(node* n){
   n->anotated_type = strdup("boolean");
+  if(strcmp(n->token->id, "Eq") && strcmp(n->token->id, "Neq")){
+    if(!strcmp(n->childs[0]->anotated_type,"boolean") && !strcmp(n->childs[1]->anotated_type,"boolean")){
+      printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
+    }
+  }
   if(!strcmp(n->childs[0]->anotated_type,"boolean") && !strcmp(n->childs[1]->anotated_type,"int")){
     printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
   } else if(!strcmp(n->childs[0]->anotated_type,"int") && !strcmp(n->childs[1]->anotated_type,"boolean")){
@@ -487,8 +492,6 @@ void parse_equality_nodes(node* n){
   } else if(!strcmp(n->childs[0]->anotated_type,"boolean") && !strcmp(n->childs[1]->anotated_type,"double")){
     printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
   } else if(!strcmp(n->childs[0]->anotated_type,"double") && !strcmp(n->childs[1]->anotated_type,"boolean")){
-    printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
-  } else if(!strcmp(n->childs[0]->anotated_type,"boolean") && !strcmp(n->childs[1]->anotated_type,"boolean")){
     printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
   }
   if(!strcmp(n->childs[0]->anotated_type,"undef")){
@@ -548,12 +551,13 @@ void parse_length_node(node* n){
 }
 
 void parse_declit_node(node* n){
-  //printf("%s\n", n->value);
-  //unsigned long long int value = atoi(n->value);
-  //printf("%llu\n", value);
-  /*if(value >= 2147483648 || value <= -2147483648)
-    printf("Number 2147483648 out of bounds\n");*/
   n->anotated_type = strdup("int");
+  /*long int a = 2147483648;
+  if(atoll((char*)n->value) > a){
+    printf("Number %s out of bounds\n", (char*)n->value);
+  } else if(atoll((char*)n->value) < a){
+    printf("Number -%s out of bounds\n", (char*)n->value);
+  }*/
 }
 
 void parse_boollit_node(node* n){

@@ -1,11 +1,13 @@
 class gcd {
 
-  public static void test(int y){
-    
-  }
-
 
   public static int main(String[] args){
+    boolean a;
+    boolean b;
+    boolean c;
+    a = true;
+    b = false;
 
+    c = a == b;
   }
 }
