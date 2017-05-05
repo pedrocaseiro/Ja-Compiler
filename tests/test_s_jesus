@@ -7,7 +7,7 @@ class gcdabcd {
       a = 5;
     }
     a = a.length;
-  }*/
+  }
   public static int main(String[] args){
     boolean a;
     boolean b;
@@ -31,6 +31,30 @@ class gcdabcd {
   public static void v(){}
   public static int gcd(){}
   public static boolean a(int b, double c){}
-  public static boolean a(double b, double c){}
+  public static boolean a(double b, double c){}*/
+  public static int f(){}
+  public static int main(String[] args){
+    int a;
+    int b;
+    boolean c;
+    boolean result;
+    double l;
+    boolean d;
+    c = args;
+    /*result = a == b;
+    result = a == h;
+    result = a > b;
+    result = a != c;
+    result = a != args;
+    result = a == args;
+    result = a >= args;
+    result = a >= b;
+    result = a >= h;*/
+    result = a >= f();
+    /*result = a == l;
+    result = l == a;
+    result = a >= l;
+    result = l <= a;*/
+  }
 
 }

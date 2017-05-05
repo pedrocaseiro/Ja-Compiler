@@ -48,6 +48,7 @@ void parse_length_node(node*);
 void parse_not_node(node*);
 void parse_logic_nodes(node*);
 void parse_equality_nodes(node*);
+void parse_relational_nodes(node*);
 void parse_logic_nodes(node*);
 void parse_and_or_nodes(node*);
 void parse_parseargs_node(node*);
@@ -64,6 +65,7 @@ void check_and_or_definition(node*);
 void check_minus_plus_definition(node*);
 void check_not_definition(node* n);
 void check_equality_nodes(node* n);
+void check_relational_nodes(node* n);
 void check_length_nodes(node* n);
 
 void create_an_tree(node*);

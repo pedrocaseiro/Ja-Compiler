@@ -294,6 +294,19 @@ bool parse_fielddecl_node(node* n){
   return true;
 }
 
+void parse_assign_node(node *n){
+  n->anotated_type = n->childs[0]->anotated_type;
+  if((!strcmp(n->childs[0]->anotated_type, "int") && !strcmp(n->childs[1]->anotated_type, "int")) ||
+     (!strcmp(n->childs[0]->anotated_type, "double") && !strcmp(n->childs[1]->anotated_type, "double")) ||
+     (!strcmp(n->childs[0]->anotated_type, "double") && !strcmp(n->childs[1]->anotated_type, "int")) ||
+     (!strcmp(n->childs[0]->anotated_type, "boolean") && !strcmp(n->childs[1]->anotated_type, "boolean"))){
+       return;
+     } else {
+       printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
+     }
+}
+
+/*
 void parse_assign_node(node* n){
   n->anotated_type = n->childs[0]->anotated_type;
 
@@ -316,7 +329,7 @@ void parse_assign_node(node* n){
       error_flag = 1;
   } else if(!strcmp(n->childs[1]->anotated_type, "undef")){
       error_flag = 1;
-  } else if(!strcmp(n->childs[0]->anotated_type, "String[]") && !strcmp(n->childs[1]->anotated_type, "String[]")){
+  } else if(!strcmp(n->childs[0]->anotated_type, "String[]") || !strcmp(n->childs[1]->anotated_type, "String[]")){
       error_flag = 1;
   }
 
@@ -349,6 +362,7 @@ void parse_assign_node(node* n){
     printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
   }
 }
+*/
 
 // percorremos tabelas até encontrar com nome igual
 // se for match -> preenchemos árvore
@@ -468,29 +482,30 @@ void parse_and_or_nodes(node* n){
   }
 }
 
-// Equality nodes >, >=, <, >=, ==, !=
-// we can only compare boolean with bool2ean, int with int, double with int, int with double and double with int
-// it should throw an error when the comparison is between boolean and int, boolean and double, int and boolean, double and boolean, undef and anything, anything and undef
-// TODO: this can be shortened!! Not done yet for readibility purposes
+// Equality nodes ==, !=
 void parse_equality_nodes(node* n){
   n->anotated_type = strdup("boolean");
-  if(strcmp(n->token->id, "Eq") && strcmp(n->token->id, "Neq")){
-    if(!strcmp(n->childs[0]->anotated_type,"boolean") && !strcmp(n->childs[1]->anotated_type,"boolean")){
-      printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
-    }
-  }
-  if(!strcmp(n->childs[0]->anotated_type,"boolean") && !strcmp(n->childs[1]->anotated_type,"int")){
-    printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
-  } else if(!strcmp(n->childs[0]->anotated_type,"int") && !strcmp(n->childs[1]->anotated_type,"boolean")){
-    printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
-  } else if(!strcmp(n->childs[0]->anotated_type,"boolean") && !strcmp(n->childs[1]->anotated_type,"double")){
-    printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
-  } else if(!strcmp(n->childs[0]->anotated_type,"double") && !strcmp(n->childs[1]->anotated_type,"boolean")){
-    printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
-  } else if(!strcmp(n->childs[0]->anotated_type,"String[]") || !strcmp(n->childs[1]->anotated_type,"String[]")){
+  if((!strcmp(n->childs[0]->anotated_type,"int") && !strcmp(n->childs[1]->anotated_type,"int")) ||
+     (!strcmp(n->childs[0]->anotated_type,"double") && !strcmp(n->childs[1]->anotated_type,"double")) ||
+     (!strcmp(n->childs[0]->anotated_type,"double") && !strcmp(n->childs[1]->anotated_type,"int")) ||
+     (!strcmp(n->childs[0]->anotated_type,"boolean") && !strcmp(n->childs[1]->anotated_type,"boolean")) ||
+     (!strcmp(n->childs[0]->anotated_type,"int") && !strcmp(n->childs[1]->anotated_type,"double"))){
+     return;
+  }else {
     printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
   }
-  if(!strcmp(n->childs[0]->anotated_type,"undef") || !strcmp(n->childs[1]->anotated_type,"undef")){
+}
+
+// Relational nodes > , >=, <, >=
+void parse_relational_nodes(node* n){
+  n->anotated_type = strdup("boolean");
+  if((!strcmp(n->childs[0]->anotated_type,"boolean") && !strcmp(n->childs[1]->anotated_type,"boolean")) ||
+     (!strcmp(n->childs[0]->anotated_type,"int") && !strcmp(n->childs[1]->anotated_type,"int")) ||
+     (!strcmp(n->childs[0]->anotated_type,"double") && !strcmp(n->childs[1]->anotated_type,"double")) ||
+     (!strcmp(n->childs[0]->anotated_type,"int") && !strcmp(n->childs[1]->anotated_type,"double")) ||
+     (!strcmp(n->childs[0]->anotated_type,"double") && !strcmp(n->childs[1]->anotated_type,"int"))){
+     return;
+  }else {
     printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
   }
 }
@@ -684,6 +699,15 @@ void check_equality_nodes(node* n){
   }
 }
 
+void check_relational_nodes(node* n){
+  if(n->childs[0]->n_children == 0 && !strcmp(n->childs[0]->anotated_type,"undef")){
+    printf("Line %d, col %d: Cannot find symbol %s\n", n->childs[0]->token->line, n->childs[0]->token->col,n->childs[0]->value);
+  }
+  if(n->childs[1]->n_children == 0 && !strcmp(n->childs[1]->anotated_type,"undef")){
+    printf("Line %d, col %d: Cannot find symbol %s\n", n->childs[1]->token->line, n->childs[1]->token->col,n->childs[1]->value);
+  }
+}
+
 void check_logic_nodes(node* n){
 
   if(n->childs[0]->n_children == 0 && !strcmp(n->childs[0]->anotated_type,"undef")){
@@ -775,7 +799,7 @@ void create_an_tree(node *n){
         create_an_tree(n->childs[i]);
       }
       parse_and_or_nodes(n);
-  } else if(!strcmp(n->token->id, "Eq") || !strcmp(n->token->id, "Geq") || !strcmp(n->token->id, "Gt") || !strcmp(n->token->id, "Leq") || !strcmp(n->token->id, "Lt") || !strcmp(n->token->id, "Neq")){
+  } else if(!strcmp(n->token->id, "Eq") || !strcmp(n->token->id, "Neq")){
       create_an_tree(n->childs[0]);
       create_an_tree(n->childs[1]);
       check_equality_nodes(n);
@@ -784,6 +808,15 @@ void create_an_tree(node *n){
         create_an_tree(n->childs[i]);
       }
       parse_equality_nodes(n);
+  } else if(!strcmp(n->token->id, "Geq") || !strcmp(n->token->id, "Gt") || !strcmp(n->token->id, "Leq") || !strcmp(n->token->id, "Lt")){
+      create_an_tree(n->childs[0]);
+      create_an_tree(n->childs[1]);
+      check_relational_nodes(n);
+
+      for(i = 2; i < n->n_children; i++){
+        create_an_tree(n->childs[i]);
+      }
+      parse_relational_nodes(n);
   } else if(!strcmp(n->token->id, "Add") || !strcmp(n->token->id, "Sub") || !strcmp(n->token->id, "Mul") || !strcmp(n->token->id, "Div") || !strcmp(n->token->id, "Mod")){
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
