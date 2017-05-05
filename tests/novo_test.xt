@@ -1,18 +1,18 @@
 class gcd {
 
-  public static int func(){
-    int a;
-    int b;
-    func(a,b);
+  public static int main(){
+
   }
 
-  public static double func(double i, int a){}
+  public static int func(int a, double b){
+    if(Z){}
+  }
+
+  public static int func(double a, double b){
+
+  }
 
 
-  public static double func(double i, int a){}
-
-
-  public static int func(int i, int c){}
 
 
 

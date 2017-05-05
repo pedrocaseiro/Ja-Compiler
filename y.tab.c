@@ -1809,7 +1809,7 @@ yyreduce:
 
   case 59:
 #line 128 "jac.y" /* yacc.c:1646  */
-    {(yyval.node) = create_and_insert_node("ParseArgs", 1, 1, (yyvsp[0].node));}
+    {(yyval.node) = create_and_insert_node("ParseArgs", 1, 1, (yyvsp[0].node));(yyval.node)->token->line = (yyval.node)->childs[0]->token->line; (yyval.node)->token->col=(yyval.node)->childs[0]->token->col;}
 #line 1814 "y.tab.c" /* yacc.c:1646  */
     break;
 

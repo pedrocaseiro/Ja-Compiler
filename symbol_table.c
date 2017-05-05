@@ -596,8 +596,7 @@ void parse_equality_nodes(node* n){
 // Relational nodes > , >=, <, >=
 void parse_relational_nodes(node* n){
   n->anotated_type = strdup("boolean");
-  if((!strcmp(n->childs[0]->anotated_type,"boolean") && !strcmp(n->childs[1]->anotated_type,"boolean")) ||
-     (!strcmp(n->childs[0]->anotated_type,"int") && !strcmp(n->childs[1]->anotated_type,"int")) ||
+  if((!strcmp(n->childs[0]->anotated_type,"int") && !strcmp(n->childs[1]->anotated_type,"int")) ||
      (!strcmp(n->childs[0]->anotated_type,"double") && !strcmp(n->childs[1]->anotated_type,"double")) ||
      (!strcmp(n->childs[0]->anotated_type,"int") && !strcmp(n->childs[1]->anotated_type,"double")) ||
      (!strcmp(n->childs[0]->anotated_type,"double") && !strcmp(n->childs[1]->anotated_type,"int"))){
@@ -658,12 +657,10 @@ void parse_length_node(node* n){
 
 void parse_declit_node(node* n){
   n->anotated_type = strdup("int");
-  /*long int a = 2147483648;
+  long int a = 2147483648;
   if(atoll((char*)n->value) > a){
     printf("Number %s out of bounds\n", (char*)n->value);
-  } else if(atoll((char*)n->value) < a){
-    printf("Number -%s out of bounds\n", (char*)n->value);
-  }*/
+  }
 }
 
 void parse_boollit_node(node* n){
@@ -709,6 +706,10 @@ void parse_return_node(node* n){
 }
 
 void parse_if_node(node* n){
+
+  if(!strcmp(n->childs[0]->anotated_type, "undef")){
+    printf("Line %d, col %d: Cannot find symbol %s\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->value);
+  }
   if(strcmp(n->childs[0]->anotated_type, "boolean")){
     printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
   }
