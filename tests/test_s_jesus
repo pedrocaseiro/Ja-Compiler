@@ -1,13 +1,36 @@
-class gcd {
-
-
+class gcdabcd {
+/*  public static int main(String[] args){
+    int a;
+    int b;
+    a = v();
+    if(a > b){
+      a = 5;
+    }
+    a = a.length;
+  }*/
   public static int main(String[] args){
     boolean a;
     boolean b;
     boolean c;
-    a = true;
+    a = x;
+    a = gcdabcd;
     b = false;
-
+    int k;
+    a = args;
     c = a == b;
+    a(5,5);
+    a = args + a;
+
+    do{
+      c = 5;
+    }while(args);
+
+    int gcd;
+    gcd();
   }
+  public static void v(){}
+  public static int gcd(){}
+  public static boolean a(int b, double c){}
+  public static boolean a(double b, double c){}
+
 }
