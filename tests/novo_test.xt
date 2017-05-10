@@ -1,19 +1,21 @@
 class gcd {
 
+public static int func;
+
   public static int main(){
+    boolean g;
+    g = false;
+    func(3,g,3);
 
   }
+  public static int func(){}
 
-  public static int func(int a, double b){
-    if(Z){}
-  }
+  public static boolean func(double a, boolean k, int y){}
 
-  public static int func(double a, double b){
+  public static boolean func(int a, boolean k, double p){}
 
-  }
+  public static void func(double a, boolean b, double y){}
 
-
-
-
+  public static double func;
 
 }

@@ -694,7 +694,13 @@ void parse_return_node(node* n){
     } else if(!strcmp(t, "void")){
       printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
     } else if(strcmp(n->childs[0]->anotated_type, t)){
+      if(!strcmp(n->childs[0]->token->id, "Id")){
+        printf("Line %d, col %d: Cannot find symbol %s\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->value);
+      }
       printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
+
+
+
     }
 
 
@@ -719,7 +725,7 @@ void parse_return_node(node* n){
 
 void parse_if_node(node* n){
 
-  if(!strcmp(n->childs[0]->anotated_type, "undef")){
+  if(!strcmp(n->childs[0]->anotated_type, "undef") && !strcmp(n->childs[0]->token->id, "Id")){//se for assign, call .. nao e suposto imprimir este erro
     printf("Line %d, col %d: Cannot find symbol %s\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->value);
   }
   if(strcmp(n->childs[0]->anotated_type, "boolean")){
@@ -728,12 +734,18 @@ void parse_if_node(node* n){
 }
 
 void parse_while_node(node* n){
+  if(!strcmp(n->childs[0]->anotated_type, "undef") && !strcmp(n->childs[0]->token->id, "Id")){//se for assign, call .. nao e suposto imprimir este erro
+    printf("Line %d, col %d: Cannot find symbol %s\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->value);
+  }
   if(strcmp(n->childs[0]->anotated_type, "boolean")){
     printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
   }
 }
 
 void parse_do_while_node(node* n){
+  if(!strcmp(n->childs[1]->anotated_type, "undef") && !strcmp(n->childs[1]->token->id, "Id")){//se for assign, call .. nao e suposto imprimir este erro
+    printf("Line %d, col %d: Cannot find symbol %s\n", n->childs[1]->token->line, n->childs[1]->token->col, n->childs[1]->value);
+  }
   if(strcmp(n->childs[1]->anotated_type, "boolean")){
     printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[1]->token->line, n->childs[1]->token->col, n->childs[1]->anotated_type, fix(n->token->id));
   }
@@ -741,7 +753,7 @@ void parse_do_while_node(node* n){
 
 void parse_print_node(node* n){
 
-  if(!strcmp(n->childs[0]->anotated_type, "undef")){
+  if(!strcmp(n->childs[0]->anotated_type, "undef") && !strcmp(n->childs[0]->token->id, "Id")){
     printf("Line %d, col %d: Cannot find symbol %s\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->value);
   }
 
