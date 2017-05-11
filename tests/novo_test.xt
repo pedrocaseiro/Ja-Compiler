@@ -1,21 +1,22 @@
-class gcd {
+class misery{
 
-public static int func;
+	public static int a;
+	public static double b;
+	public static int baleia_azul (){
+		double a;
+		a=4.94065645841246544e-324;
+		a= 1.79769313___486231570e+308;
+    a = 0000.000;
+		int d;
+    d = 0.0_3230;
+    d = 0;
+    d=55__________________________________________________________________________76565456465;
+		d=12;
+		d= 5456768573432544322132e352;
+		d= 564546546546545645645645645656465E456;
+		//d=46545646546546546546546876845645645646546545646546546546546546545646546545646545646545646546546545646546545645646546545646254154564564564654654654654564654654654654654654564654654645646545645645646545646546546545645646545646546554566545645646546546546465465465546546554654;
+		d = 45_______________________________________________5;
 
-  public static int main(){
-    boolean g;
-    g = false;
-    func(3,g,3);
-
-  }
-  public static int func(){}
-
-  public static boolean func(double a, boolean k, int y){}
-
-  public static boolean func(int a, boolean k, double p){}
-
-  public static void func(double a, boolean b, double y){}
-
-  public static double func;
-
+		a=0.0_______________78;
+	}
 }

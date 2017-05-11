@@ -1,6 +1,8 @@
 #include <stdarg.h>
 #include <string.h>
 #include <stdbool.h>
+#include <limits.h>
+#include <float.h>
 #include "ast.h"
 #include "symbol_table.h"
 
@@ -167,13 +169,13 @@ void iterate_tree(node *n){
           n->childs[i]->anotated_type = strdup("undef");
         }
       } else if(!strcmp(n->childs[i]->token->id, "BoolLit")){
-          parse_boollit_node(n->childs[i]);
+          n->childs[i]->anotated_type = strdup("boolean");
       } else if(!strcmp(n->childs[i]->token->id, "RealLit")){
-          parse_reallit_node(n->childs[i]);
+          n->childs[i]->anotated_type = strdup("double");
       } else if(!strcmp(n->childs[i]->token->id, "DecLit")){
-          parse_declit_node(n->childs[i]);
+          n->childs[i]->anotated_type = strdup("int");
       } else if(!strcmp(n->childs[i]->token->id, "StrLit")){
-          parse_strlit_node(n->childs[i]);
+          n->childs[i]->anotated_type = strdup("String");
       }
       iterate_tree(n->childs[i]);
   }
@@ -305,64 +307,6 @@ void parse_assign_node(node *n){
        printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
      }
 }
-
-/*
-void parse_assign_node(node* n){
-  n->anotated_type = n->childs[0]->anotated_type;
-
-  // incompatibility
-  int error_flag = 0;
-  int flag = 0;
-  if(!strcmp(n->childs[0]->anotated_type, "boolean") && !strcmp(n->childs[1]->anotated_type, "int")){
-    error_flag = 1;
-  } else if(!strcmp(n->childs[0]->anotated_type, "int") && !strcmp(n->childs[1]->anotated_type, "boolean")){
-      error_flag = 1;
-  } else if(!strcmp(n->childs[0]->anotated_type, "double") && !strcmp(n->childs[1]->anotated_type, "boolean")){
-      error_flag = 1;
-  } else if(!strcmp(n->childs[0]->anotated_type, "boolean") && !strcmp(n->childs[1]->anotated_type, "double")){
-      error_flag = 1;
-  } else if(!strcmp(n->childs[0]->anotated_type, "int") && !strcmp(n->childs[1]->anotated_type, "double")){
-      error_flag = 1;
-  } else if(!strcmp(n->childs[0]->anotated_type, "int") && !strcmp(n->childs[1]->anotated_type, "double")){
-      error_flag = 1;
-  } else if(!strcmp(n->childs[0]->anotated_type, "undef")){
-      error_flag = 1;
-  } else if(!strcmp(n->childs[1]->anotated_type, "undef")){
-      error_flag = 1;
-  } else if(!strcmp(n->childs[0]->anotated_type, "String[]") || !strcmp(n->childs[1]->anotated_type, "String[]")){
-      error_flag = 1;
-  }
-
-
-  if(!strcmp(n->childs[1]->token->id, "Call")){
-    if(!strcmp(n->childs[0]->anotated_type, "int") && !strcmp(n->childs[1]->anotated_type, "double")){
-        flag = 1;
-    } else if(!strcmp(n->childs[0]->anotated_type, "int") && !strcmp(n->childs[1]->anotated_type, "boolean")){
-        flag = 1;
-    } else if(!strcmp(n->childs[0]->anotated_type, "int") && !strcmp(n->childs[1]->anotated_type, "void")){
-        flag = 1;
-    } else if(!strcmp(n->childs[0]->anotated_type, "double") && !strcmp(n->childs[1]->anotated_type, "boolean")){
-        flag = 1;
-    } else if(!strcmp(n->childs[0]->anotated_type, "double") && !strcmp(n->childs[1]->anotated_type, "void")){
-        flag = 1;
-    } else if(!strcmp(n->childs[0]->anotated_type, "boolean") && !strcmp(n->childs[1]->anotated_type, "int")){
-        flag = 1;
-    } else if(!strcmp(n->childs[0]->anotated_type, "boolean") && !strcmp(n->childs[1]->anotated_type, "double")){
-        flag = 1;
-    } else if(!strcmp(n->childs[0]->anotated_type, "boolean") && !strcmp(n->childs[1]->anotated_type, "void")){
-        flag = 1;
-    }
-  }
-
-  if(flag){
-    printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
-  }
-
-  if(error_flag == 1){
-    printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
-  }
-}
-*/
 // percorremos tabelas até encontrar com nome igual
 // se for match -> preenchemos árvore
 // se for compativel -> contador++
@@ -472,87 +416,6 @@ void parse_call_node(node* n){
 
 }
 
-
-/*
-void parse_call_node(node* n){
-  int k;
-  int counter = 0;
-  int ambiguous_counter = 0;
-  int matches = 0;
-  int flag = 0;
-  symbol* g = (symbol*)malloc(sizeof(symbol));
-  g = table[0]->first;
-
-  while(g != NULL){
-    counter = 0;
-    ambiguous_counter = 0;
-    if(!strcmp(n->childs[0]->value, g->name) && ((n->n_children - 1) == g->n_params) && g->is_method == 1){
-
-      for(k = 0; k < g->n_params; k++){
-        if(!strcmp(n->childs[k+1]->anotated_type, g->params[k]) ){
-          counter++;
-        } else if(!strcmp(n->childs[k+1]->anotated_type, "int") && !strcmp(g->params[k], "double")){
-          ambiguous_counter++;
-        }
-      }
-      if(counter == g->n_params){
-        n->anotated_type = g->type;
-        flag ++;
-        matches++;
-        char str[1000]="(";
-        int j;
-        for(j = 0; j < g->n_params; j++){
-          strcat(str, g->params[j]);
-          if(j != g->n_params - 1){
-            strcat(str, ",");
-            }
-        }
-
-        strcat(str, ")");
-        n->childs[0]->anotated_type = strdup(str);
-
-      } else if(counter + ambiguous_counter == g->n_params){
-        n->anotated_type = g->type;
-        matches++;
-        char str[1000]="(";
-        int j;
-        for(j = 0; j < g->n_params; j++){
-          strcat(str, g->params[j]);
-          if(j != g->n_params - 1){
-            strcat(str, ",");
-            }
-        }
-
-        strcat(str, ")");
-        n->childs[0]->anotated_type = strdup(str);
-      }
-    }
-    g = g->next;
-  }
-  if((matches > 1 && flag == 0) || flag > 1){
-    n->anotated_type = "undef";
-    n->childs[0]->anotated_type = "undef";
-    printf("Line %d, col %d: Reference to method %s is ambiguous\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->value);
-  } else if(matches == 0){
-    int k;
-    char call_child_types[1000]="(";
-    char result_to_print[1000]="";
-
-    //mandar print correto
-    for(k = 1; k < n->n_children; k++){
-      strcat(call_child_types, n->childs[k]->anotated_type);
-      if(k != n->n_children - 1){
-        strcat(call_child_types, ",");
-      }
-    }
-    strcat(call_child_types, ")");
-    strcat(result_to_print, n->childs[0]->value);
-    n->anotated_type = "undef";
-    n->childs[0]->anotated_type = "undef";
-    printf("Line %d, col %d: Cannot find symbol %s\n", n->childs[0]->token->line, n->childs[0]->token->col, strcat(result_to_print, call_child_types));
-  }
-}
-*/
 void parse_parseargs_node(node* n){
 
   n->anotated_type = strdup("int");
@@ -666,6 +529,36 @@ void parse_declit_node(node* n){
 // count the number of zeros until e or \n
 //
 void parse_reallit_node(node* n){
+
+  double number;
+  char* char_value = (char*)n->value;
+  char* str = (char*)malloc(1000*sizeof(char));
+  int i = 0, j=0, zeros;
+  bool e_flag = false;
+  bool different_zero_flag = false;
+  while(char_value[i] != '\0'){
+    if(char_value[i] == 'E' || char_value[i] == 'e')
+      e_flag = true;
+
+    if(char_value[i] != '.' && char_value[i] != '0' && !e_flag)
+      different_zero_flag = true;
+
+    str[j] = char_value[i];
+    j++;
+    i++;
+
+  }
+  str[j] = '\0';
+  number = atof(str);
+  if(different_zero_flag){
+    if(isinf(number)){
+      printf("Line %d, col %d: Number %s out of bounds\n", n->token->line, n->token->col, n->value);
+    } else if(number > DBL_MAX){
+      printf("Line %d, col %d: Number %s out of bounds\n", n->token->line, n->token->col, n->value);
+    }
+
+  }
+  free(str);
   n->anotated_type = strdup("double");
 }
 
@@ -970,6 +863,14 @@ void create_an_tree(node *n){
         create_an_tree(n->childs[i]);
       }
       parse_return_node(n);
+  } else if(!strcmp(n->token->id, "BoolLit")){
+      parse_boollit_node(n);
+  } else if(!strcmp(n->token->id, "RealLit")){
+      parse_reallit_node(n);
+  } else if(!strcmp(n->token->id, "DecLit")){
+      parse_declit_node(n);
+  } else if(!strcmp(n->token->id, "StrLit")){
+      parse_strlit_node(n);
   }
 }
 
