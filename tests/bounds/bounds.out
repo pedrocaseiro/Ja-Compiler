@@ -1,0 +1,58 @@
+Line 13, col 6: Number 5456768573432544322132e352 out of bounds
+Line 13, col 4: Operator = cannot be applied to types int, double
+Line 14, col 6: Number 564546546546545645645645645656465E456 out of bounds
+Line 14, col 4: Operator = cannot be applied to types int, double
+===== Class misery Symbol Table =====
+a		int
+b		double
+baleia_azul	()	int
+
+===== Method baleia_azul() Symbol Table =====
+return		int
+a		double
+d		int
+
+Program
+..Id(misery)
+..FieldDecl
+....Int
+....Id(a)
+..FieldDecl
+....Double
+....Id(b)
+..MethodDecl
+....MethodHeader
+......Int
+......Id(baleia_azul)
+......MethodParams
+....MethodBody
+......VarDecl
+........Double
+........Id(a)
+......Assign - double
+........Id(a) - double
+........RealLit(4.94065645841246544e-324) - double
+......Assign - double
+........Id(a) - double
+........RealLit(1.79769313___486231570e+308) - double
+......VarDecl
+........Int
+........Id(d)
+......Assign - int
+........Id(d) - int
+........DecLit(55__________________________________________________________________________76565456465) - int
+......Assign - int
+........Id(d) - int
+........DecLit(12) - int
+......Assign - int
+........Id(d) - int
+........RealLit(5456768573432544322132e352) - double
+......Assign - int
+........Id(d) - int
+........RealLit(564546546546545645645645645656465E456) - double
+......Assign - int
+........Id(d) - int
+........DecLit(45_______________________________________________5) - int
+......Assign - double
+........Id(a) - double
+........RealLit(0.0_______________78) - double

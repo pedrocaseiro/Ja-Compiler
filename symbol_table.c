@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <limits.h>
 #include <float.h>
+#include <math.h>
 #include "ast.h"
 #include "symbol_table.h"
 
@@ -224,8 +225,10 @@ bool parse_methodheader_node(node* n){
   node* methodparams = (node*)malloc(sizeof(node));
   s = table[0]->first;
   int count = 0;
-  char str[1000] = {0}; // TODO: não fazer 100 à mão!!!!!
-  char str2[1000] = {0}; // TODO: MUDAR ISTO
+  //char str[1000] = {0}; // TODO: não fazer 100 à mão!!!!!
+  //char str2[1000] = {0}; // TODO: MUDAR ISTO
+  char* str = (char*)malloc(1000 * sizeof(char));
+  char* str2 = (char*)malloc(1000 * sizeof(char));
   while(s != NULL){
     if(!strcmp(s->name, n->childs[1]->value) && n->childs[2]->n_children == s->n_params && s->is_method == 1){
       //check if they have the same parameters
@@ -407,9 +410,22 @@ void parse_call_node(node* n){
         n->childs[0]->anotated_type = "undef";
         printf("Line %d, col %d: Cannot find symbol %s\n", n->childs[0]->token->line, n->childs[0]->token->col, strcat(result_to_print, call_child_types));
     } else{//ambiguous
+
+      char call_child_types[1000]="(";
+      int h=1;
+      //mandar print correto
+      for(h = 1; h < n->n_children; h++){
+        strcat(call_child_types, n->childs[h]->anotated_type);
+        if(h != n->n_children - 1){
+          strcat(call_child_types, ",");
+        }
+      }
+      strcat(call_child_types, ")");
+
+
       n->anotated_type = "undef";
       n->childs[0]->anotated_type = "undef";
-      printf("Line %d, col %d: Reference to method %s is ambiguous\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->value);
+      printf("Line %d, col %d: Reference to method %s%s is ambiguous\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->value, call_child_types);
     }
   }
 
@@ -426,10 +442,7 @@ void parse_parseargs_node(node* n){
   if(n->childs[1]->n_children == 0 && !strcmp(n->childs[1]->anotated_type,"undef")){
     printf("Line %d, col %d: Cannot find symbol %s\n", n->childs[1]->token->line, n->childs[1]->token->col, n->childs[1]->value);
   }
-  if(strcmp(n->childs[0]->anotated_type,"String[]")){//TODO: alterar linhas
-    printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col-17, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
-  }
-  if(strcmp(n->childs[1]->anotated_type,"int")){//TODO: alterar linhas
+  if(strcmp(n->childs[0]->anotated_type,"String[]") || strcmp(n->childs[1]->anotated_type,"int")){//TODO: alterar linhas
     printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col-17, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
   }
 }
@@ -522,7 +535,7 @@ void parse_declit_node(node* n){
   n->anotated_type = strdup("int");
   long int a = 2147483648;
   if(atoll((char*)n->value) > a){
-    printf("Number %s out of bounds\n", (char*)n->value);
+    printf("Line %d, col %d: Number %s out of bounds\n", n->token->line, n->token->col, (char*)n->value);
   }
 }
 
@@ -533,7 +546,7 @@ void parse_reallit_node(node* n){
   double number;
   char* char_value = (char*)n->value;
   char* str = (char*)malloc(1000*sizeof(char));
-  int i = 0, j=0, zeros;
+  int i = 0, j=0;
   bool e_flag = false;
   bool different_zero_flag = false;
   while(char_value[i] != '\0'){
@@ -596,23 +609,6 @@ void parse_return_node(node* n){
 
     }
 
-
-    /*if((n->childs[0]->n_children == 0) && !strcmp(n->childs[0]->anotated_type, "void")){
-      printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
-    } else if((n->childs[0]->n_children > 0) && !strcmp(n->childs[0]->anotated_type, "void")){
-      printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[0]->childs[0]->token->line, n->childs[0]->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
-    }
-
-    // types are different
-    if((n->childs[0]->n_children == 0) && strcmp(n->childs[0]->anotated_type, t) && (strcmp(t, "double") && strcmp(n->childs[0]->anotated_type, "int"))){
-      printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
-    } else if((n->childs[0]->n_children > 0) && strcmp(n->childs[0]->anotated_type, t) && (strcmp(t, "double") && strcmp(n->childs[0]->anotated_type, "int"))){
-      printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
-    }
-    if (n->childs[0]->n_children == 0 && !strcmp(n->childs[0]->anotated_type, "undef")){//verificar isto
-      printf("Line %d, col %d: Cannot find symbol %s\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->value);
-      printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
-    }*/
   }
 }
 
@@ -650,7 +646,7 @@ void parse_print_node(node* n){
     printf("Line %d, col %d: Cannot find symbol %s\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->value);
   }
 
-
+  //TODO: check a+b+c+d
   if((n->childs[0]->n_children == 0) && (!strcmp(n->childs[0]->anotated_type, "String[]") || !strcmp(n->childs[0]->anotated_type, "undef") || !strcmp(n->childs[0]->anotated_type, "void"))){
     printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
   } else if((n->childs[0]->n_children > 0) && (!strcmp(n->childs[0]->anotated_type, "String[]") || !strcmp(n->childs[0]->anotated_type, "undef") || !strcmp(n->childs[0]->anotated_type, "void"))){
@@ -669,14 +665,14 @@ void check_assign_definition(node* n){
   }
 }
 
-/*void check_call_definition(node* n){
+void check_call_definition(node* n){
   int i;
   for(i=1; i< n->n_children;i++){
     if((n->childs[i]->n_children == 0) && !strcmp(n->childs[i]->anotated_type, "undef")){
       printf("Line %d, col %d: Cannot find symbol %s\n", n->childs[i]->token->line, n->childs[i]->token->col, n->childs[i]->value);
     }
   }
-}*/
+}
 
 void check_and_or_definition(node* n){
   int i;
@@ -791,7 +787,7 @@ void create_an_tree(node *n){
       parse_assign_node(n);
   } else if(!strcmp(n->token->id, "Call")){
       //create_an_tree(n->childs[0]);
-      //check_call_definition(n);
+      check_call_definition(n);
       // TODO: a 1
       for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
