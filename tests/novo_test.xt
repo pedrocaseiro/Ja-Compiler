@@ -2,18 +2,20 @@ class gcd {
 
 
   public static int main(String[] args){
+    System.out.println(a+b+c+d);
+
+
 
     //func(2,2);
-    //System.out.println(a+b+c+d);
-
-    return 0;
-    return i;
-    return rr+1;
 
   }
 
-    public static int func(double rr, int p){}
-    public static int func(double a, double p){}
+    public static int func(double rr, int p){
 
+      //return 0;
+      //return y;
+      //return ee;
+      //return func(r,op);
+    }
 
 }

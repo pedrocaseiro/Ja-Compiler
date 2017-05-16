@@ -646,11 +646,8 @@ void parse_print_node(node* n){
     printf("Line %d, col %d: Cannot find symbol %s\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->value);
   }
 
-  //TODO: check a+b+c+d
-  if((n->childs[0]->n_children == 0) && (!strcmp(n->childs[0]->anotated_type, "String[]") || !strcmp(n->childs[0]->anotated_type, "undef") || !strcmp(n->childs[0]->anotated_type, "void"))){
+  if(!strcmp(n->childs[0]->anotated_type, "String[]") || !strcmp(n->childs[0]->anotated_type, "undef") || !strcmp(n->childs[0]->anotated_type, "void")){
     printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
-  } else if((n->childs[0]->n_children > 0) && (!strcmp(n->childs[0]->anotated_type, "String[]") || !strcmp(n->childs[0]->anotated_type, "undef") || !strcmp(n->childs[0]->anotated_type, "void"))){
-      printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[0]->childs[0]->token->line, n->childs[0]->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
   }
 }
 
@@ -772,11 +769,11 @@ void create_an_tree(node *n){
       }
       parse_do_while_node(n);
   } else if(!strcmp(n->token->id, "Print")){
-      create_an_tree(n->childs[0]);
-      parse_print_node(n);
-      for(i = 1; i < n->n_children; i++){
+
+      for(i = 0; i < n->n_children; i++){
         create_an_tree(n->childs[i]);
       }
+      parse_print_node(n);
   } else if(!strcmp(n->token->id, "Assign")){
       create_an_tree(n->childs[1]);
       create_an_tree(n->childs[0]);
