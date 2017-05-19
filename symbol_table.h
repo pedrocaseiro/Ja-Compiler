@@ -59,14 +59,9 @@ void parse_boollit_node(node*);
 void parse_assign_node(node*);
 void parse_print_node(node*);
 
-void check_assign_definition(node*);
 void check_call_definition(node*);
-void check_and_or_definition(node*);
-void check_minus_plus_definition(node*);
-void check_not_definition(node* n);
-void check_equality_nodes(node* n);
-void check_relational_nodes(node* n);
-void check_length_nodes(node* n);
+
+
 
 void create_an_tree(node*);
 char* fix(char*);
