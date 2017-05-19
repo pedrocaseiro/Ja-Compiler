@@ -2385,6 +2385,7 @@ int main(int argc, char **argv) {
         print_table();
         printf("\n");
         print_tree(ast,0);
+        //destroy_tree(ast);
       }
     }
   } else {

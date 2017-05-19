@@ -25,6 +25,7 @@ node* newnode(char* nodetype, int to_be_used) {
   new_node->token->col = 0;
   new_node->anotated_type = NULL;
   new_node->value = NULL;
+  new_node->is_method = 0;
   new_node->to_be_used = to_be_used;
   new_node->n_children = 0;
   new_node->childs = NULL;
@@ -120,16 +121,29 @@ void ast_decl(node *type, node *decl) {
     ast_decl_aux(type, decl);
   }
 }
-
+/*
+new_node->token = (token_struct*) malloc(sizeof(token_struct));
+new_node->token->id = nodetype;
+new_node->token->line = 0;
+new_node->token->col = 0;
+new_node->anotated_type = NULL;
+new_node->value = NULL;
+new_node->to_be_used = to_be_used;
+new_node->n_children = 0;
+new_node->childs = NULL;
+new_node->duplicated_method = 0;
+new_node->table_index = 0;*/
 void destroy_tree(node *n) {
 
   if(n != NULL){
     int i;
-
     for (i = 0; i < n->n_children; i++) {
       destroy_tree(n->childs[i]);
     }
 
+    free(n->token);
+    //free(n->anotated_type);
+    free(n->value);
     free(n->childs);
     free(n);
   }

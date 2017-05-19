@@ -2,9 +2,12 @@ class gcd {
 
 
   public static int main(String[] args){
-    System.out.println(a+b+c+d);
-
-
+    double a;
+    a = 242_241_521.521E500;
+    double c;
+    c = 0.5e-3;
+    int b;
+    b = 2147483649;
 
     //func(2,2);
 
