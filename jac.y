@@ -101,7 +101,7 @@ Statement: OBRACE StatementL CBRACE                                  {if($2 != N
          | PRINT OCURV StrLitAux CCURV SEMI                          {$$ = create_and_insert_node("Print", 1, 1, $3);}
          | Assignment SEMI                                           {$$ = create_and_insert_node("Assign", 0, 1, $1);}
          | MethodInvocation SEMI                                     {$$ = create_and_insert_node("Call", 1, 1, $1);}
-         | ParseArgs SEMI                                            {$$ = create_and_insert_node("ParseArgs", 1, 1, $1);$$->token->line = $$->childs[0]->token->line; $$->token->col=$$->childs[0]->token->col;}
+         | ParseArgs SEMI                                            {$$ = create_and_insert_node("ParseArgs", 1, 1, $1); if($$->n_children){$$->token->line = $$->childs[0]->token->line; $$->token->col=$$->childs[0]->token->col;}}
          | SEMI                                                      {$$ = create_terminal_node("Semi", 0, NULL);}
          | RETURN Expr SEMI                                          {$$ = create_and_insert_node("Return", 1, 1, $2);$$->token->line = $1->line;$$->token->col = $1->col;}
          | RETURN SEMI                                               {$$ = create_and_insert_node("Return", 1, 0);$$->token->line = $1->line;$$->token->col = $1->col;}
@@ -124,7 +124,7 @@ StrLitAux: STRLIT                                                    {$$ = creat
 ParseArgs: PARSEINT OCURV IDAux OSQUARE Expr CSQUARE CCURV           {$$ = create_and_insert_node("ParseArgs", 0, 2, $3, $5);}
          | PARSEINT OCURV error CCURV                                {$$ = create_terminal_node("Error", 0, NULL);}
 
-ExprAux: MethodInvocation                                            {$$ = create_and_insert_node("Call", 1, 1, $1); $$->token->line = $$->childs[0]->token->line; $$->token->col=$$->childs[0]->token->col;}
+ExprAux: MethodInvocation                                            {$$ = create_and_insert_node("Call", 1, 1, $1); if($$->n_children){$$->token->line = $$->childs[0]->token->line; $$->token->col=$$->childs[0]->token->col;}}
        | ParseArgs                                                   {$$ = create_and_insert_node("ParseArgs", 1, 1, $1);$$->token->line = $$->childs[0]->token->line; $$->token->col=$$->childs[0]->token->col;}
        | ExprAux AND ExprAux                                         {$$ = create_and_insert_node("And", 1, 2, $1, $3); $$->token->line = $2->line;$$->token->col = $2->col;}
        | ExprAux OR ExprAux                                          {$$ = create_and_insert_node("Or", 1, 2, $1, $3); $$->token->line = $2->line;$$->token->col = $2->col;}
