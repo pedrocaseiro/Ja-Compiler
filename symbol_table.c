@@ -105,6 +105,7 @@ void second_traverse(node* n){
 void first_traverse(node* n) {
   int i = 0;
   int k = 0;
+  //TODO: dá seg fault aqui sem flag!!!!!!!
   if (!strcmp(n->token->id, "Program")) {
     table[table_index] = new_symbol_table("Class", n->childs[0]->value, 0, NULL);
     table_index++;

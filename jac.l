@@ -34,12 +34,13 @@ reserved            "++"|"--"|"null"|"Integer"|"System"|"abstract"|"assert"|"bre
 
 %%
 "/*" {BEGIN MULTILINECOMMENT; comment_start_col = col; comment_start_line = line; col+=yyleng;}
-<MULTILINECOMMENT><<eof>> {printf("Line %d, col %d: unterminated comment\n", comment_start_line, comment_start_col); col+=1; return 0;}
-<MULTILINECOMMENT>"*/"  {col+=yyleng; BEGIN 0;}
-<MULTILINECOMMENT>\n    {col=1; line+=1;}
-<MULTILINECOMMENT>\r    {col=1; line+=1;}
-<MULTILINECOMMENT>\r\n  {col=1; line+=1;}
-<MULTILINECOMMENT>.     {col+=yyleng;}
+<MULTILINECOMMENT><<eof>>    {printf("Line %d, col %d: unterminated comment\n", comment_start_line, comment_start_col); col+=1; return 0;}
+<MULTILINECOMMENT>"*/"       {col+=yyleng; BEGIN 0;}
+<MULTILINECOMMENT>\n         {col=1; line+=1;}
+<MULTILINECOMMENT>\r         {col=1; line+=1;}
+<MULTILINECOMMENT>\r\n       {col=1; line+=1;}
+<MULTILINECOMMENT>"\f"|"\t"  {col+=1;}
+<MULTILINECOMMENT>.          {col+=yyleng;}
 
 "//" {BEGIN COMMENT;}
 <COMMENT>"\n"|"\r" {col=1; line+=1; BEGIN 0;}
@@ -100,7 +101,7 @@ reserved            "++"|"--"|"null"|"Integer"|"System"|"abstract"|"assert"|"bre
 \f                   {col+=1;}
 \r\n                 {col=1; line+=1;}
 {reserved}           {col+=yyleng; if(input_flag) { printf("RESERVED(%s)\n", yytext); } if(return_flag) { yylval.token = allocate_structure(line, col - yyleng, yytext); return RESERVED;}}
-{declit}             {col+=yyleng; if(input_flag) { printf("DECLIT(%s)\n", yytext); col +=yyleng; } if(return_flag) { yylval.token = allocate_structure(line, col - yyleng, yytext); return DECLIT;}}
+{declit}             {col+=yyleng; if(input_flag) { printf("DECLIT(%s)\n", yytext); } if(return_flag) { yylval.token = allocate_structure(line, col - yyleng, yytext); return DECLIT;}}
 {reallit}            {col+=yyleng; if(input_flag) { printf("REALLIT(%s)\n", yytext); } if(return_flag) { yylval.token = allocate_structure(line, col - yyleng, yytext); return REALLIT;}}
 {strlit}             {col+=yyleng; if(input_flag) { printf("STRLIT(%s)\n", yytext); } if(return_flag) { yylval.token = allocate_structure(line, col - yyleng, yytext); return STRLIT;}}
 {id}                 {col+=yyleng; if(input_flag) { printf("ID(%s)\n", yytext); } if(return_flag) { yylval.token = allocate_structure(line, col - yyleng, yytext); return ID;}}
@@ -143,8 +144,9 @@ int main(int argc, char **argv) {
         //destroy_tree(ast);
       }
     } else if(!strcmp(argv[1], "-3")){
+       return_flag = 1;
        yyparse();
-      if(!error_flag){
+       if(!error_flag){
         table_index = 0;
         table = new_table(MAX_SIZE);
         first_traverse(ast);
@@ -153,13 +155,16 @@ int main(int argc, char **argv) {
       }
     }
   } else {
+    return_flag = 1;
     yyparse();
-    table_index = 0;
-    table = new_table(MAX_SIZE);
-    first_traverse(ast);
-    create_an_tree(ast);
+    if(!error_flag){
+      table_index = 0;
+      table = new_table(MAX_SIZE);
+      first_traverse(ast);
+      create_an_tree(ast);
+    }
   }
-  yylex_destroy();
+  //yylex_destroy();
   return 0;
 }
 
