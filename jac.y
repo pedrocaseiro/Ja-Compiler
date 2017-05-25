@@ -3,6 +3,7 @@
   #include <string.h>
   #include "ast.h"
   #include "symbol_table.h"
+  #include "code_gen.h"
   void yyerror();
   int yylex();
 

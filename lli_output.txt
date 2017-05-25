@@ -1,0 +1,7 @@
+define i32 @main(i32 %argc, i8** %argv){
+    call void @gcd2.method.main.stringArray(i32 %argc, i8** %argv)
+    ret i32 0
+}
+define void @gcd2.method.main.stringArray(i32 %argc, i8** %argv){
+    ret void
+}

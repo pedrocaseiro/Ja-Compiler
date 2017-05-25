@@ -5,6 +5,7 @@
   #include "y.tab.h"
   #include "ast.h"
   #include "symbol_table.h"
+  #include "code_gen.h"
   #define MAX_SIZE 1024
 
   int yyparse();
@@ -162,6 +163,7 @@ int main(int argc, char **argv) {
       table = new_table(MAX_SIZE);
       first_traverse(ast);
       create_an_tree(ast);
+      code_generation(ast);
     }
   }
   //yylex_destroy();
