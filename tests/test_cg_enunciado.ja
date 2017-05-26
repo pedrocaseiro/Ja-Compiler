@@ -8,6 +8,7 @@ class gcd2{
     System.out.println(p);
     System.out.println(i);
     System.out.println(w);
+    System.out.println(args);
   }
 
 }

@@ -1,0 +1,16 @@
+Line 11, col 24: Incompatible type String[] in System.out.println statement
+define i32 @main(i32 %argc, i8** %argv){
+    call void @gcd2.method.main.stringArray(i32 %argc, i8** %argv)
+    ret i32 0
+}
+define void @gcd2.method.main.stringArray(i32 %argc, i8** %argv){
+    %argc.addr = alloca i32
+    %argv.addr = alloca i8**
+    %p = alloca i32
+    %i = alloca double
+    %w = alloca i1
+    %1 = load i32, i32* %p
+    %1 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i32 0, i32 0), i32 %1
+    %2 = load double, double* %i
+    %-1 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str.1, i32 0, i32 0), double %-1    %3 = load i1, i1* %w
+    %-1 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i32 0, i32 0), i1 %-1

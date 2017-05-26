@@ -95,10 +95,11 @@ void generate_methoddecl(node *n){
     if(!strcmp(n->childs[0]->childs[2]->childs[i]->childs[0]->token->id, "StringArray")){
       printf("    %%argc.addr = alloca i32\n");
       printf("    %%argv.addr = alloca i8**\n");
-      //n->childs[0]->childs[2]->childs[i]->childs[0]->llvm_type = "StringArray";
+      n->childs[0]->childs[2]->childs[i]->childs[1]->pointer_table->llvm_type = "StringArray";
+
     } else {
       printf("    %%%s.addr = alloca %s\n", n->childs[0]->childs[2]->childs[i]->childs[1]->value, return_type_to_llvm(n->childs[0]->childs[2]->childs[i]->childs[0]->token->id));
-      //n->childs[0]->childs[2]->childs[i]->childs[0]->llvm_type = return_type_to_llvm(n->childs[0]->childs[2]->childs[i]->childs[0]->token->id);
+      n->childs[0]->childs[2]->childs[i]->childs[1]->pointer_table->llvm_type = return_type_to_llvm(n->childs[0]->childs[2]->childs[i]->childs[0]->token->id);
     }
   }
   // TODO: %retval = alloca i32/i1...
@@ -120,16 +121,16 @@ void generate_methoddecl(node *n){
 
 
 void generate_print(node* n){
-/*
-  if(!strcmp(n->childs[0]->childs[0]->pointer_table->llvm_type, "i32")){
 
-  }else if(!strcmp(n->childs[0]->childs[0]->pointer_table->llvm_type, "double")){
-
-  }else if(!strcmp(n->childs[0]->childs[0]->pointer_table->llvm_type, "i1")){
-
-  }else if(!strcmp(n->childs[0]->childs[0]->pointer_table->llvm_type, "StringArray")){
-
-  }*/
+  if(!strcmp(n->childs[0]->pointer_table->llvm_type, "i32")){
+    printf("    %%%d = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i32 0, i32 0), i32 %%%d\n", n->childs[0]->address,n->childs[0]->address);
+  }else if(!strcmp(n->childs[0]->pointer_table->llvm_type, "double")){
+    printf("    %%%d = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str.1, i32 0, i32 0), double %%%d\n", n->childs[0]->address,n->childs[0]->address);
+  }else if(!strcmp(n->childs[0]->pointer_table->llvm_type, "i1")){
+    printf("    %%%d = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i32 0, i32 0), i1 %%%d\n", n->childs[0]->address,n->childs[0]->address);
+  }else if(!strcmp(n->childs[0]->pointer_table->llvm_type, "StringArray")){
+    printf("    %%%d = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str.3, i32 0, i32 0), i8 %%%d\n", n->childs[0]->address,n->childs[0]->address);
+  }
 }
 
 void generate_assign(node *n){
@@ -150,7 +151,6 @@ void generate_id(node *n){
       printf("    %%%d = load %s, %s* %%%s\n", current_temporary, n->pointer_table->llvm_type, n->pointer_table->llvm_type, n->value);
     } else if(!strcmp(n->pointer_table->llvm_type, "StringArray")){
       printf("    %%%d = load %s, %s* %%%s\n", current_temporary, n->pointer_table->llvm_type, n->pointer_table->llvm_type, n->value);
-
     }
     current_temporary++;
   }
