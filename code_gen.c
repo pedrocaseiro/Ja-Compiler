@@ -15,7 +15,6 @@ int current_scope = 1;
 int current_temporary = 1;
 
 char* return_type_to_llvm(char* type){
-
   if(!strcmp(type, "int") || !strcmp(type, "Int")){
     return "i32";
   } else if(!strcmp(type, "double") || !strcmp(type, "Double")){
@@ -44,32 +43,32 @@ char* parse_arguments_type(char* type){
     return "stringArray";
   } else {
     return "undefined";
-  } 
+  }
 }
 
 void generate_fielddecl(node* n){
   if(!strcmp(n->childs[0]->token->id, "Int")){
     printf("@%s.%s = common global %s 0\n", class, n->childs[1]->value, return_type_to_llvm(n->childs[0]->token->id));
-    n->childs[0]->llvm_type = return_type_to_llvm(n->childs[0]->token->id);
+    n->childs[1]->pointer_table->llvm_type = return_type_to_llvm(n->childs[0]->token->id);
   }else if(!strcmp(n->childs[0]->token->id, "Double")){
     printf("@%s.%s = common global %s 0.0\n", class, n->childs[1]->value, return_type_to_llvm(n->childs[0]->token->id));
-    n->childs[0]->llvm_type = return_type_to_llvm(n->childs[0]->token->id);
+    n->childs[1]->pointer_table->llvm_type = return_type_to_llvm(n->childs[0]->token->id);
   } else if(!strcmp(n->childs[0]->token->id, "Bool")){
     printf("@%s.%s = common global %s 0\n", class, n->childs[1]->value, return_type_to_llvm(n->childs[0]->token->id));
-    n->childs[0]->llvm_type = return_type_to_llvm(n->childs[0]->token->id);
+    n->childs[1]->pointer_table->llvm_type = return_type_to_llvm(n->childs[0]->token->id);
   }
 }
 
 void generate_vardecl(node* n){
   if(!strcmp(n->childs[0]->token->id, "Int")){
     printf("    %%%s = alloca %s\n", n->childs[1]->value, return_type_to_llvm(n->childs[0]->token->id));
-    n->childs[0]->llvm_type = return_type_to_llvm(n->childs[0]->token->id);
+    n->childs[1]->pointer_table->llvm_type = return_type_to_llvm(n->childs[0]->token->id);
   }else if(!strcmp(n->childs[0]->token->id, "Double")){
     printf("    %%%s = alloca %s\n", n->childs[1]->value, return_type_to_llvm(n->childs[0]->token->id));
-    n->childs[0]->llvm_type = return_type_to_llvm(n->childs[0]->token->id);
+    n->childs[1]->pointer_table->llvm_type = return_type_to_llvm(n->childs[0]->token->id);
   } else if(!strcmp(n->childs[0]->token->id, "Bool")){
     printf("    %%%s = alloca %s\n", n->childs[1]->value, return_type_to_llvm(n->childs[0]->token->id));
-    n->childs[0]->llvm_type = return_type_to_llvm(n->childs[0]->token->id);
+    n->childs[1]->pointer_table->llvm_type = return_type_to_llvm(n->childs[0]->token->id);
   }
 }
 
@@ -83,7 +82,11 @@ void generate_methoddecl(node *n){
   printf("(");
   //print arguments
   for(i = 0; i < n->childs[0]->childs[2]->n_children; i++){
-    printf("%s %s", return_type_to_llvm(n->childs[0]->childs[2]->childs[i]->childs[0]->token->id), n->childs[0]->childs[2]->childs[i]->childs[1]->value);
+    if(!strcmp(n->childs[0]->childs[2]->childs[i]->childs[0]->token->id, "StringArray")){
+      printf("i32 %%argc, i8** %%argv");
+    } else {
+      printf("%s %s", return_type_to_llvm(n->childs[0]->childs[2]->childs[i]->childs[0]->token->id), n->childs[0]->childs[2]->childs[i]->childs[1]->value);
+    }
     if(i != n->childs[0]->childs[2]->n_children - 1) printf(", ");
   }
   printf("){\n");
@@ -92,10 +95,10 @@ void generate_methoddecl(node *n){
     if(!strcmp(n->childs[0]->childs[2]->childs[i]->childs[0]->token->id, "StringArray")){
       printf("    %%argc.addr = alloca i32\n");
       printf("    %%argv.addr = alloca i8**\n");
-      n->childs[0]->childs[2]->childs[i]->childs[0]->llvm_type = "StringArray";
+      //n->childs[0]->childs[2]->childs[i]->childs[0]->llvm_type = "StringArray";
     } else {
       printf("    %%%s.addr = alloca %s\n", n->childs[0]->childs[2]->childs[i]->childs[1]->value, return_type_to_llvm(n->childs[0]->childs[2]->childs[i]->childs[0]->token->id));
-      n->childs[0]->childs[2]->childs[i]->childs[0]->llvm_type = return_type_to_llvm(n->childs[0]->childs[2]->childs[i]->childs[0]->token->id);
+      //n->childs[0]->childs[2]->childs[i]->childs[0]->llvm_type = return_type_to_llvm(n->childs[0]->childs[2]->childs[i]->childs[0]->token->id);
     }
   }
   // TODO: %retval = alloca i32/i1...
@@ -103,29 +106,30 @@ void generate_methoddecl(node *n){
     code_generation(n->childs[1]->childs[i]);
   }
   if(!strcmp(n->childs[0]->childs[0]->token->id, "Int")){
-    printf("    ret %s 0\n", return_type_to_llvm(n->childs[0]->childs[0]->value));   
+    printf("    ret %s 0\n", return_type_to_llvm(n->childs[0]->childs[0]->value));
   }else if(!strcmp(n->childs[0]->childs[0]->token->id, "Double")){
-    printf("    ret %s 0.0\n", return_type_to_llvm(n->childs[0]->childs[0]->value));   
+    printf("    ret %s 0.0\n", return_type_to_llvm(n->childs[0]->childs[0]->value));
   } else if(!strcmp(n->childs[0]->childs[0]->token->id, "Bool")){
-    printf("    ret %s 0\n", return_type_to_llvm(n->childs[0]->childs[0]->value));   
+    printf("    ret %s 0\n", return_type_to_llvm(n->childs[0]->childs[0]->value));
   } else if(!strcmp(n->childs[0]->childs[0]->token->id, "Void")){
-    printf("    ret %s\n", return_type_to_llvm(n->childs[0]->childs[0]->value));   
+    printf("    ret %s\n", return_type_to_llvm(n->childs[0]->childs[0]->value));
   }
-  printf("}\n"); 
+  printf("}\n");
 }
 
 
 
 void generate_print(node* n){
-  if(!strcmp(n->childs[0]->childs[0]->llvm_type, "i32")){
-    
-  }else if(!strcmp(n->childs[0]->childs[0]->llvm_type, "double")){
+/*
+  if(!strcmp(n->childs[0]->childs[0]->pointer_table->llvm_type, "i32")){
 
-  }else if(!strcmp(n->childs[0]->childs[0]->llvm_type, "i1")){
+  }else if(!strcmp(n->childs[0]->childs[0]->pointer_table->llvm_type, "double")){
 
-  }else if(!strcmp(n->childs[0]->childs[0]->llvm_type, "StringArray")){
+  }else if(!strcmp(n->childs[0]->childs[0]->pointer_table->llvm_type, "i1")){
 
-  }
+  }else if(!strcmp(n->childs[0]->childs[0]->pointer_table->llvm_type, "StringArray")){
+
+  }*/
 }
 
 void generate_assign(node *n){
@@ -134,15 +138,24 @@ void generate_assign(node *n){
 
 // when we find a node id, we want to load it
 void generate_id(node *n){
-  if(!strcmp(n->llvm_type, "i32")){
-    printf("%%%d = load %s, %s* %%%s", current_temporary, return_type_to_llvm(n->anotated_type), return_type_to_llvm(n->anotated_type), n->value);
-    n->address = current_temporary;
-  } else if(!strcmp(n->llvm_type, "double")){
-  } else if(!strcmp(n->llvm_type, "i1")){
-  } else if(!strcmp(n->llvm_type, "StringArray")){
-  
+
+  if(n->pointer_table != NULL){
+
+    if(!strcmp(n->pointer_table->llvm_type, "i32")){
+      printf("    %%%d = load %s, %s* %%%s\n", current_temporary, n->pointer_table->llvm_type, n->pointer_table->llvm_type, n->value);
+      n->address = current_temporary;
+    } else if(!strcmp(n->pointer_table->llvm_type, "double")){
+      printf("    %%%d = load %s, %s* %%%s\n", current_temporary, n->pointer_table->llvm_type, n->pointer_table->llvm_type, n->value);
+    } else if(!strcmp(n->pointer_table->llvm_type, "i1")){
+      printf("    %%%d = load %s, %s* %%%s\n", current_temporary, n->pointer_table->llvm_type, n->pointer_table->llvm_type, n->value);
+    } else if(!strcmp(n->pointer_table->llvm_type, "StringArray")){
+      printf("    %%%d = load %s, %s* %%%s\n", current_temporary, n->pointer_table->llvm_type, n->pointer_table->llvm_type, n->value);
+
+    }
+    current_temporary++;
   }
-  current_temporary++;
+
+
 }
 
 
@@ -159,7 +172,7 @@ void code_generation(node* n){
       code_generation(n->childs[i]);
     }
   } else if(!strcmp(n->token->id, "FieldDecl")){
-    generate_fielddecl(n); 
+    generate_fielddecl(n);
   } else if(!strcmp(n->token->id, "MethodDecl")){
     current_scope++;
     current_temporary = 1;
@@ -173,7 +186,7 @@ void code_generation(node* n){
     generate_print(n);
   } else if(!strcmp(n->token->id, "Assign")){
     generate_assign(n);
-  } else if(!strcmp(n->token->id, "Id") && strcmp(n->llvm_type, "undefined")){
+  } else if(!strcmp(n->token->id, "Id") /*&& strcmp(n->llvm_type, "undefined")*/){
     generate_id(n);
   }
 }

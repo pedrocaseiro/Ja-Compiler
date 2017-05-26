@@ -20,6 +20,7 @@ symbol* new_symbol(char* name, int n_params, char** params, char* type, char* fl
   s->flag = flag;
   s->next = NULL;
   s->is_method=is_method; // not a method
+  s->llvm_type = NULL;
   return s;
 }
 
@@ -49,17 +50,18 @@ char* str_to_lower(char* s) {
   return str;
 }
 
-void insert_symbol(symbol_table* st, char* name, int n_params, char** params, char* type, char* flag, int is_method) {
+symbol* insert_symbol(symbol_table* st, char* name, int n_params, char** params, char* type, char* flag, int is_method) {
   symbol* first_symbol = st->first;
   if (first_symbol == NULL) {
     st->first = new_symbol(name, n_params, params, type, flag, is_method);
-    return;
+    return NULL;
   }
 
   while(first_symbol->next != NULL) {
     first_symbol = first_symbol->next;
   }
   first_symbol->next = new_symbol(name, n_params, params, type, flag, is_method);
+  return first_symbol->next;
 
 }
 
@@ -76,15 +78,18 @@ void second_traverse(node* n){
 
   insert_symbol(table[table_index], strdup("return"), 0, NULL, str_to_lower(n->childs[0]->childs[0]->token->id), NULL, 0);
   for(i = 0; i < n_params; i++){
-    if(parse_formalparams_node(n->childs[0]->childs[2]->childs[i]))
-      insert_symbol(table[table_index], n->childs[0]->childs[2]->childs[i]->childs[1]->value, 0, NULL, table[table_index]->params[i], strdup("param"), 0);
+    if(parse_formalparams_node(n->childs[0]->childs[2]->childs[i])){
+      symbol* aux = insert_symbol(table[table_index], n->childs[0]->childs[2]->childs[i]->childs[1]->value, 0, NULL, table[table_index]->params[i], strdup("param"), 0);
+      n->childs[0]->childs[2]->childs[i]->childs[1]->pointer_table = aux;
+    }
   }
 
   for(i = 0; i < n->childs[1]->n_children; i++){
     if(!strcmp(n->childs[1]->childs[i]->token->id, "VarDecl")){
       // we call it with n as a VarDecl node
       if(parse_vardecl_node(n->childs[1]->childs[i])){
-        insert_symbol(table[table_index], n->childs[1]->childs[i]->childs[1]->value, 0, NULL, str_to_lower(n->childs[1]->childs[i]->childs[0]->token->id), NULL, 0);
+        symbol* aux =insert_symbol(table[table_index], n->childs[1]->childs[i]->childs[1]->value, 0, NULL, str_to_lower(n->childs[1]->childs[i]->childs[0]->token->id), NULL, 0);
+        n->childs[1]->childs[i]->childs[1]->pointer_table = aux;
       }
     } else {
       // we pass method body
@@ -152,6 +157,7 @@ void iterate_tree(node *n){
         while(s != NULL){
           if(!strcmp(n->childs[i]->value, s->name)){
             n->childs[i]->anotated_type = strdup(s->type);
+            n->childs[i]->pointer_table = s;
             break;
           }
           if(n->childs[i]->anotated_type == NULL){
@@ -160,6 +166,7 @@ void iterate_tree(node *n){
             while(g != NULL){
               if(!strcmp(n->childs[i]->value, g->name) && g->params == NULL){
                 n->childs[i]->anotated_type = strdup(g->type);
+                n->childs[i]->pointer_table = g;
                 break;
               }
               g = g->next;

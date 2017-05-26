@@ -2,6 +2,9 @@
 #include <string.h>
 #include <stdbool.h>
 #include "ast.h"
+#include "symbol_table.h"
+
+
 
 node *transfer_nodes[2048];
 node *decl_nodes[2048];
@@ -32,7 +35,7 @@ node* newnode(char* nodetype, int to_be_used) {
   new_node->duplicated_method = 0;
   new_node->table_index = 0;
   new_node->address = -1;
-  new_node->llvm_type = "undefined";
+  new_node->pointer_table = NULL;
   return new_node;
 }
 

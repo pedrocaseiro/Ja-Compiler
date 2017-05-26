@@ -163,7 +163,7 @@ int main(int argc, char **argv) {
       table = new_table(MAX_SIZE);
       first_traverse(ast);
       create_an_tree(ast);
-      code_generation(ast);
+      //code_generation(ast);
     }
   }
   //yylex_destroy();

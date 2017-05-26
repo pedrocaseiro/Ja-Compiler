@@ -1,13 +1,13 @@
 class gcd2{
   public static void main(String[] args) {
     int p;
+    double i;
+    boolean w;
     p = 5;
+    i = 4.5;
     System.out.println(p);
+    System.out.println(i);
+    System.out.println(w);
   }
 
-  public static int ola(int x, double y){
-    int p;
-    p = 5;
-    System.out.println(p);
-  }
 }

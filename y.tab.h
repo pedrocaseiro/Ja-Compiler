@@ -148,7 +148,7 @@ extern int yydebug;
 typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
-#line 15 "jac.y" /* yacc.c:1909  */
+#line 16 "jac.y" /* yacc.c:1909  */
 
   struct token_struct* token;
   struct node *node;

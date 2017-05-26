@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdbool.h>
 
+
 typedef struct token_struct {
 	char* id;
 	int line;
@@ -20,7 +21,7 @@ typedef struct node {
 	struct node** childs;
 	int table_index;
 	int address;
-	char* llvm_type;
+	struct symbol* pointer_table;
 } node;
 
 int error_flag;

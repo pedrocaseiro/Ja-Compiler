@@ -11,6 +11,7 @@ typedef struct symbol {
   char* flag;
   int is_method; // 0 is not method, 1 is method
   struct symbol* next;
+  char* llvm_type;
 } symbol;
 
 typedef struct symbol_table {
@@ -31,7 +32,7 @@ void first_traverse(node*);
 void print_table();
 void print_symbol_table(symbol*);
 char* str_to_lower(char*);
-void insert_symbol(symbol_table*, char*, int, char**, char*, char*, int);
+symbol* insert_symbol(symbol_table*, char*, int, char**, char*, char*, int);
 
 
 void parse_while_node(node*);
