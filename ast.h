@@ -20,6 +20,7 @@ typedef struct node {
 	struct node** childs;
 	int table_index;
 	int address;
+	char* llvm_type;
 } node;
 
 int error_flag;

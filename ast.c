@@ -32,6 +32,7 @@ node* newnode(char* nodetype, int to_be_used) {
   new_node->duplicated_method = 0;
   new_node->table_index = 0;
   new_node->address = -1;
+  new_node->llvm_type = "undefined";
   return new_node;
 }
 

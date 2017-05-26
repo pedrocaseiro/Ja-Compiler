@@ -1,15 +1,13 @@
 class gcd2{
-  public static int a;
-  public static boolean b;
-  public static double c;
-
   public static void main(String[] args) {
     int p;
-    boolean k;
-    double l;
+    p = 5;
+    System.out.println(p);
   }
 
   public static int ola(int x, double y){
-
+    int p;
+    p = 5;
+    System.out.println(p);
   }
 }
