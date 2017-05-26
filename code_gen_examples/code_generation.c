@@ -4,11 +4,16 @@
 
 int main(int argc, char* argv[]){
   int l;
-  l = 0;
+  l = 5;
   printf("%d\n", l);
-  printf("%d\n", 5);
-  printf("%d %d\n", l, l);
-  printf("%d %d\n", 5, 5);
 
   return 0;  
+}
+
+int ola(){
+  int l;
+  l = 5;
+  printf("%d\n", l);
+
+  return 0;
 }

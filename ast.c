@@ -31,6 +31,7 @@ node* newnode(char* nodetype, int to_be_used) {
   new_node->childs = NULL;
   new_node->duplicated_method = 0;
   new_node->table_index = 0;
+  new_node->address = -1;
   return new_node;
 }
 

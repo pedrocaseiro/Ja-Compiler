@@ -9,12 +9,10 @@
 #include "code_gen.h"
 
 char* class;
-int temporary_counter;
-//counter variaveis temporarias
-//counter strings
-//counter calls para igualar quando chamamos
-//class.method.nome.argumentos
-//
+
+// we start at 1 because of labels
+int current_scope = 1;
+int current_temporary = 1;
 
 char* return_type_to_llvm(char* type){
 
@@ -51,24 +49,22 @@ char* parse_arguments_type(char* type){
 
 void generate_fielddecl(node* n){
   if(!strcmp(n->childs[0]->token->id, "Int")){
-    printf("@%s.%s.global = common global %s 0\n", n->childs[1]->value, class, return_type_to_llvm(n->childs[0]->token->id));
+    printf("@%s.%s = common global %s 0\n", class, n->childs[1]->value, return_type_to_llvm(n->childs[0]->token->id));
   }else if(!strcmp(n->childs[0]->token->id, "Double")){
-    printf("@%s.%s.global = common global %s 0.0\n", n->childs[1]->value, class, return_type_to_llvm(n->childs[0]->token->id));
+    printf("@%s.%s = common global %s 0.0\n", class, n->childs[1]->value, return_type_to_llvm(n->childs[0]->token->id));
   } else if(!strcmp(n->childs[0]->token->id, "Bool")){
-    printf("@%s.%s.global = common global %s 0\n", n->childs[1]->value, class, return_type_to_llvm(n->childs[0]->token->id));
+    printf("@%s.%s = common global %s 0\n", class, n->childs[1]->value, return_type_to_llvm(n->childs[0]->token->id));
   }
 }
 
 void generate_vardecl(node* n){
-   //TODO: GUARDAR COM NOME E ARGUMENTOS DO METODO
-   if(!strcmp(n->childs[0]->token->id, "Int")){
-    printf("    %%%s.%s.local = alloca %s\n", n->childs[1]->value, class, return_type_to_llvm(n->childs[0]->token->id));
+  if(!strcmp(n->childs[0]->token->id, "Int")){
+    printf("    %%%s = alloca %s\n", n->childs[1]->value, return_type_to_llvm(n->childs[0]->token->id));
   }else if(!strcmp(n->childs[0]->token->id, "Double")){
-    printf("    %%%s.%s.local = alloca %s\n", n->childs[1]->value, class, return_type_to_llvm(n->childs[0]->token->id));
+    printf("    %%%s = alloca %s\n", n->childs[1]->value, return_type_to_llvm(n->childs[0]->token->id));
   } else if(!strcmp(n->childs[0]->token->id, "Bool")){
-    printf("    %%%s.%s.local = alloca %s\n", n->childs[1]->value, class, return_type_to_llvm(n->childs[0]->token->id));
+    printf("    %%%s = alloca %s\n", n->childs[1]->value, return_type_to_llvm(n->childs[0]->token->id));
   }
-
 }
 
 void generate_methoddecl(node *n){
@@ -88,7 +84,7 @@ void generate_methoddecl(node *n){
   //%argc.addr = alloca i32
   for(i = 0; i < n->childs[0]->childs[2]->n_children; i++){
     if(!strcmp(n->childs[0]->childs[2]->childs[i]->childs[0]->token->id, "StringArray")){
-      printf("    %%args.addr = alloca i32\n");
+      printf("    %%argc.addr = alloca i32\n");
       printf("    %%argv.addr = alloca i8**\n");
     } else {
       printf("    %%%s.addr = alloca %s\n", n->childs[0]->childs[2]->childs[i]->childs[1]->value, return_type_to_llvm(n->childs[0]->childs[2]->childs[i]->childs[0]->token->id));
@@ -111,31 +107,36 @@ void generate_methoddecl(node *n){
 }
 
 
+
 void generate_print(node* n){
   if(!strcmp(n->childs[0]->childs[0]->anotated_type, "int")){
-    //declit
-    if(!strcmp(n->childs[0]->childs[0]->token->id, "Declit")){
-      printf("%%call%d = call %d (i8*, ...) @printf(i8* getelementptr inbounds ([]) )")
-         /*%call1 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i      32 0, i32 0), i32 5)*/
-    }
-    //id
-    else if(!strcmp(n->childs[0]->childs[0]->token->id, "Id")){
+    
+  }else if(!strcmp(n->childs[0]->childs[0]->anotated_type, "double")){
 
-    }
-    //.length 
-    else if(!strcmp(n->childs[0]->childs[0]->token->id, "Length")){
+  }else if(!strcmp(n->childs[0]->childs[0]->anotated_type, "bool")){
 
-    }
-    //Integer.parseInt()
-    else if(!strcmp(n->childs[0]->childs[0]->token->id, "ParseArgs")){
+  }else if(!strcmp(n->childs[0]->childs[0]->anotated_type, "String[]")){
 
-    } 
-    // unary minus
-    else if(!strcmp(n->childs[0]->childs[0]->token->id, "ParseArgs")){
-
-    }
   }
 }
+
+void generate_assign(node *n){
+
+}
+
+// when we find a node id, we want to load it
+void generate_id(node *n){
+  if(!strcmp(n->anotated_type, "int")){
+    printf("%%%d = load %s, %s* %%%s", current_temporary, return_type_to_llvm(n->anotated_type), return_type_to_llvm(n->anotated_type), n->value);
+    n->address = current_temporary;
+  } else if(!strcmp(n->anotated_type, "double")){
+  } else if(!strcmp(n->anotated_type, "boolean")){
+  } else if(!strcmp(n->anotated_type, "String[]")){
+  
+  }
+  current_temporary++;
+}
+
 
 void code_generation(node* n){
   int i;
@@ -150,12 +151,21 @@ void code_generation(node* n){
       code_generation(n->childs[i]);
     }
   } else if(!strcmp(n->token->id, "FieldDecl")){
-      generate_fielddecl(n); 
+    generate_fielddecl(n); 
   } else if(!strcmp(n->token->id, "MethodDecl")){
-      generate_methoddecl(n);
+    current_scope++;
+    current_temporary = 1;
+    generate_methoddecl(n);
   } else if(!strcmp(n->token->id, "VarDecl")){
-      generate_vardecl(n);
+    generate_vardecl(n);
   } else if(!strcmp(n->token->id, "Print")){
-      generate_print(n);
+    for(i = 0; i < n->n_children; i++){
+      code_generation(n->childs[i]);
+    }
+    generate_print(n);
+  } else if(!strcmp(n->token->id, "Assign")){
+    generate_assign(n);
+  } else if(!strcmp(n->token->id, "Id")){
+    generate_id(n);
   }
 }

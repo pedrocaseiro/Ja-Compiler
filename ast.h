@@ -19,6 +19,7 @@ typedef struct node {
 	int duplicated_method; // 0 is false, 1 is true
 	struct node** childs;
 	int table_index;
+	int address;
 } node;
 
 int error_flag;
