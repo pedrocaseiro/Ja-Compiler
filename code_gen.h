@@ -12,3 +12,4 @@ void generate_assign(node*);
 void generate_id(node*);
 char* return_type_to_llvm(char*);
 char* parse_arguments_type(char*);
+void code_gen_ast(node* n);

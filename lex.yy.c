@@ -2423,7 +2423,10 @@ int main(int argc, char **argv) {
       table = new_table(MAX_SIZE);
       first_traverse(ast);
       create_an_tree(ast);
-      code_generation(ast);
+      //print_table();
+      //print_tree(ast,0);
+      code_gen_ast(ast);
+
     }
   }
   //yylex_destroy();
