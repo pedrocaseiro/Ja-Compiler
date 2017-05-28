@@ -1,19 +1,10 @@
 class gcd2{
   public static void main(String[] args) {
+
     int a;
-    a = 5;
-    double x;
-    System.out.println(22);
-    System.out.println(2.2);
-    System.out.println(22);
-    System.out.println("true\n");
-    System.out.println("true");
+    a = -3;
     System.out.println(a);
-    System.out.println(Integer.parseInt(args));
-    System.out.println("sfasf\n");
-    System.out.println("sfasf\n");
-    System.out.println("sfasf\n");
-    System.out.println("ola\rola\fola\tola\\ola\\\\ola\n");
+
 
   }
 

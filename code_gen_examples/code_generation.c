@@ -5,7 +5,7 @@
 int h;
 
 int main(int argc, char* argv[]){
-  int l;
+  /*int l;
   int y;
   double t;
   bool b;
@@ -20,6 +20,10 @@ int main(int argc, char* argv[]){
   printf("%s\n", u);
   printf("sfasf\n");
   printf("ola\rola\fola\tola\\ola\\\\ola\n");
-
+*/
+  //int length = argc-1;
+  //printf("%s", argv[1]);
+  int a;
+  a = 3;
   return 0;
 }
