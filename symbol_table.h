@@ -24,6 +24,7 @@ typedef struct symbol_table {
 
 symbol_table** table;
 int table_index;
+int error_semantic;
 
 symbol_table** new_table(int);
 symbol* new_symbol(char*, int, char**, char*, char*, int);

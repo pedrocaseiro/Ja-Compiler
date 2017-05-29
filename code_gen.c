@@ -148,7 +148,7 @@ char* parse_string(char* str){
 void generate_fielddecl(node* n){
   if(!strcmp(n->childs[0]->token->id, "Int")){
     printf("@%s.%s = common global %s 0\n", class, n->childs[1]->value, return_type_to_llvm(n->childs[0]->token->id));
-    
+
     n->childs[1]->pointer_table->llvm_type = return_type_to_llvm(n->childs[0]->token->id);
   }else if(!strcmp(n->childs[0]->token->id, "Double")){
     printf("@%s.%s = common global %s 0.0\n", class, n->childs[1]->value, return_type_to_llvm(n->childs[0]->token->id));
@@ -195,14 +195,7 @@ void generate_methoddecl(node *n){
     if(!strcmp(n->childs[0]->childs[2]->childs[i]->childs[0]->token->id, "StringArray")){
       printf("    %%argc.addr = alloca i32\n");
       printf("    %%argv.addr = alloca i8**\n");
-/*
-      printf("    %%.length = alloca i32\n");
-      printf("    %%%d = load i32, i32* %%argc\n", current_temporary);
-      current_temporary++;
-      printf("    %%%d = sub nsw i32 %%%d, 1\n", current_temporary, current_temporary-1);
-      current_temporary++;
-      printf("    store i32 %%argc, i32* %%%d\n", current_temporary);
-*/
+
 
       printf("    %%%d = alloca i32\n", current_temporary);
       printf("    %%.length = alloca i32\n");
@@ -310,11 +303,29 @@ void generate_declit(node *n){
 
 }
 
+char* fix_lit_for_conversion(node* n){
+  char* str = (char*) n->value;
+
+  char* tmp = (char*)malloc(sizeof(char)*strlen(str)*10);
+  int i, j=0;
+
+  for (i=0;i<strlen(str);i++) {
+    if (str[i] != '_') {
+        tmp[j] = str[i];
+        j++;
+    }
+  }
+  tmp[j] = '\0';
+
+  return tmp;
+}
+
+
 void generate_reallit(node *n){
 
   printf("    %%%d = alloca double\n", current_temporary);
   //TODO: isto dá erro no LLVM. ex: 5e+1 é interpretado como int. temos de lhe tirar os underscores e fazer atof
-  printf("    store double %s, double* %%%d\n", n->value, current_temporary);
+  printf("    store double %.16E, double* %%%d\n", atof(fix_lit_for_conversion(n)), current_temporary);
   current_temporary++;
   printf("    %%%d = load double, double* %%%d\n", current_temporary, current_temporary-1);
   n->address = current_temporary;
@@ -351,7 +362,10 @@ void generate_id(node *n){
 
 void generate_minus(node* n){
 
-  assign_var =*((int*)(&n->childs[0]->value));
+  char* aux = fix_lit_for_conversion(n->childs[0]);
+  int num = atoi(aux);
+  num *= -1;
+  assign_var = num;
 
 }
 
