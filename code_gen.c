@@ -19,6 +19,8 @@ int string_counter = 0;
 int final_size = 0;
 int assign_var;
 
+int array_counter = 0;
+
 
 char* return_type_to_llvm(char* type){
   if(!strcmp(type, "int") || !strcmp(type, "Int")){
@@ -148,7 +150,6 @@ char* parse_string(char* str){
 void generate_fielddecl(node* n){
   if(!strcmp(n->childs[0]->token->id, "Int")){
     printf("@%s.%s = common global %s 0\n", class, n->childs[1]->value, return_type_to_llvm(n->childs[0]->token->id));
-
     n->childs[1]->pointer_table->llvm_type = return_type_to_llvm(n->childs[0]->token->id);
   }else if(!strcmp(n->childs[0]->token->id, "Double")){
     printf("@%s.%s = common global %s 0.0\n", class, n->childs[1]->value, return_type_to_llvm(n->childs[0]->token->id));
@@ -195,7 +196,8 @@ void generate_methoddecl(node *n){
     if(!strcmp(n->childs[0]->childs[2]->childs[i]->childs[0]->token->id, "StringArray")){
       printf("    %%argc.addr = alloca i32\n");
       printf("    %%argv.addr = alloca i8**\n");
-
+      printf("    store i32 %%argc, i32* %%argc.addr\n");
+      printf("    store i8** %%argv, i8*** %%argv.addr\n");
 
       printf("    %%%d = alloca i32\n", current_temporary);
       printf("    %%.length = alloca i32\n");
@@ -211,6 +213,7 @@ void generate_methoddecl(node *n){
       n->childs[0]->childs[2]->childs[i]->childs[1]->pointer_table->llvm_type = "StringArray";
 
     } else {
+
       printf("    %%%s.addr = alloca %s\n", n->childs[0]->childs[2]->childs[i]->childs[1]->value, return_type_to_llvm(n->childs[0]->childs[2]->childs[i]->childs[0]->token->id));
       n->childs[0]->childs[2]->childs[i]->childs[1]->pointer_table->llvm_type = return_type_to_llvm(n->childs[0]->childs[2]->childs[i]->childs[0]->token->id);
     }
@@ -249,60 +252,6 @@ void generate_global_strings(){
 }
 
 
-void generate_print(node* n){
-
-  if(!strcmp(n->childs[0]->anotated_type, "int")){
-    printf("    %%%d = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str.int, i32 0, i32 0), i32 %%%d)\n", current_temporary, n->childs[0]->address);
-  }else if(!strcmp(n->childs[0]->anotated_type, "double")){
-    printf("    %%%d = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str.double, i32 0, i32 0), double %%%d)\n", current_temporary,n->childs[0]->address);
-  }else if(!strcmp(n->childs[0]->anotated_type, "boolean")){
-    printf("    %%%d = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [6 x i8]* @.str.false, i32 0, i32 0), i1 %%%d)\n", current_temporary,n->childs[0]->address);
-  }else if(!strcmp(n->childs[0]->anotated_type, "String")){
-    printf("    %%%d = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([%d x i8], [%d x i8]* @.str.string.%d, i32 0, i32 0), i32 0)\n", current_temporary, final_size, final_size, string_counter-1);
-  }
-
-  current_temporary++;
-}
-
-
-void generate_assign(node *n){
-
-    printf("    store i32 %d, i32* %%%s\n", assign_var, n->childs[0]->value);
-}
-
-void generate_length(node *n){
-
-  printf("    %%%d = load i32, i32* %%.length\n", current_temporary);
-  n->address = current_temporary;
-  current_temporary++;
-
-}
-
-void generate_parseArgs(node *n){
-
-}
-
-void generate_strlit(node *n){
-
-  global_string_print[string_counter]= (char*)n->value;
-  parse_string(global_string_print[string_counter]);
-  string_counter++;
-
-}
-
-void generate_declit(node *n){
-
-  printf("    %%%d = alloca i32\n", current_temporary);
-  printf("    store i32 %s, i32* %%%d\n", n->value, current_temporary);
-  current_temporary++;
-  printf("    %%%d = load i32, i32* %%%d\n", current_temporary, current_temporary-1);
-  n->address = current_temporary;
-  current_temporary++;
-
-  assign_var =*((int*)(&n->value));
-
-}
-
 char* fix_lit_for_conversion(node* n){
   char* str = (char*) n->value;
 
@@ -320,15 +269,100 @@ char* fix_lit_for_conversion(node* n){
   return tmp;
 }
 
+void generate_print(node* n){
+
+  if(!strcmp(n->childs[0]->anotated_type, "int")){
+    printf("    %%%d = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str.int, i32 0, i32 0), i32 %%%d)\n", current_temporary, n->childs[0]->address);
+    current_temporary++;
+  }else if(!strcmp(n->childs[0]->anotated_type, "double")){
+    printf("    %%%d = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str.double, i32 0, i32 0), double %%%d)\n", current_temporary,n->childs[0]->address);
+    current_temporary++;
+  }else if(!strcmp(n->childs[0]->anotated_type, "boolean")){
+    printf("    %%%d = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [6 x i8]* @.str.false, i32 0, i32 0), i1 %%%d)\n", current_temporary,n->childs[0]->address);
+    current_temporary++;
+  }else if(!strcmp(n->childs[0]->anotated_type, "String")){
+    printf("    %%%d = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([%d x i8], [%d x i8]* @.str.string.%d, i32 0, i32 0), i32 0)\n", current_temporary, final_size, final_size, string_counter-1);
+    current_temporary++;
+  }
+}
+
+
+void generate_assign(node *n){
+  // a = b; 
+  if(!strcmp(n->childs[0]->anotated_type, "int")){
+    printf("    store i32 %%%d, i32* %%%d\n", assign_var, n->childs[0]->address);
+  } else if(!strcmp(n->childs[0]->anotated_type, "double")){
+    if(!strcmp(n->childs[1]->anotated_type, "double")){
+      printf("    store double %%%d, double* %%%d\n", assign_var, n->childs[0]->address);
+    } else if(!strcmp(n->childs[1]->anotated_type, "int")){
+      printf("    %%%d = load i32, i32* %%%d\n", current_temporary, n->childs[1]->address);
+      current_temporary++;
+      printf("    %%%d = conv sitofp i32 %%%d to double\n", current_temporary, current_temporary-1);
+      printf("    store double %%%d, double* %%%d\n", current_temporary, n->childs[1]->address);
+      current_temporary++;
+    }
+  } else if(!strcmp(n->childs[0]->anotated_type, "boolean")){
+    //TODO: store boolean
+  } 
+}
+
+void generate_length(node *n){
+
+  printf("    %%%d = load i32, i32* %%.length\n", current_temporary);
+  n->address = current_temporary;
+  current_temporary++;
+
+}
+
+// generate code for args
+void generate_parseArgs(node *n){
+
+  printf("    %%%d = add nsw i32 %%%d, 1\n", current_temporary, n->childs[1]->address);
+  current_temporary++;
+  printf("    %%%d = alloca i32\n", current_temporary);
+  printf("    store i32 %%%d, i32* %%%d\n", current_temporary - 1, current_temporary);
+  current_temporary++;
+  printf("    %%%d = load i32, i32* %%%d\n", current_temporary, current_temporary - 1);
+  current_temporary++;
+  printf("    %%%d = load i8**, i8*** %%argv.addr\n", current_temporary);
+  printf("    %%arrayidx%d = getelementptr inbounds i8*, i8** %%%d, i32 %%%d\n", array_counter, current_temporary, current_temporary - 1);
+  current_temporary++;
+  printf("    %%%d = load i8*, i8** %%arrayidx%d\n", current_temporary, array_counter);
+  current_temporary++;
+  array_counter++;
+  printf("    %%%d = call i32(i8*, ...) bitcast (i32(...)* @atoi to i32 (i8*, ...)*)(i8* %%%d)\n", current_temporary, current_temporary - 1);
+  n->address = current_temporary;
+  current_temporary++;
+}
+
+void generate_strlit(node *n){
+
+  global_string_print[string_counter]= (char*)n->value;
+  parse_string(global_string_print[string_counter]);
+  string_counter++;
+}
+
+void generate_declit(node *n){
+
+  printf("    %%%d = alloca i32\n", current_temporary);
+  printf("    store i32 %d, i32* %%%d\n", atoi(fix_lit_for_conversion(n)), current_temporary);
+  current_temporary++;
+  printf("    %%%d = load i32, i32* %%%d\n", current_temporary, current_temporary-1);
+  n->address = current_temporary;
+  assign_var = current_temporary;
+  current_temporary++;
+
+}
+
 
 void generate_reallit(node *n){
 
   printf("    %%%d = alloca double\n", current_temporary);
-  //TODO: isto dá erro no LLVM. ex: 5e+1 é interpretado como int. temos de lhe tirar os underscores e fazer atof
   printf("    store double %.16E, double* %%%d\n", atof(fix_lit_for_conversion(n)), current_temporary);
   current_temporary++;
   printf("    %%%d = load double, double* %%%d\n", current_temporary, current_temporary-1);
   n->address = current_temporary;
+  assign_var = current_temporary;
   current_temporary++;
 
 }
@@ -347,26 +381,34 @@ void generate_id(node *n){
     if(!strcmp(n->pointer_table->llvm_type, "i32")){
       printf("    %%%d = load %s, %s* %%%s\n", current_temporary, n->pointer_table->llvm_type, n->pointer_table->llvm_type, n->value);
       n->address = current_temporary;
+      assign_var = current_temporary;
+      current_temporary++;
     } else if(!strcmp(n->pointer_table->llvm_type, "double")){
       printf("    %%%d = load %s, %s* %%%s\n", current_temporary, n->pointer_table->llvm_type, n->pointer_table->llvm_type, n->value);
       n->address = current_temporary;
+      assign_var = current_temporary;
+      current_temporary++;
     } else if(!strcmp(n->pointer_table->llvm_type, "i1")){
       printf("    %%%d = load %s, %s* %%%s\n", current_temporary, n->pointer_table->llvm_type, n->pointer_table->llvm_type, n->value);
       n->address = current_temporary;
+      assign_var = current_temporary;
+      current_temporary++;
     }
-    current_temporary++;
   }
-
-
 }
 
 void generate_minus(node* n){
-
-  char* aux = fix_lit_for_conversion(n->childs[0]);
-  int num = atoi(aux);
-  num *= -1;
-  assign_var = num;
-
+  if(!strcmp(n->childs[0]->anotated_type, "int")){
+    // int
+    printf("    %%%d = sub nsw i32 0, %%%d\n", current_temporary, n->childs[0]->address); 
+    n->address = current_temporary;
+    current_temporary++;
+  } else{
+    // double
+    printf("    %%%d = fsub nsw -0.000000e+00, %%%d\n",current_temporary, n->childs[0]->address); 
+    n->address = current_temporary;
+    current_temporary++;
+  }
 }
 
 
@@ -380,6 +422,7 @@ void code_generation(node* n){
     printf("    ret i32 0\n");
     printf("}\n");
     printf("declare i32 @printf(i8*, ...)\n");
+    printf("declare i32 @atoi(...)\n");
 
 
   for(i = 0; i < n->n_children; i++){
@@ -421,7 +464,14 @@ void code_generation(node* n){
   } else if(!strcmp(n->token->id, "BoolLit")){
     generate_boollit(n);
   } else if(!strcmp(n->token->id, "Minus")){
+    for(i = 0; i < n->n_children; i++){
+      code_generation(n->childs[i]);
+    }
     generate_minus(n);
+  } else if(!strcmp(n->token->id, "Plus")){
+    for(i = 0; i < n->n_children; i++){
+      code_generation(n->childs[i]);
+    }
   }
 
 }
