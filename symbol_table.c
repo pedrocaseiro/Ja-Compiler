@@ -54,7 +54,7 @@ symbol* insert_symbol(symbol_table* st, char* name, int n_params, char** params,
   symbol* first_symbol = st->first;
   if (first_symbol == NULL) {
     st->first = new_symbol(name, n_params, params, type, flag, is_method);
-    return NULL;
+    return st->first;
   }
 
   while(first_symbol->next != NULL) {
@@ -141,7 +141,9 @@ void first_traverse(node* n) {
     }
   } else if(!strcmp(n->token->id, "FieldDecl")){
     if(parse_fielddecl_node(n)){
-      insert_symbol(table[0], n->childs[1]->value, 0, NULL, str_to_lower(n->childs[0]->token->id), NULL, 0);
+      symbol* aux=insert_symbol(table[0], n->childs[1]->value, 0, NULL, str_to_lower(n->childs[0]->token->id), NULL, 0);
+      //printf("%s\n", aux->name);
+      n->childs[1]->pointer_table = aux;
     }
   }
 }

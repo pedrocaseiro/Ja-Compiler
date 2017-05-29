@@ -148,6 +148,7 @@ char* parse_string(char* str){
 void generate_fielddecl(node* n){
   if(!strcmp(n->childs[0]->token->id, "Int")){
     printf("@%s.%s = common global %s 0\n", class, n->childs[1]->value, return_type_to_llvm(n->childs[0]->token->id));
+    
     n->childs[1]->pointer_table->llvm_type = return_type_to_llvm(n->childs[0]->token->id);
   }else if(!strcmp(n->childs[0]->token->id, "Double")){
     printf("@%s.%s = common global %s 0.0\n", class, n->childs[1]->value, return_type_to_llvm(n->childs[0]->token->id));

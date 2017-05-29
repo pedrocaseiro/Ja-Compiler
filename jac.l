@@ -165,7 +165,7 @@ int main(int argc, char **argv) {
       create_an_tree(ast);
       //print_table();
       //print_tree(ast,0);
-      code_gen_ast(ast);
+      //code_gen_ast(ast);
 
     }
   }

@@ -12,7 +12,7 @@ class gcd2 {
     int a;
     boolean b;
     b = true;
-    
+
     int lllll;
     lllll = 5;
     a = 4;
@@ -77,5 +77,5 @@ class gcd2 {
     System.out.println(5.0e1);
     System.out.println(10);
     System.out.println(a);
-  } 
+  }
 }
