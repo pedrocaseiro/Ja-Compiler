@@ -1,0 +1,81 @@
+class gcd2 {
+  public static int c;
+  public static double ddd;
+  public static double dddddd;
+  public static void main(String[] args) {
+    boolean boo;
+    boo = true;
+    System.out.println(boo);
+    System.out.println(boo);
+    System.out.println("%\\%\\%\na");
+    System.out.println(args.length);
+    int a;
+    boolean b;
+    b = true;
+    
+    int lllll;
+    lllll = 5;
+    a = 4;
+    a = lllll;
+    System.out.println(a);
+    System.out.println(b);
+    boolean b1;
+    b = false;
+    //b1 = b;
+    a = 5;
+    System.out.println(Integer.parseInt(args[a]));
+    int a23;
+    a23 = Integer.parseInt(args[Integer.parseInt(args[Integer.parseInt(args[0])])]);
+    System.out.println(a23);
+
+    double d;
+    d = 5.5;
+    d = -d;
+    System.out.println(d);
+    System.out.println("A");
+    a = 1_____________1;
+    System.out.println(a);
+    a = -a;
+    System.out.println("a = -a");
+    System.out.println(a);
+    System.out.println("LUL -5");
+    System.out.println(-5);
+    a = - - -a;
+    System.out.println("a = ---a");
+    System.out.println(a);
+    a = - -a;
+    System.out.println("a = --a");
+    System.out.println(a);
+
+
+    b = true;
+    System.out.println(b);
+    b = false;
+    d = 5.1123123e-41;
+    d = 5______0e4;
+    d = 51234e4;
+    d = 5e45;
+    c = 4;
+    ddd = 1.56;
+
+    ddd = 1;
+    System.out.println("ARGS:");
+    int xd;
+    xd = 3;
+    d = Integer.parseInt(args[xd]);
+    System.out.println(d);
+    System.out.println("ARGS:");
+    a = args.length;
+    System.out.println(a);
+    System.out.println("DDDD");
+    System.out.println(ddd);
+    System.out.println(b);
+    System.out.println(b);
+    System.out.println("LUUULL\n");
+    System.out.println("La%fsfkhh\"hjsfahfshfsh\nasaddd '    \f \t          asdas           \\       sUUULL\n");
+    System.out.println(false);
+    System.out.println(5.0e1);
+    System.out.println(10);
+    System.out.println(a);
+  } 
+}

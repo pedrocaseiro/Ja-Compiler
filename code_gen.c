@@ -312,6 +312,7 @@ void generate_declit(node *n){
 void generate_reallit(node *n){
 
   printf("    %%%d = alloca double\n", current_temporary);
+  //TODO: isto dá erro no LLVM. ex: 5e+1 é interpretado como int. temos de lhe tirar os underscores e fazer atof
   printf("    store double %s, double* %%%d\n", n->value, current_temporary);
   current_temporary++;
   printf("    %%%d = load double, double* %%%d\n", current_temporary, current_temporary-1);
