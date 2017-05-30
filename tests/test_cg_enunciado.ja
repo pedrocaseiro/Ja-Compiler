@@ -6,7 +6,11 @@ class gcd2{
   double o;
   i = 9.4;
   o = -i;
-  System.out.println(-o);
+  int y;
+  y = Integer.parseInt(args[Integer.parseInt(args[Integer.parseInt(args[0])])]);
+  a = args.length;
+  System.out.println(a);
+  //System.out.println(y);
 
   }
 

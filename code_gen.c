@@ -364,6 +364,7 @@ void generate_length(node *n){
 
   printf("    %%%d = load i32, i32* %%.length\n", current_temporary);
   n->address = current_temporary;
+  assign_var = current_temporary;
   current_temporary++;
 
 }
@@ -386,6 +387,7 @@ void generate_parseArgs(node *n){
   array_counter++;
   printf("    %%%d = call i32(i8*, ...) bitcast (i32(...)* @atoi to i32 (i8*, ...)*)(i8* %%%d)\n", current_temporary, current_temporary - 1);
   n->address = current_temporary;
+  assign_var = current_temporary;
   current_temporary++;
 }
 
@@ -478,6 +480,7 @@ void generate_minus(node* n){
     // int
     printf("    %%%d = sub nsw i32 0, %%%d\n", current_temporary, n->childs[0]->address);
     n->address = current_temporary;
+    assign_var = current_temporary;
     current_temporary++;
   } else{
     // double
