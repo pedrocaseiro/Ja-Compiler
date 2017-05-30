@@ -3,8 +3,10 @@ class gcd2{
   public static void main(String[] args) {
   a = 5;
   double i;
+  double o;
   i = 9.4;
-  System.out.println(i);
+  o = -i;
+  System.out.println(-o);
 
   }
 

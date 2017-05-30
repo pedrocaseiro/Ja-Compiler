@@ -483,6 +483,7 @@ void generate_minus(node* n){
     // double
     printf("    %%%d = fsub double -0.000000e+00, %%%d\n",current_temporary, n->childs[0]->address);
     n->address = current_temporary;
+    assign_var = current_temporary;
     current_temporary++;
   }
 }
