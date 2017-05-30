@@ -23,6 +23,7 @@ symbol* new_symbol(char* name, int n_params, char** params, char* type, char* fl
   s->next = NULL;
   s->is_method=is_method; // not a method
   s->llvm_type = NULL;
+  s->is_global = -1;
   return s;
 }
 
@@ -423,7 +424,7 @@ void parse_call_node(node* n){
         n->anotated_type = "undef";
         n->childs[0]->anotated_type = "undef";
         printf("Line %d, col %d: Cannot find symbol %s\n", n->childs[0]->token->line, n->childs[0]->token->col, strcat(result_to_print, call_child_types));
-        error_semantic = 1;
+
     } else{//ambiguous
 
       char call_child_types[1000]="(";
@@ -441,7 +442,6 @@ void parse_call_node(node* n){
       n->anotated_type = "undef";
       n->childs[0]->anotated_type = "undef";
       printf("Line %d, col %d: Reference to method %s%s is ambiguous\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->value, call_child_types);
-      error_semantic = 1;
     }
   }
 
@@ -454,7 +454,6 @@ void parse_parseargs_node(node* n){
 
   if(strcmp(n->childs[0]->anotated_type,"String[]") || strcmp(n->childs[1]->anotated_type,"int")){//TODO: alterar linhas
     printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col-17, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
-    error_semantic = 1;
   }
 }
 
@@ -463,7 +462,6 @@ void parse_and_or_nodes(node* n){
   n->anotated_type = strdup("boolean");
   if(strcmp(n->childs[0]->anotated_type,"boolean") || strcmp(n->childs[1]->anotated_type,"boolean")){
     printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
-    error_semantic = 1;
   }
 }
 
@@ -478,7 +476,6 @@ void parse_equality_nodes(node* n){
      return;
   }else {
     printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
-    error_semantic = 1;
   }
 }
 
@@ -492,7 +489,6 @@ void parse_relational_nodes(node* n){
      return;
   }else {
     printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
-    error_semantic = 1;
   }
 }
 
@@ -504,7 +500,6 @@ void parse_minus_plus_nodes(node* n){
     n->anotated_type = n->childs[0]->anotated_type;
   else{
     printf("Line %d, col %d: Operator %s cannot be applied to type %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type);
-    error_semantic = 1;
     n->anotated_type = strdup("undef");
   }
 
@@ -520,14 +515,12 @@ void parse_logic_nodes(node* n){
       n->anotated_type = strdup("double");
     } else {
       printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
-      error_semantic = 1;
       n->anotated_type = strdup("undef");
     }
   } else if(!strcmp(n->childs[0]->anotated_type, "int") && !strcmp(n->childs[1]->anotated_type, "int")){
       n->anotated_type = strdup("int");
   } else {
     printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type, n->childs[1]->anotated_type);
-    error_semantic = 1;
     n->anotated_type = strdup("undef");
   }
 }
@@ -537,7 +530,6 @@ void parse_not_node(node* n){
   n->anotated_type = strdup("boolean");
   if(strcmp(n->childs[0]->anotated_type, "boolean")){
     printf("Line %d, col %d: Operator %s cannot be applied to type %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type);
-    error_semantic = 1;
   }
 }
 
@@ -546,7 +538,6 @@ void parse_length_node(node* n){
   n->anotated_type = strdup("int");
   if(strcmp(n->childs[0]->anotated_type, "String[]")){
     printf("Line %d, col %d: Operator %s cannot be applied to type %s\n", n->token->line, n->token->col, fix(n->token->id), n->childs[0]->anotated_type);
-    error_semantic = 1;
   }
 }
 
@@ -555,7 +546,6 @@ void parse_declit_node(node* n){
   long int a = 2147483648;
   if(atoll((char*)n->value) >= a){
     printf("Line %d, col %d: Number %s out of bounds\n", n->token->line, n->token->col, (char*)n->value);
-    error_semantic = 1;
   }
 }
 
@@ -588,10 +578,8 @@ void parse_reallit_node(node* n){
   if(different_zero_flag){
     if(number==0){
       printf("Line %d, col %d: Number %s out of bounds\n", n->token->line, n->token->col, n->value);
-      error_semantic = 1;
     } else if(number > DBL_MAX){
       printf("Line %d, col %d: Number %s out of bounds\n", n->token->line, n->token->col, n->value);
-      error_semantic = 1;
     }
 
   }
@@ -615,20 +603,17 @@ void parse_return_node(node* n){
     // if it is not void
     if(strcmp(t, "void")){
       printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->token->line, n->token->col, "void", fix(n->token->id));
-      error_semantic = 1;
     }
   } else if(n->n_children > 0){
     if(!strcmp(t, "double")){
       if(strcmp(n->childs[0]->anotated_type, "int") && strcmp(n->childs[0]->anotated_type, "double")){
         printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
-        error_semantic = 1;
       }
     } else if(!strcmp(t, "void")){
       printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
-      error_semantic = 1;
     } else if(strcmp(n->childs[0]->anotated_type, t)){
       printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
-      error_semantic = 1;
+
 
     }
 
@@ -638,21 +623,18 @@ void parse_return_node(node* n){
 void parse_if_node(node* n){
   if(strcmp(n->childs[0]->anotated_type, "boolean")){
     printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
-    error_semantic = 1;
   }
 }
 
 void parse_while_node(node* n){
   if(strcmp(n->childs[0]->anotated_type, "boolean")){
     printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
-    error_semantic = 1;
   }
 }
 
 void parse_do_while_node(node* n){
   if(strcmp(n->childs[1]->anotated_type, "boolean")){
     printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[1]->token->line, n->childs[1]->token->col, n->childs[1]->anotated_type, fix(n->token->id));
-    error_semantic = 1;
   }
 }
 
@@ -660,7 +642,6 @@ void parse_print_node(node* n){
 
   if(!strcmp(n->childs[0]->anotated_type, "String[]") || !strcmp(n->childs[0]->anotated_type, "undef") || !strcmp(n->childs[0]->anotated_type, "void")){
     printf("Line %d, col %d: Incompatible type %s in %s statement\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->anotated_type, fix(n->token->id));
-    error_semantic = 1;
   }
 }
 
@@ -791,7 +772,6 @@ void create_an_tree(node *n){
   } else if(!strcmp(n->token->id, "Id")){
       if(!strcmp(n->anotated_type,"undef") && n->is_method == 0){
         printf("Line %d, col %d: Cannot find symbol %s\n", n->token->line, n->token->col,n->value);
-        error_semantic = 1;
       }
   }
 }

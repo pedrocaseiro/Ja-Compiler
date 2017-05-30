@@ -12,6 +12,7 @@ typedef struct symbol {
   int is_method; // 0 is not method, 1 is method
   struct symbol* next;
   char* llvm_type;
+  int is_global;
 } symbol;
 
 typedef struct symbol_table {
