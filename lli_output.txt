@@ -39,16 +39,14 @@ define void @gcd2.method.main.stringArray(i32 %argc, i8** %argv){
     store i32 5, i32* %5
     %6 = load i32, i32* %5
     store i32 %6, i32* @gcd2.a
-    %7 = load i32, i32* @gcd2.a
-    %8 = add nsw i32 %7, 1
-    %9 = alloca i32
-    store i32 %8, i32* %9
-    %10 = load i32, i32* %9
-    %11 = load i8**, i8*** %argv.addr
-    %arrayidx0 = getelementptr inbounds i8*, i8** %11, i32 %10
-    %12 = load i8*, i8** %arrayidx0
-    %13 = call i32(i8*, ...) bitcast (i32(...)* @atoi to i32 (i8*, ...)*)(i8* %12)
-    %14 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str.int, i32 0, i32 0), i32 %13)
+    %i = alloca double
+    %7 = load double, double* %i
+    %8 = alloca double
+    store double 9.4000000000000004E+00, double* %8
+    %9 = load double, double* %8
+    store double %9, double* %i
+    %10 = load double, double* %i
+    %11 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str.double, i32 0, i32 0), double %10)
     ret void
 }
 @.str.int = private unnamed_addr constant [4 x i8] c"%d\0A\00"

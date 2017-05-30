@@ -21,8 +21,8 @@ int main(int argc, char* argv[]){
   */
   //int length = argc-1;
   //printf("%s", argv[1]);
-  double a;
-  a = 5.4;
-  printf("%f\n", -a);
+  /*double a;
+  a = 5.4;*/
+  printf("%s\n");
   return 0;
 }

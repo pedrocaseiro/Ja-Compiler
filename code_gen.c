@@ -124,7 +124,6 @@ char* parse_string(char* str){
           new_string[index] = '%';
           index++;
           final_size+=2;
-          i++;
       } else{
         if(str[i] != '"'){
           new_string[index] = str[i];
@@ -487,6 +486,27 @@ void generate_minus(node* n){
     current_temporary++;
   }
 }
+void generate_plus(node* n){
+  if(!strcmp(n->childs[0]->anotated_type, "int")){
+
+    // int
+    printf("    %%%d = alloca i32\n", current_temporary);
+    printf("    store i32 %s, i32* %%%d\n", (char*)n->childs[0]->value, current_temporary);
+    current_temporary++;
+    printf("    %%%d = load i32, i32* %%%d\n", current_temporary, current_temporary-1);
+    n->address = current_temporary;
+    current_temporary++;
+
+  } else{
+    // double
+    printf("    %%%d = alloca double\n", current_temporary);
+    printf("    store double %s, double* %%%d\n", (char*)n->childs[0]->value, current_temporary);
+    current_temporary++;
+    printf("    %%%d = load double, double* %%%d\n", current_temporary, current_temporary-1);
+    n->address = current_temporary;
+    current_temporary++;
+  }
+}
 
 
 void code_generation(node* n){
@@ -550,6 +570,7 @@ void code_generation(node* n){
     for(i = 0; i < n->n_children; i++){
       code_generation(n->childs[i]);
     }
+    generate_plus(n);
   }
 
 }

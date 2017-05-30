@@ -2,7 +2,9 @@ class gcd2{
   public static int a;
   public static void main(String[] args) {
   a = 5;
-  System.out.println(Integer.parseInt(args[a]));
+  double i;
+  i = 9.4;
+  System.out.println(i);
 
   }
 
