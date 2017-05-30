@@ -207,8 +207,9 @@ void generate_methoddecl(node *n){
       printf("    %%%d = load i32, i32* %%%d\n", current_temporary, current_temporary-1);
       current_temporary++;
       printf("    %%%d = sub nsw i32 %%%d, 1\n", current_temporary, current_temporary-1);
-      printf("    store i32 %%%d, i32* %%.length\n", current_temporary);
+      printf("    store i32 %%%d, i32* %%.length\n\n\n\n", current_temporary);
       current_temporary++;
+
 
       n->childs[0]->childs[2]->childs[i]->childs[1]->pointer_table->llvm_type = "StringArray";
 
@@ -288,22 +289,22 @@ void generate_print(node* n){
 
 
 void generate_assign(node *n){
-  // a = b; 
+  // a = b;
   if(!strcmp(n->childs[0]->anotated_type, "int")){
-    printf("    store i32 %%%d, i32* %%%d\n", assign_var, n->childs[0]->address);
+    printf("    store i32 %%%d, i32* %%%s\n", assign_var, n->childs[0]->value);
   } else if(!strcmp(n->childs[0]->anotated_type, "double")){
     if(!strcmp(n->childs[1]->anotated_type, "double")){
-      printf("    store double %%%d, double* %%%d\n", assign_var, n->childs[0]->address);
+      printf("    store double %%%d, double* %%%s\n", assign_var, n->childs[0]->value);
     } else if(!strcmp(n->childs[1]->anotated_type, "int")){
       printf("    %%%d = load i32, i32* %%%d\n", current_temporary, n->childs[1]->address);
       current_temporary++;
       printf("    %%%d = conv sitofp i32 %%%d to double\n", current_temporary, current_temporary-1);
-      printf("    store double %%%d, double* %%%d\n", current_temporary, n->childs[1]->address);
+      printf("    store double %%%d, double* %%%s\n", current_temporary, n->childs[1]->value);
       current_temporary++;
     }
   } else if(!strcmp(n->childs[0]->anotated_type, "boolean")){
     //TODO: store boolean
-  } 
+  }
 }
 
 void generate_length(node *n){
@@ -383,6 +384,7 @@ void generate_id(node *n){
       n->address = current_temporary;
       assign_var = current_temporary;
       current_temporary++;
+
     } else if(!strcmp(n->pointer_table->llvm_type, "double")){
       printf("    %%%d = load %s, %s* %%%s\n", current_temporary, n->pointer_table->llvm_type, n->pointer_table->llvm_type, n->value);
       n->address = current_temporary;
@@ -400,12 +402,12 @@ void generate_id(node *n){
 void generate_minus(node* n){
   if(!strcmp(n->childs[0]->anotated_type, "int")){
     // int
-    printf("    %%%d = sub nsw i32 0, %%%d\n", current_temporary, n->childs[0]->address); 
+    printf("    %%%d = sub nsw i32 0, %%%d\n", current_temporary, n->childs[0]->address);
     n->address = current_temporary;
     current_temporary++;
   } else{
     // double
-    printf("    %%%d = fsub nsw -0.000000e+00, %%%d\n",current_temporary, n->childs[0]->address); 
+    printf("    %%%d = fsub nsw -0.000000e+00, %%%d\n",current_temporary, n->childs[0]->address);
     n->address = current_temporary;
     current_temporary++;
   }
