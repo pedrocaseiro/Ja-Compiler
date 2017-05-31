@@ -536,8 +536,15 @@ void code_generation(node* n){
     generate_boolean_print();
 
 
-  for(i = 0; i < n->n_children; i++){
-      code_generation(n->childs[i]);
+    for(i = 0; i < n->n_children; i++){
+      if(!strcmp(n->childs[i]->token->id, "FieldDecl")){
+        code_generation(n->childs[i]);
+      }
+    }
+    for(i = 0; i < n->n_children; i++){
+      if(strcmp(n->childs[i]->token->id, "FieldDecl")){
+        code_generation(n->childs[i]);
+      }
     }
   } else if(!strcmp(n->token->id, "FieldDecl")){
     for(i = 0; i < n->n_children; i++){
