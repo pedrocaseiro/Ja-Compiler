@@ -10,6 +10,8 @@ void generate_(node*);
 void generate_vardecl(node*);
 void generate_assign(node*);
 void generate_id(node*);
+void generate_add(node*);
+void generate_sub(node*);
 char* return_type_to_llvm(char*);
 char* parse_arguments_type(char*);
 void code_gen_ast(node* n);

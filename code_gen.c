@@ -340,11 +340,6 @@ void generate_assign(node *n){
       }
       n->address = n->childs[1]->address;
     } else if(!strcmp(n->childs[1]->anotated_type, "int")){
-      //printf("    %%%d = alloca double\n", current_temporary);
-      //printf("    store i32 %%%d, i32* %%%d\n", n->childs[1]->address, current_temporary);
-      //current_temporary++;
-      //printf("    %%%d = load i32, i32* %%%d\n", current_temporary, current_temporary-1);
-      //current_temporary++;
       printf("    %%%d = sitofp i32 %%%d to double\n", current_temporary, n->childs[1]->address);
       if(n->childs[0]->pointer_table->is_global == 1){
         printf("    store double %%%d, double* @%s.%s\n", current_temporary, class, n->childs[0]->value);
@@ -521,6 +516,69 @@ void generate_plus(node* n){
   }
 }
 
+void generate_add(node* n){
+  if(!strcmp(n->childs[0]->anotated_type, "int") && !strcmp(n->childs[1]->anotated_type, "int")){
+    // int + int
+    printf("%%%d = add i32 %%%d, %%%d\n", current_temporary, n->childs[0]->address, n->childs[1]->address);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  } else if(!strcmp(n->childs[0]->anotated_type, "double") && !strcmp(n->childs[1]->anotated_type, "double")){
+    // double + double
+    printf("%%%d = fadd double %%%d, %%%d\n", current_temporary, n->childs[0]->address, n->childs[1]->address);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  } else if(!strcmp(n->childs[0]->anotated_type, "int") && !strcmp(n->childs[1]->anotated_type, "double")){
+    // int + double
+    printf("    %%%d = sitofp i32 %%%d to double\n", current_temporary, n->childs[0]->address);
+    current_temporary++;
+    printf("%%%d = fadd double %%%d, %%%d\n", current_temporary, current_temporary - 1, n->childs[1]->address);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  } else if(!strcmp(n->childs[0]->anotated_type, "double") && !strcmp(n->childs[1]->anotated_type, "int")){
+    // double + int
+     printf("    %%%d = sitofp i32 %%%d to double\n", current_temporary, n->childs[1]->address);
+    current_temporary++;
+    printf("%%%d = fadd double %%%d, %%%d\n", current_temporary, current_temporary - 1, n->childs[0]->address);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  }
+}
+
+void generate_sub(node* n){
+  if(!strcmp(n->childs[0]->anotated_type, "int") && !strcmp(n->childs[1]->anotated_type, "int")){
+    // int + int
+    printf("%%%d = sub i32 %%%d, %%%d\n", current_temporary, n->childs[0]->address, n->childs[1]->address);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  } else if(!strcmp(n->childs[0]->anotated_type, "double") && !strcmp(n->childs[1]->anotated_type, "double")){
+    // double + double
+    printf("%%%d = fsub double %%%d, %%%d\n", current_temporary, n->childs[0]->address, n->childs[1]->address);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  } else if(!strcmp(n->childs[0]->anotated_type, "int") && !strcmp(n->childs[1]->anotated_type, "double")){
+    // int + double
+    printf("    %%%d = sitofp i32 %%%d to double\n", current_temporary, n->childs[0]->address);
+    current_temporary++;
+    printf("%%%d = fsub double %%%d, %%%d\n", current_temporary, current_temporary - 1, n->childs[1]->address);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  } else if(!strcmp(n->childs[0]->anotated_type, "double") && !strcmp(n->childs[1]->anotated_type, "int")){
+    // double + int
+     printf("    %%%d = sitofp i32 %%%d to double\n", current_temporary, n->childs[1]->address);
+    current_temporary++;
+    printf("%%%d = fsub double %%%d, %%%d\n", current_temporary, n->childs[0]->address, current_temporary - 1);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  }
+}
 
 void code_generation(node* n){
   int i;
@@ -595,7 +653,18 @@ void code_generation(node* n){
       code_generation(n->childs[i]);
     }
     generate_plus(n);
+  } else if(!strcmp(n->token->id, "Add")){
+    for(i = 0; i < n->n_children; i++){
+      code_generation(n->childs[i]);
+    }
+    generate_add(n);
+  } else if(!strcmp(n->token->id, "Sub")){
+    for(i = 0; i < n->n_children; i++){
+      code_generation(n->childs[i]);
+    }
+    generate_sub(n);
   }
+
 
 }
 

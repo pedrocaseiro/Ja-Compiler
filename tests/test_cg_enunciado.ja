@@ -1,15 +1,18 @@
 class gcd2{
-  public static double a;
+  public static double x;
+  public static double l;
   public static double m;
   public static void main(String[] args) {
+    int k;
+    int a;
+    a = 5;
 
-    //System.out.println(m = args.length-Integer.parseInt(args[1]));
-    //System.out.println(m = +Integer.parseInt(args[1]));
-    
-
-
+    System.out.println(a - 3);
+    System.out.println(3.3 - 3.3);
+    System.out.println(3.3 - 3);
+    System.out.println(3 - 3.3);
   }
 
 
-
+  public static int d;
 }
