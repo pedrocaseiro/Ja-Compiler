@@ -20,7 +20,11 @@ define void @printBoolean(i1 %b) {
     ret void
 }
 @gcd2.a = common global double 0.0
-@gcd2.m = common global double 0.0
+@gcd2.b = common global double 0.0
+@gcd2.c = common global i32 0
+@gcd2.d = common global i32 0
+@gcd2.e = common global i32 0
+@gcd2.f = common global i32 0
 define void @gcd2.method.main.stringArray(i32 %argc, i8** %argv){
     %argc.addr = alloca i32
     %argv.addr = alloca i8**
@@ -35,6 +39,222 @@ define void @gcd2.method.main.stringArray(i32 %argc, i8** %argv){
 
 
 
+    %i = alloca i32
+    %4 = load i32, i32* @gcd2.c
+    %5 = load i32, i32* %i
+    %6 = alloca i32
+    store i32 3, i32* %6
+    %7 = load i32, i32* %6
+    store i32 %7, i32* %i
+    %8 = load i32, i32* %i
+    store i32 %8, i32* @gcd2.c
+    %9 = load i32, i32* @gcd2.c
+    %10 = load i32, i32* @gcd2.f
+    %11 = load i32, i32* @gcd2.c
+    %12 = load i32, i32* @gcd2.d
+%13 = sub i32 %11, %12
+    store i32 %13, i32* @gcd2.f
+    %14 = load i32, i32* @gcd2.f
+    %15 = load i32, i32* @gcd2.f
+    %16 = load i32, i32* @gcd2.c
+    %17 = load i32, i32* @gcd2.d
+%18 = sub i32 %16, %17
+    %19 = sub nsw i32 0, %18
+    store i32 %19, i32* @gcd2.f
+    %20 = load i32, i32* @gcd2.f
+    %21 = load i32, i32* @gcd2.f
+    %22 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str.int, i32 0, i32 0), i32 %21)
+    %23 = load i32, i32* @gcd2.f
+    %24 = load i32, i32* @gcd2.c
+    %25 = load i32, i32* @gcd2.d
+%26 = sub i32 %24, %25
+    %27 = alloca i32
+    store i32 %26, i32* %27
+    %28 = load i32, i32* %27
+    store i32 %28, i32* @gcd2.f
+    %29 = load i32, i32* @gcd2.f
+    %30 = load i32, i32* @gcd2.f
+    %31 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str.int, i32 0, i32 0), i32 %30)
+    %32 = load i32, i32* @gcd2.e
+    %33 = alloca i32
+    store i32 2, i32* %33
+    %34 = load i32, i32* %33
+    %35 = add nsw i32 %34, 1
+    %36 = alloca i32
+    store i32 %35, i32* %36
+    %37 = load i32, i32* %36
+    %38 = load i8**, i8*** %argv.addr
+    %arrayidx0 = getelementptr inbounds i8*, i8** %38, i32 %37
+    %39 = load i8*, i8** %arrayidx0
+    %40 = call i32(i8*, ...) bitcast (i32(...)* @atoi to i32 (i8*, ...)*)(i8* %39)
+    store i32 %40, i32* @gcd2.e
+    %41 = load i32, i32* @gcd2.e
+    %42 = load i32, i32* @gcd2.e
+    %43 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str.int, i32 0, i32 0), i32 %42)
+    %44 = load i32, i32* @gcd2.e
+    %45 = load i32, i32* @gcd2.f
+%46 = sub i32 %44, %45
+    %47 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str.int, i32 0, i32 0), i32 %46)
+    %48 = load i32, i32* @gcd2.e
+    %49 = load i32, i32* @gcd2.f
+%50 = add i32 %48, %49
+    %51 = sub nsw i32 0, %50
+    %52 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str.int, i32 0, i32 0), i32 %51)
+    %53 = load double, double* @gcd2.a
+    %54 = alloca double
+    store double 4.5000000000000000E+00, double* %54
+    %55 = load double, double* %54
+    store double %55, double* @gcd2.a
+    %56 = load double, double* @gcd2.a
+    %57 = load double, double* @gcd2.b
+    %58 = load i32, i32* %.length
+    %59 = load double, double* @gcd2.a
+    %60 = sitofp i32 %58 to double
+%61 = fsub double %60, %59
+    store double %61, double* @gcd2.b
+    %62 = load double, double* @gcd2.b
+    %63 = load double, double* @gcd2.b
+    %64 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str.double, i32 0, i32 0), double %63)
+    %65 = load double, double* @gcd2.b
+    %66 = fsub double -0.000000e+00, %65
+    %67 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str.double, i32 0, i32 0), double %66)
+    %68 = load double, double* @gcd2.b
+    %69 = alloca double
+    store double 4.5000000000000000E+00, double* %69
+    %70 = load double, double* %69
+    %71 = alloca i32
+    store i32 4, i32* %71
+    %72 = load i32, i32* %71
+    %73 = sitofp i32 %72 to double
+%74 = fsub double %70, %73
+    store double %74, double* @gcd2.b
+    %75 = load double, double* @gcd2.b
+    %76 = load double, double* @gcd2.b
+    %77 = fsub double -0.000000e+00, %76
+    %78 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str.double, i32 0, i32 0), double %77)
+    %79 = load i32, i32* @gcd2.e
+    %80 = load i32, i32* %.length
+%81 = sub i32 %79, %80
+    %82 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str.int, i32 0, i32 0), i32 %81)
+    %83 = load i32, i32* @gcd2.e
+    %84 = load i32, i32* %.length
+%85 = add i32 %83, %84
+    %86 = sub nsw i32 0, %85
+    %87 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str.int, i32 0, i32 0), i32 %86)
+    %88 = alloca double
+    store double 3.2999999999999998E+00, double* %88
+    %89 = load double, double* %88
+    %90 = load i32, i32* %.length
+    %91 = sitofp i32 %90 to double
+%92 = fadd double %91, %89
+    %93 = alloca double
+    store double %92, double* %93
+    %94 = load double, double* %93
+    %95 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str.double, i32 0, i32 0), double %94)
+    %96 = alloca double
+    store double 3.2999999999999998E+00, double* %96
+    %97 = load double, double* %96
+    %98 = load i32, i32* %.length
+    %99 = sitofp i32 %98 to double
+%100 = fadd double %99, %97
+    %101 = fsub double -0.000000e+00, %100
+    %102 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str.double, i32 0, i32 0), double %101)
+    %103 = load double, double* @gcd2.b
+    %104 = alloca double
+    store double 3.2999999999999998E+00, double* %104
+    %105 = load double, double* %104
+    %106 = load i32, i32* %.length
+    %107 = sitofp i32 %106 to double
+%108 = fadd double %107, %105
+%109 = fsub double %103, %108
+    %110 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str.double, i32 0, i32 0), double %109)
+    %111 = load double, double* @gcd2.b
+    %112 = load double, double* @gcd2.a
+    store double %112, double* @gcd2.b
+    %113 = load double, double* @gcd2.b
+    %114 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str.double, i32 0, i32 0), double %112)
+    %115 = load i32, i32* @gcd2.e
+    %116 = load i32, i32* %.length
+%117 = sub i32 %115, %116
+    %118 = alloca double
+    store double 5.5000000000000000E+00, double* %118
+    %119 = load double, double* %118
+    %120 = sitofp i32 %117 to double
+%121 = fadd double %120, %119
+    %122 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str.double, i32 0, i32 0), double %121)
+    %123 = load i32, i32* @gcd2.e
+    %124 = load i32, i32* %.length
+%125 = add i32 %123, %124
+    %126 = alloca double
+    store double 5.5000000000000000E+00, double* %126
+    %127 = load double, double* %126
+    %128 = sitofp i32 %125 to double
+%129 = fadd double %128, %127
+    %130 = fsub double -0.000000e+00, %129
+    %131 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str.double, i32 0, i32 0), double %130)
+    %132 = alloca double
+    store double 3.2999999999999998E+00, double* %132
+    %133 = load double, double* %132
+    %134 = load i32, i32* %.length
+    %135 = sitofp i32 %134 to double
+%136 = fadd double %135, %133
+    %137 = alloca double
+    store double %136, double* %137
+    %138 = load double, double* %137
+    %139 = alloca double
+    store double 6.7000000000000002E+00, double* %139
+    %140 = load double, double* %139
+%141 = fsub double %138, %140
+    %142 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str.double, i32 0, i32 0), double %141)
+    %143 = alloca double
+    store double 3.2999999999999998E+00, double* %143
+    %144 = load double, double* %143
+    %145 = load i32, i32* %.length
+    %146 = sitofp i32 %145 to double
+%147 = fadd double %146, %144
+    %148 = fsub double -0.000000e+00, %147
+    %149 = alloca i32
+    store i32 6, i32* %149
+    %150 = load i32, i32* %149
+    %151 = sitofp i32 %150 to double
+%152 = fadd double %151, %148
+    %153 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str.double, i32 0, i32 0), double %152)
+    %154 = load double, double* @gcd2.b
+    %155 = alloca i32
+    store i32 3, i32* %155
+    %156 = load i32, i32* %155
+    %157 = load i32, i32* %.length
+%158 = add i32 %156, %157
+    %159 = alloca i32
+    store i32 5, i32* %159
+    %160 = load i32, i32* %159
+%161 = add i32 %158, %160
+    %162 = sitofp i32 %161 to double
+%163 = fsub double %154, %162
+    %164 = alloca i32
+    store i32 1, i32* %164
+    %165 = load i32, i32* %164
+    %166 = sitofp i32 %165 to double
+%167 = fsub double %163, %166
+    %168 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str.double, i32 0, i32 0), double %167)
+    %169 = load double, double* @gcd2.b
+    %170 = load double, double* @gcd2.a
+    %171 = fsub double -0.000000e+00, %170
+    %172 = alloca i32
+    store i32 4, i32* %172
+    %173 = load i32, i32* %172
+    %174 = sitofp i32 %173 to double
+%175 = fadd double %174, %171
+    store double %175, double* @gcd2.b
+    %176 = load double, double* @gcd2.b
+    %177 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str.double, i32 0, i32 0), double %175)
+    %178 = load double, double* @gcd2.a
+    %179 = load i32, i32* %.length
+    %180 = sitofp i32 %179 to double
+    store double %180, double* @gcd2.a
+    %181 = sitofp i32 %179 to double
+    %182 = load double, double* @gcd2.a
+    %183 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str.double, i32 0, i32 0), double %181)
     ret void
 }
 @.str.int = private unnamed_addr constant [4 x i8] c"%d\0A\00"

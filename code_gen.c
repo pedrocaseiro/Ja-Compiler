@@ -507,7 +507,7 @@ void generate_plus(node* n){
   } else if(!strcmp(n->childs[0]->anotated_type, "double")){
     // double
     printf("    %%%d = alloca double\n", current_temporary);
-    printf("    store double %.16E, double* %%%d\n", atof(fix_lit_for_conversion(n->childs[0])), current_temporary);
+    printf("    store double %%%d, double* %%%d\n", n->childs[0]->address, current_temporary);
     current_temporary++;
     printf("    %%%d = load double, double* %%%d\n", current_temporary, current_temporary-1);
     n->address = current_temporary;
