@@ -330,6 +330,7 @@ void generate_assign(node *n){
     } else {
       printf("    store i32 %%%d, i32* %%%s\n", assign_var, n->childs[0]->value);
     }
+    n->address = n->childs[1]->address;
   } else if(!strcmp(n->childs[0]->anotated_type, "double")){
     if(!strcmp(n->childs[1]->anotated_type, "double")){
       if(n->childs[0]->pointer_table->is_global == 1){
@@ -337,19 +338,24 @@ void generate_assign(node *n){
       }else{
         printf("    store double %%%d, double* %%%s\n", assign_var, n->childs[0]->value);
       }
+      n->address = n->childs[1]->address;
     } else if(!strcmp(n->childs[1]->anotated_type, "int")){
-      printf("    %%%d = alloca i32\n", current_temporary);
-      printf("    store i32 %%%d, i32* %%%d\n", n->childs[1]->address, current_temporary);
-      current_temporary++;
-      printf("    %%%d = load i32, i32* %%%d\n", current_temporary, current_temporary-1);
-      current_temporary++;
-      printf("    %%%d = sitofp i32 %%%d to double\n", current_temporary, current_temporary-1);
+      //printf("    %%%d = alloca double\n", current_temporary);
+      //printf("    store i32 %%%d, i32* %%%d\n", n->childs[1]->address, current_temporary);
+      //current_temporary++;
+      //printf("    %%%d = load i32, i32* %%%d\n", current_temporary, current_temporary-1);
+      //current_temporary++;
+      printf("    %%%d = sitofp i32 %%%d to double\n", current_temporary, n->childs[1]->address);
       if(n->childs[0]->pointer_table->is_global == 1){
         printf("    store double %%%d, double* @%s.%s\n", current_temporary, class, n->childs[0]->value);
       } else {
         printf("    store double %%%d, double* %%%s\n", current_temporary, n->childs[0]->value);
       }
       current_temporary++;
+      printf("    %%%d = sitofp i32 %%%d to double\n", current_temporary, n->childs[1]->address);
+      n->address = current_temporary;
+      current_temporary++;
+
     }
   } else if(!strcmp(n->childs[0]->anotated_type, "boolean")){
     if(n->childs[0]->pointer_table->is_global == 1){
@@ -357,6 +363,7 @@ void generate_assign(node *n){
     } else {
       printf("    store i1 %%%d, i1* %%%s\n", assign_var, n->childs[0]->value);
     }
+    n->address = n->childs[1]->address;
   }
 }
 
@@ -442,8 +449,8 @@ void generate_boollit(node *n){
 
 // when we find a node id, we want to load it
 void generate_id(node *n){
-
-  if(n->pointer_table != NULL){
+  //printf("%s\n", n->value);
+  if(n->pointer_table != NULL && n->pointer_table->llvm_type != NULL){
     if(!strcmp(n->pointer_table->llvm_type, "i32")){
       if(n->pointer_table->is_global == 1){
         printf("    %%%d = load %s, %s* @%s.%s\n", current_temporary, n->pointer_table->llvm_type, n->pointer_table->llvm_type, class, n->value);
@@ -495,19 +502,21 @@ void generate_plus(node* n){
 
     // int
     printf("    %%%d = alloca i32\n", current_temporary);
-    printf("    store i32 %s, i32* %%%d\n", (char*)n->childs[0]->value, current_temporary);
+    printf("    store i32 %%%d, i32* %%%d\n", n->childs[0]->address, current_temporary);
     current_temporary++;
     printf("    %%%d = load i32, i32* %%%d\n", current_temporary, current_temporary-1);
     n->address = current_temporary;
+    assign_var = current_temporary;
     current_temporary++;
 
-  } else{
+  } else if(!strcmp(n->childs[0]->anotated_type, "double")){
     // double
     printf("    %%%d = alloca double\n", current_temporary);
-    printf("    store double %s, double* %%%d\n", (char*)n->childs[0]->value, current_temporary);
+    printf("    store double %.16E, double* %%%d\n", atof(fix_lit_for_conversion(n->childs[0])), current_temporary);
     current_temporary++;
     printf("    %%%d = load double, double* %%%d\n", current_temporary, current_temporary-1);
     n->address = current_temporary;
+    assign_var = current_temporary;
     current_temporary++;
   }
 }
@@ -531,6 +540,9 @@ void code_generation(node* n){
       code_generation(n->childs[i]);
     }
   } else if(!strcmp(n->token->id, "FieldDecl")){
+    for(i = 0; i < n->n_children; i++){
+      code_generation(n->childs[i]);
+    }
     generate_fielddecl(n);
   } else if(!strcmp(n->token->id, "MethodDecl")){
     current_scope++;
@@ -548,6 +560,7 @@ void code_generation(node* n){
       code_generation(n->childs[i]);
     }
     generate_assign(n);
+    generate_id(n->childs[0]);
   } else if(!strcmp(n->token->id, "Length")){
     generate_length(n);
   } else if(!strcmp(n->token->id, "ParseArgs")){
@@ -555,7 +568,7 @@ void code_generation(node* n){
       code_generation(n->childs[i]);
     }
     generate_parseArgs(n);
-  } else if(!strcmp(n->token->id, "Id") /*&& strcmp(n->llvm_type, "undefined")*/){
+  } else if(!strcmp(n->token->id, "Id")){
     generate_id(n);
   } else if(!strcmp(n->token->id, "StrLit")){
     generate_strlit(n);

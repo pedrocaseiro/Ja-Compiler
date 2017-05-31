@@ -1,17 +1,15 @@
 class gcd2{
-  public static int a;
+  public static double a;
+  public static double m;
   public static void main(String[] args) {
-  a = 5;
-  double i;
-  double o;
-  i = 9.4;
-  o = -i;
-  int y;
-  y = Integer.parseInt(args[Integer.parseInt(args[Integer.parseInt(args[0])])]);
-  a = args.length;
-  System.out.println(a);
-  //System.out.println(y);
+
+    //System.out.println(m = args.length-Integer.parseInt(args[1]));
+    //System.out.println(m = +Integer.parseInt(args[1]));
+    
+
 
   }
+
+
 
 }
