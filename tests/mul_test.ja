@@ -1,0 +1,65 @@
+class gcd2{
+  public static double a;
+  public static double b;
+  public static int c;
+  public static int d;
+  public static void main(String[] args) {
+    int i;
+    c = i = 3;
+    d = 8;
+    f = c * d;
+    f = -(c*d);
+    System.out.println(f);
+    f = +(c*d);
+    System.out.println(f);
+    e = Integer.parseInt(args[2]);
+    System.out.println(e);
+    System.out.println(e*f);
+    System.out.println(-(e*f));
+    a = 4.5;
+    b = args.length - a;
+    System.out.println(b);
+    System.out.println(-b);
+
+    b = 4.5 - 4;
+    System.out.println(-b);
+
+    System.out.println(e - args.length);
+    System.out.println(-(e * args.length));
+
+    System.out.println(+(3.3 * args.length));
+    System.out.println(-(3.3 * args.length));
+
+    System.out.println(b-(3.3 * args.length));
+
+
+    System.out.println(b = a);
+
+
+
+    System.out.println(e - args.length * 5.5);
+    System.out.println(-(e * args.length * 5.5));
+
+    System.out.println(+(3.3 * args.length) * 6.7);
+    System.out.println(-(3.3 * args.length) * 6);
+
+    System.out.println(b-(3 + args.length *5) * 1);
+
+
+    System.out.println(b = -a *4);
+
+
+
+
+
+
+    System.out.println( a = args.length );
+
+
+  }
+  public static int e;
+  public static int f;
+
+
+
+}

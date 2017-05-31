@@ -580,6 +580,338 @@ void generate_sub(node* n){
   }
 }
 
+void generate_mul(node* n){
+  if(!strcmp(n->childs[0]->anotated_type, "int") && !strcmp(n->childs[1]->anotated_type, "int")){
+    // int + int
+    printf("%%%d = mul nsw i32 %%%d, %%%d\n", current_temporary, n->childs[0]->address, n->childs[1]->address);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  } else if(!strcmp(n->childs[0]->anotated_type, "double") && !strcmp(n->childs[1]->anotated_type, "double")){
+    // double + double
+    printf("%%%d = fmul double %%%d, %%%d\n", current_temporary, n->childs[0]->address, n->childs[1]->address);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  } else if(!strcmp(n->childs[0]->anotated_type, "int") && !strcmp(n->childs[1]->anotated_type, "double")){
+    // int + double
+    printf("    %%%d = sitofp i32 %%%d to double\n", current_temporary, n->childs[0]->address);
+    current_temporary++;
+    printf("%%%d = fmul double %%%d, %%%d\n", current_temporary, current_temporary - 1, n->childs[1]->address);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  } else if(!strcmp(n->childs[0]->anotated_type, "double") && !strcmp(n->childs[1]->anotated_type, "int")){
+    // double + int
+     printf("    %%%d = sitofp i32 %%%d to double\n", current_temporary, n->childs[1]->address);
+    current_temporary++;
+    printf("%%%d = fmul double %%%d, %%%d\n", current_temporary, n->childs[0]->address, current_temporary - 1);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  }
+}
+
+
+void generate_div(node* n){
+  if(!strcmp(n->childs[0]->anotated_type, "int") && !strcmp(n->childs[1]->anotated_type, "int")){
+    // int + int
+    printf("%%%d = sdiv i32 %%%d, %%%d\n", current_temporary, n->childs[0]->address, n->childs[1]->address);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  } else if(!strcmp(n->childs[0]->anotated_type, "double") && !strcmp(n->childs[1]->anotated_type, "double")){
+    // double + double
+    printf("%%%d = fdiv double %%%d, %%%d\n", current_temporary, n->childs[0]->address, n->childs[1]->address);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  } else if(!strcmp(n->childs[0]->anotated_type, "int") && !strcmp(n->childs[1]->anotated_type, "double")){
+    // int + double
+    printf("    %%%d = sitofp i32 %%%d to double\n", current_temporary, n->childs[0]->address);
+    current_temporary++;
+    printf("%%%d = fdiv double %%%d, %%%d\n", current_temporary, current_temporary - 1, n->childs[1]->address);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  } else if(!strcmp(n->childs[0]->anotated_type, "double") && !strcmp(n->childs[1]->anotated_type, "int")){
+    // double + int
+     printf("    %%%d = sitofp i32 %%%d to double\n", current_temporary, n->childs[1]->address);
+    current_temporary++;
+    printf("%%%d = fdiv double %%%d, %%%d\n", current_temporary, n->childs[0]->address, current_temporary - 1);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  }
+}
+
+void generate_mod(node* n){
+  if(!strcmp(n->childs[0]->anotated_type, "int") && !strcmp(n->childs[1]->anotated_type, "int")){
+    // int + int
+    printf("%%%d = srem i32 %%%d, %%%d\n", current_temporary, n->childs[0]->address, n->childs[1]->address);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  } else if(!strcmp(n->childs[0]->anotated_type, "double") && !strcmp(n->childs[1]->anotated_type, "double")){
+    // double + double
+    printf("%%%d = frem double %%%d, %%%d\n", current_temporary, n->childs[0]->address, n->childs[1]->address);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  } else if(!strcmp(n->childs[0]->anotated_type, "int") && !strcmp(n->childs[1]->anotated_type, "double")){
+    // int + double
+    printf("    %%%d = sitofp i32 %%%d to double\n", current_temporary, n->childs[0]->address);
+    current_temporary++;
+    printf("%%%d = frem double %%%d, %%%d\n", current_temporary, current_temporary - 1, n->childs[1]->address);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  } else if(!strcmp(n->childs[0]->anotated_type, "double") && !strcmp(n->childs[1]->anotated_type, "int")){
+    // double + int
+     printf("    %%%d = sitofp i32 %%%d to double\n", current_temporary, n->childs[1]->address);
+    current_temporary++;
+    printf("%%%d = frem double %%%d, %%%d\n", current_temporary, n->childs[0]->address, current_temporary - 1);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  }
+}
+
+void generate_not(node* n){
+
+  if(!strcmp(n->childs[0]->anotated_type, "boolean")){
+
+    printf("    %%%d = icmp ne i1 %%%d, 1\n", current_temporary, n->childs[0]->address);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+
+  }
+
+}
+
+void generate_eq(node* n){
+  if(!strcmp(n->childs[0]->anotated_type, "int") && !strcmp(n->childs[1]->anotated_type, "int")){
+    // int + int
+    printf("%%%d = icmp eq i32 %%%d, %%%d\n", current_temporary, n->childs[0]->address, n->childs[1]->address);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  } else if(!strcmp(n->childs[0]->anotated_type, "double") && !strcmp(n->childs[1]->anotated_type, "double")){
+    // double + double
+    printf("%%%d = fcmp oeq double %%%d, %%%d\n", current_temporary, n->childs[0]->address, n->childs[1]->address);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  } else if(!strcmp(n->childs[0]->anotated_type, "int") && !strcmp(n->childs[1]->anotated_type, "double")){
+    // int + double
+    printf("    %%%d = sitofp i32 %%%d to double\n", current_temporary, n->childs[0]->address);
+    current_temporary++;
+    printf("%%%d = fcmp oeq double %%%d, %%%d\n", current_temporary, current_temporary-1, n->childs[1]->address);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  } else if(!strcmp(n->childs[0]->anotated_type, "double") && !strcmp(n->childs[1]->anotated_type, "int")){
+    // double + int
+     printf("    %%%d = sitofp i32 %%%d to double\n", current_temporary, n->childs[1]->address);
+    current_temporary++;
+    printf("%%%d = fcmp oeq double %%%d, %%%d\n", current_temporary, n->childs[0]->address, current_temporary-1);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  } else if(!strcmp(n->childs[0]->anotated_type, "boolean") && !strcmp(n->childs[1]->anotated_type, "boolean")){
+    // int + int
+    printf("%%%d = icmp eq i1 %%%d, %%%d\n", current_temporary, n->childs[0]->address, n->childs[1]->address);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  }
+
+}
+
+
+
+
+void generate_neq(node* n){
+  if(!strcmp(n->childs[0]->anotated_type, "int") && !strcmp(n->childs[1]->anotated_type, "int")){
+    // int + int
+    printf("%%%d = icmp ne i32 %%%d, %%%d\n", current_temporary, n->childs[0]->address, n->childs[1]->address);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  } else if(!strcmp(n->childs[0]->anotated_type, "double") && !strcmp(n->childs[1]->anotated_type, "double")){
+    // double + double
+    printf("%%%d = fcmp une double %%%d, %%%d\n", current_temporary, n->childs[0]->address, n->childs[1]->address);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  } else if(!strcmp(n->childs[0]->anotated_type, "int") && !strcmp(n->childs[1]->anotated_type, "double")){
+    // int + double
+    printf("    %%%d = sitofp i32 %%%d to double\n", current_temporary, n->childs[0]->address);
+    current_temporary++;
+    printf("%%%d = fcmp une double %%%d, %%%d\n", current_temporary, current_temporary-1, n->childs[1]->address);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  } else if(!strcmp(n->childs[0]->anotated_type, "double") && !strcmp(n->childs[1]->anotated_type, "int")){
+    // double + int
+     printf("    %%%d = sitofp i32 %%%d to double\n", current_temporary, n->childs[1]->address);
+    current_temporary++;
+    printf("%%%d = fcmp une double %%%d, %%%d\n", current_temporary, n->childs[0]->address, current_temporary-1);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  } else if(!strcmp(n->childs[0]->anotated_type, "boolean") && !strcmp(n->childs[1]->anotated_type, "boolean")){
+    // int + int
+    printf("%%%d = icmp eq i1 %%%d, %%%d\n", current_temporary, n->childs[0]->address, n->childs[1]->address);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  }
+
+}
+
+
+
+void generate_lt(node* n){
+  if(!strcmp(n->childs[0]->anotated_type, "int") && !strcmp(n->childs[1]->anotated_type, "int")){
+    // int + int
+    printf("%%%d = icmp slt i32 %%%d, %%%d\n", current_temporary, n->childs[0]->address, n->childs[1]->address);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  } else if(!strcmp(n->childs[0]->anotated_type, "double") && !strcmp(n->childs[1]->anotated_type, "double")){
+    // double + double
+    printf("%%%d = fcmp olt double %%%d, %%%d\n", current_temporary, n->childs[0]->address, n->childs[1]->address);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  } else if(!strcmp(n->childs[0]->anotated_type, "int") && !strcmp(n->childs[1]->anotated_type, "double")){
+    // int + double
+    printf("    %%%d = sitofp i32 %%%d to double\n", current_temporary, n->childs[0]->address);
+    current_temporary++;
+    printf("%%%d = fcmp olt double %%%d, %%%d\n", current_temporary, current_temporary-1, n->childs[1]->address);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  } else if(!strcmp(n->childs[0]->anotated_type, "double") && !strcmp(n->childs[1]->anotated_type, "int")){
+    // double + int
+     printf("    %%%d = sitofp i32 %%%d to double\n", current_temporary, n->childs[1]->address);
+    current_temporary++;
+    printf("%%%d = fcmp olt double %%%d, %%%d\n", current_temporary, n->childs[0]->address, current_temporary-1);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  }
+
+}
+
+
+void generate_leq(node* n){
+  if(!strcmp(n->childs[0]->anotated_type, "int") && !strcmp(n->childs[1]->anotated_type, "int")){
+    // int + int
+    printf("%%%d = icmp sle i32 %%%d, %%%d\n", current_temporary, n->childs[0]->address, n->childs[1]->address);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  } else if(!strcmp(n->childs[0]->anotated_type, "double") && !strcmp(n->childs[1]->anotated_type, "double")){
+    // double + double
+    printf("%%%d = fcmp ole double %%%d, %%%d\n", current_temporary, n->childs[0]->address, n->childs[1]->address);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  } else if(!strcmp(n->childs[0]->anotated_type, "int") && !strcmp(n->childs[1]->anotated_type, "double")){
+    // int + double
+    printf("    %%%d = sitofp i32 %%%d to double\n", current_temporary, n->childs[0]->address);
+    current_temporary++;
+    printf("%%%d = fcmp ole double %%%d, %%%d\n", current_temporary, current_temporary-1, n->childs[1]->address);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  } else if(!strcmp(n->childs[0]->anotated_type, "double") && !strcmp(n->childs[1]->anotated_type, "int")){
+    // double + int
+     printf("    %%%d = sitofp i32 %%%d to double\n", current_temporary, n->childs[1]->address);
+    current_temporary++;
+    printf("%%%d = fcmp ole double %%%d, %%%d\n", current_temporary, n->childs[0]->address, current_temporary-1);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  }
+}
+
+void generate_gt(node* n){
+  if(!strcmp(n->childs[0]->anotated_type, "int") && !strcmp(n->childs[1]->anotated_type, "int")){
+    // int + int
+    printf("%%%d = icmp sgt i32 %%%d, %%%d\n", current_temporary, n->childs[0]->address, n->childs[1]->address);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  } else if(!strcmp(n->childs[0]->anotated_type, "double") && !strcmp(n->childs[1]->anotated_type, "double")){
+    // double + double
+    printf("%%%d = fcmp ogt double %%%d, %%%d\n", current_temporary, n->childs[0]->address, n->childs[1]->address);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  } else if(!strcmp(n->childs[0]->anotated_type, "int") && !strcmp(n->childs[1]->anotated_type, "double")){
+    // int + double
+    printf("    %%%d = sitofp i32 %%%d to double\n", current_temporary, n->childs[0]->address);
+    current_temporary++;
+    printf("%%%d = fcmp ogt double %%%d, %%%d\n", current_temporary, current_temporary-1, n->childs[1]->address);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  } else if(!strcmp(n->childs[0]->anotated_type, "double") && !strcmp(n->childs[1]->anotated_type, "int")){
+    // double + int
+     printf("    %%%d = sitofp i32 %%%d to double\n", current_temporary, n->childs[1]->address);
+    current_temporary++;
+    printf("%%%d = fcmp ogt double %%%d, %%%d\n", current_temporary, n->childs[0]->address, current_temporary-1);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  }
+}
+
+void generate_geq(node* n){
+  if(!strcmp(n->childs[0]->anotated_type, "int") && !strcmp(n->childs[1]->anotated_type, "int")){
+    // int + int
+    printf("%%%d = icmp sge i32 %%%d, %%%d\n", current_temporary, n->childs[0]->address, n->childs[1]->address);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  } else if(!strcmp(n->childs[0]->anotated_type, "double") && !strcmp(n->childs[1]->anotated_type, "double")){
+    // double + double
+    printf("%%%d = fcmp oge double %%%d, %%%d\n", current_temporary, n->childs[0]->address, n->childs[1]->address);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  } else if(!strcmp(n->childs[0]->anotated_type, "int") && !strcmp(n->childs[1]->anotated_type, "double")){
+    // int + double
+    printf("    %%%d = sitofp i32 %%%d to double\n", current_temporary, n->childs[0]->address);
+    current_temporary++;
+    printf("%%%d = fcmp oge double %%%d, %%%d\n", current_temporary, current_temporary-1, n->childs[1]->address);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  } else if(!strcmp(n->childs[0]->anotated_type, "double") && !strcmp(n->childs[1]->anotated_type, "int")){
+    // double + int
+     printf("    %%%d = sitofp i32 %%%d to double\n", current_temporary, n->childs[1]->address);
+    current_temporary++;
+    printf("%%%d = fcmp oge double %%%d, %%%d\n", current_temporary, n->childs[0]->address, current_temporary-1);
+    n->address = current_temporary;
+    assign_var = current_temporary;
+    current_temporary++;
+  }
+}
+
+
+
+
+
+
+
+
+
+
 void code_generation(node* n){
   int i;
   if(!strcmp(n->token->id, "Program")){
@@ -663,7 +995,58 @@ void code_generation(node* n){
       code_generation(n->childs[i]);
     }
     generate_sub(n);
+  } else if(!strcmp(n->token->id, "Mul")){
+    for(i = 0; i < n->n_children; i++){
+      code_generation(n->childs[i]);
+    }
+    generate_mul(n);
+  } else if(!strcmp(n->token->id, "Div")){
+    for(i = 0; i < n->n_children; i++){
+      code_generation(n->childs[i]);
+    }
+    generate_div(n);
+  } else if(!strcmp(n->token->id, "Mod")){
+    for(i = 0; i < n->n_children; i++){
+      code_generation(n->childs[i]);
+    }
+    generate_mod(n);
+  } else if(!strcmp(n->token->id, "Not")){
+    for(i = 0; i < n->n_children; i++){
+      code_generation(n->childs[i]);
+    }
+    generate_not(n);
+  } else if(!strcmp(n->token->id, "Eq")){
+    for(i = 0; i < n->n_children; i++){
+      code_generation(n->childs[i]);
+    }
+    generate_eq(n);
+  } else if(!strcmp(n->token->id, "Neq")){
+    for(i = 0; i < n->n_children; i++){
+      code_generation(n->childs[i]);
+    }
+    generate_neq(n);
+  } else if(!strcmp(n->token->id, "Lt")){
+    for(i = 0; i < n->n_children; i++){
+      code_generation(n->childs[i]);
+    }
+    generate_lt(n);
+  } else if(!strcmp(n->token->id, "Leq")){
+    for(i = 0; i < n->n_children; i++){
+      code_generation(n->childs[i]);
+    }
+    generate_leq(n);
+  } else if(!strcmp(n->token->id, "Gt")){
+    for(i = 0; i < n->n_children; i++){
+      code_generation(n->childs[i]);
+    }
+    generate_gt(n);
+  } else if(!strcmp(n->token->id, "Geq")){
+    for(i = 0; i < n->n_children; i++){
+      code_generation(n->childs[i]);
+    }
+    generate_geq(n);
   }
+
 
 
 }
