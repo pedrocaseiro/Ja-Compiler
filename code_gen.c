@@ -18,8 +18,9 @@ char* global_string_print[1000];
 int string_counter = 0;
 int final_size = 0;
 int assign_var;
-int land_counter = 0;
 
+int land_counter = 0;
+int control_flow_counter;
 int array_counter = 0;
 
 
@@ -970,6 +971,61 @@ void generate_or(node* n){
 
 }
 
+void generate_if(node* n){
+  int local_control_flow_counter = control_flow_counter;
+  control_flow_counter++;
+  printf("    br i1 %%%d, label %%label.if%d, label %%label.else%d\n", n->childs[0]->address, local_control_flow_counter, local_control_flow_counter);
+
+  printf("label.if%d: \n", local_control_flow_counter);
+  code_generation(n->childs[1]);
+  printf("    br label %%label.end%d\n", local_control_flow_counter);
+
+  printf("label.else%d: \n", local_control_flow_counter);
+  code_generation(n->childs[2]);
+  printf("    br label %%label.end%d\n", local_control_flow_counter);
+
+  printf("label.end%d:\n", local_control_flow_counter);
+
+}
+
+void generate_while(node* n){
+  int local_control_flow_counter = control_flow_counter;
+  control_flow_counter++;
+
+  code_generation(n->childs[0]);
+  printf("    br i1 %%%d, label %%label.body%d, label %%label.end%d\n", n->childs[0]->address, local_control_flow_counter, local_control_flow_counter);
+
+
+  printf("label.body%d: \n", local_control_flow_counter);
+  code_generation(n->childs[1]);
+
+  code_generation(n->childs[0]);
+  printf("    br i1 %%%d, label %%label.body%d, label %%label.end%d\n", n->childs[0]->address, local_control_flow_counter, local_control_flow_counter);
+
+  printf("label.end%d:\n", local_control_flow_counter);
+
+}
+
+
+void generate_do_while(node* n){
+  int local_control_flow_counter = control_flow_counter;
+  control_flow_counter++;
+
+  code_generation(n->childs[0]);
+
+  code_generation(n->childs[1]);
+  printf("    br i1 %%%d, label %%label.body%d, label %%label.end%d\n", n->childs[1]->address, local_control_flow_counter, local_control_flow_counter);
+
+
+  printf("label.body%d: \n", local_control_flow_counter);
+  code_generation(n->childs[0]);
+
+  code_generation(n->childs[1]);
+  printf("    br i1 %%%d, label %%label.body%d, label %%label.end%d\n", n->childs[1]->address, local_control_flow_counter, local_control_flow_counter);
+
+  printf("label.end%d:\n", local_control_flow_counter);
+
+}
 
 
 
@@ -1113,6 +1169,17 @@ void code_generation(node* n){
   } else if(!strcmp(n->token->id, "Or")){
     code_generation(n->childs[0]);
     generate_or(n);
+  } else if(!strcmp(n->token->id, "If")){
+    code_generation(n->childs[0]);
+    generate_if(n);
+  } else if(!strcmp(n->token->id, "Block")){
+    for(i = 0; i < n->n_children; i++){
+      code_generation(n->childs[i]);
+    }
+  } else if(!strcmp(n->token->id, "While")){
+    generate_while(n);
+  } else if(!strcmp(n->token->id, "DoWhile")){
+    generate_do_while(n);
   }
 
 

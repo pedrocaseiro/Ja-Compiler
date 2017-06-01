@@ -21,8 +21,8 @@ define void @printBoolean(i1 %b) {
 }
 @gcd2.a = common global double 0.0
 @gcd2.b = common global double 0.0
-@gcd2.d = common global i32 0
-@gcd2.c = common global i32 0
+@gcd2.d = common global i1 0
+@gcd2.c = common global i1 0
 define void @gcd2.method.main.stringArray(i32 %argc, i8** %argv){
     %argc.addr = alloca i32
     %argv.addr = alloca i8**
@@ -37,65 +37,67 @@ define void @gcd2.method.main.stringArray(i32 %argc, i8** %argv){
 
 
 
-    %4 = load i32, i32* @gcd2.d
-    %5 = alloca i32
-    store i32 3, i32* %5
-    %6 = load i32, i32* %5
-    store i32 %6, i32* @gcd2.d
-    %7 = load i32, i32* @gcd2.d
-    %8 = load double, double* @gcd2.a
-    %9 = alloca double
-    store double 3.0000000000000000E+00, double* %9
-    %10 = load double, double* %9
-    store double %10, double* @gcd2.a
-    %11 = load double, double* @gcd2.a
-    %r = alloca i1
-    %12 = load i1, i1* %r
-    %13 = alloca i1
-    store i1 1, i1* %13
-    %14 = load i1, i1* %13
-    store i1 %14, i1* %r
-    %15 = load i1, i1* %r
-    %p = alloca i1
-    %16 = load i1, i1* %p
-    %17 = alloca i1
-    store i1 1, i1* %17
-    %18 = load i1, i1* %17
-    store i1 %18, i1* %p
-    %19 = load i1, i1* %p
-    %e = alloca i1
-    %20 = load i1, i1* %e
-    %21 = load i1, i1* %p
-    br label %land.entry0
-land.entry0:
-    %22 = icmp ne i1 %21, 0
-    br i1 %22, label %land.rhs0, label %land.end0
-land.rhs0:
-    %23 = load i1, i1* %e
-    %24 = icmp ne i1 %23, 0
-    br label %land.end0
-land.end0:
-    %25 = phi i1 [0, %land.entry0], [%23, %land.rhs0]
-    store i1 %25, i1* %e
-    %26 = load i1, i1* %e
-    %27 = load i1, i1* %r
-    %28 = icmp ne i1 %27, 1
-    %29 = load i1, i1* %e
-    br label %land.entry1
-land.entry1:
-    %30 = icmp ne i1 %29, 0
-    br i1 %30, label %land.rhs1, label %land.end1
-land.rhs1:
-    %31 = load i1, i1* %e
-    %32 = icmp ne i1 %31, 1
-    %33 = icmp ne i1 %32, 0
-    br label %land.end1
-land.end1:
-    %34 = phi i1 [0, %land.entry1], [%32, %land.rhs1]
-%35 = icmp ne i1 %28, %34
-    call void @printBoolean(i1 %35)
+    %4 = load i1, i1* @gcd2.c
+    %5 = alloca i1
+    store i1 1, i1* %5
+    %6 = load i1, i1* %5
+    store i1 %6, i1* @gcd2.c
+    %7 = load i1, i1* @gcd2.c
+    %8 = load i1, i1* @gcd2.d
+    %9 = alloca i1
+    store i1 0, i1* %9
+    %10 = load i1, i1* %9
+    store i1 %10, i1* @gcd2.d
+    %11 = load i1, i1* @gcd2.d
+    %a = alloca i32
+    %12 = load i32, i32* %a
+    %13 = alloca i32
+    store i32 0, i32* %13
+    %14 = load i32, i32* %13
+    store i32 %14, i32* %a
+    %15 = load i32, i32* %a
+    %16 = load i32, i32* %a
+    %17 = alloca i32
+    store i32 0, i32* %17
+    %18 = load i32, i32* %17
+    store i32 %18, i32* %a
+    %19 = load i32, i32* %a
+    %20 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([5 x i8], [5 x i8]* @.str.string.0, i32 0, i32 0), i32 0)
+    %21 = load i32, i32* %a
+    %22 = load i32, i32* %a
+    %23 = alloca i32
+    store i32 1, i32* %23
+    %24 = load i32, i32* %23
+%25 = add i32 %22, %24
+    store i32 %25, i32* %a
+    %26 = load i32, i32* %a
+    %27 = load i32, i32* %a
+    %28 = alloca i32
+    store i32 5, i32* %28
+    %29 = load i32, i32* %28
+%30 = icmp sle i32 %27, %29
+    br i1 %30, label %label.body0, label %label.end0
+label.body0: 
+    %31 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([5 x i8], [5 x i8]* @.str.string.1, i32 0, i32 0), i32 0)
+    %32 = load i32, i32* %a
+    %33 = load i32, i32* %a
+    %34 = alloca i32
+    store i32 1, i32* %34
+    %35 = load i32, i32* %34
+%36 = add i32 %33, %35
+    store i32 %36, i32* %a
+    %37 = load i32, i32* %a
+    %38 = load i32, i32* %a
+    %39 = alloca i32
+    store i32 5, i32* %39
+    %40 = load i32, i32* %39
+%41 = icmp sle i32 %38, %40
+    br i1 %41, label %label.body0, label %label.end0
+label.end0:
     ret void
 }
+@.str.string.0 = private unnamed_addr constant [5 x i8] c"Yes\0A\00"
+@.str.string.1 = private unnamed_addr constant [5 x i8] c"Yes\0A\00"
 @.str.int = private unnamed_addr constant [4 x i8] c"%d\0A\00"
 @.str.double = private unnamed_addr constant [7 x i8] c"%.16E\0A\00"
 @.str.true = private unnamed_addr constant [6 x i8] c"true\0A\00"

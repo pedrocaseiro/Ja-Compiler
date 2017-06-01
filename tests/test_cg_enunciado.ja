@@ -3,19 +3,26 @@ class gcd2{
   public static double b;
   public static void main(String[] args) {
 
-    d = 3;
-    a = 3.0;
-    boolean r;
-    r = true;
-    boolean p;
-    p = true;
-    boolean e;
-    e = p && e;
-    System.out.println(!r != (e && !e));
+    c = true;
+    d = false;
+
+    int a;
+    a = 0;
+  /*  while(a < 5){
+      System.out.println("Yes");
+      a = a+1;
+    }
+*/
+    a = 0;
+    do{
+      System.out.println("Yes");
+      a = a+1;
+    }while(a<=5);
+
 
   }
 
 
-  public static int d;
-  public static int c;
+  public static boolean d;
+  public static boolean c;
 }
