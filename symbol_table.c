@@ -37,8 +37,6 @@ symbol_table* new_symbol_table(char* type, char* name, int n_params, char** para
   return st;
 }
 
-
-
 void print_symbol_table(symbol* s) {
   printf("%s\t", s->name);
   if(s->params!= NULL){
@@ -63,8 +61,23 @@ void print_symbol_table(symbol* s) {
   }
 }
 
+void print_global_table(int i){
+  printf("===== %s %s Symbol Table =====\n", table[i]->type, table[i]->name);
+}
 
-
+void print_local_table(int i){
+  int j;
+  printf("===== %s %s(", table[i]->type, table[i]->name);
+  if(table[i]->n_params > 0){
+    for(j = 0; j < table[i]->n_params; j++){
+      printf("%s", table[i]->params[j]);
+      if(j != table[i]->n_params - 1){
+        printf(",");
+      }
+    }
+  }
+  printf(") Symbol Table =====\n");
+}
 
 char* str_to_lower(char* s) {
   char* str = strdup(s);
@@ -824,26 +837,6 @@ void create_an_tree(node *n){
         printf("Line %d, col %d: Cannot find symbol %s\n", n->token->line, n->token->col,n->value);
       }
   }
-}
-
-
-
-void print_global_table(int i){
-  printf("===== %s %s Symbol Table =====\n", table[i]->type, table[i]->name);
-}
-
-void print_local_table(int i){
-  int j;
-  printf("===== %s %s(", table[i]->type, table[i]->name);
-  if(table[i]->n_params > 0){
-    for(j = 0; j < table[i]->n_params; j++){
-      printf("%s", table[i]->params[j]);
-      if(j != table[i]->n_params - 1){
-        printf(",");
-      }
-    }
-  }
-  printf(") Symbol Table =====\n");
 }
 
 void print_table() {
