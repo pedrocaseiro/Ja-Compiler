@@ -22,6 +22,7 @@ int assign_var;
 int land_counter = 0;
 int control_flow_counter;
 int array_counter = 0;
+char* return_type;
 
 
 char* return_type_to_llvm(char* type){
@@ -190,6 +191,7 @@ void generate_vardecl(node* n){
 
 void generate_methoddecl(node *n){
   int i;
+  return_type = n->childs[0]->childs[0]->token->id;
   printf("define %s @%s.method.%s", return_type_to_llvm(n->childs[0]->childs[0]->value), class, n->childs[0]->childs[1]->value);
   for(i = 0; i < n->childs[0]->childs[2]->n_children; i++){
     printf(".");
@@ -206,7 +208,6 @@ void generate_methoddecl(node *n){
     if(i != n->childs[0]->childs[2]->n_children - 1) printf(", ");
   }
   printf("){\n");
-  //%argc.addr = alloca i32
   for(i = 0; i < n->childs[0]->childs[2]->n_children; i++){
     if(!strcmp(n->childs[0]->childs[2]->childs[i]->childs[0]->token->id, "StringArray")){
       printf("    %%argc.addr = alloca i32\n");
@@ -238,6 +239,7 @@ void generate_methoddecl(node *n){
   for(i = 0; i < n->childs[1]->n_children; i++){
     code_generation(n->childs[1]->childs[i]);
   }
+
   if(!strcmp(n->childs[0]->childs[0]->token->id, "Int")){
     printf("    ret %s 0\n", return_type_to_llvm(n->childs[0]->childs[0]->value));
   }else if(!strcmp(n->childs[0]->childs[0]->token->id, "Double")){
@@ -1031,18 +1033,24 @@ void generate_do_while(node* n){
 
 
 void generate_return(node* n){
-
-  if(!strcmp(n->childs[0]->anotated_type, "int")){
-
-
-  } else if(!strcmp(n->childs[0]->anotated_type, "boolean")){
-
-
-  } else if(!strcmp(n->childs[0]->anotated_type, "double")){
-
-
+  if(n->n_children > 0){
+    if(!strcmp(return_type, "Int")){
+      printf("    ret i32 %%%d\n", n->childs[0]->address);
+    } else if(!strcmp(return_type, "Bool")){
+      printf("    ret i1 %%%d\n", n->childs[0]->address);
+    } else if(!strcmp(return_type, "Double")){
+      if(!strcmp(n->childs[0]->anotated_type, "int")){
+        printf("    %%%d = sitofp i32 %%%d to double\n", current_temporary, n->childs[0]->address);
+        printf("    ret double %%%d\n", current_temporary);
+        current_temporary++;
+      }
+    }
+  } else{
+    if(!strcmp(return_type, "Void")){
+     printf("    ret void\n");
+   }
   }
-
+  current_temporary++;
 }
 
 void code_generation(node* n){
@@ -1196,7 +1204,7 @@ void code_generation(node* n){
   } else if(!strcmp(n->token->id, "DoWhile")){
     generate_do_while(n);
   } else if(!strcmp(n->token->id, "Return")){
-    code_generation(n->childs[0]);
+    if(n->n_children > 0) code_generation(n->childs[0]);
     generate_return(n);
   }
 

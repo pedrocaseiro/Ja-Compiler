@@ -1,39 +1,48 @@
 ; ModuleID = 'code_generation.c'
-target datalayout = "e-m:e-i64:64-f80:128-n8:16:32:64-S128"
-target triple = "x86_64-unknown-linux-gnu"
+target datalayout = "e-m:o-i64:64-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-apple-macosx10.12.0"
 
-; Function Attrs: nounwind uwtable
+; Function Attrs: nounwind ssp uwtable
 define i32 @main(i32 %argc, i8** %argv) #0 {
-  %1 = alloca i32, align 4
-  %2 = alloca i32, align 4
-  %3 = alloca i8**, align 8
-  %a = alloca i32, align 4
-  %b = alloca i32, align 4
-  %c = alloca i32, align 4
-  store i32 0, i32* %1, align 4
-  store i32 %argc, i32* %2, align 4
-  store i8** %argv, i8*** %3, align 8
-  store i32 1, i32* %a, align 4
-  store i32 0, i32* %b, align 4
-  %4 = load i32, i32* %a, align 4
-  %5 = load i32, i32* %b, align 4
-  %6 = icmp eq i32 %4, %5
-  br i1 %6, label %7, label %8
-
-; <label>:7                                       ; preds = %0
-  store i32 2, i32* %c, align 4
-  br label %9
-
-; <label>:8                                       ; preds = %0
-  store i32 3, i32* %c, align 4
-  br label %9
-
-; <label>:9                                       ; preds = %8, %7
+entry:
+  %retval = alloca i32, align 4
+  %argc.addr = alloca i32, align 4
+  %argv.addr = alloca i8**, align 8
+  store i32 0, i32* %retval, align 4
+  store i32 %argc, i32* %argc.addr, align 4
+  store i8** %argv, i8*** %argv.addr, align 8
   ret i32 0
 }
 
-attributes #0 = { nounwind uwtable "disable-tail-calls"="false" "less-precise-fpmad"="false" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+fxsr,+mmx,+sse,+sse2" "unsafe-fp-math"="false" "use-soft-float"="false" }
+; Function Attrs: nounwind ssp uwtable
+define void @teralul() #0 {
+entry:
+  ret void
+}
 
-!llvm.ident = !{!0}
+; Function Attrs: nounwind ssp uwtable
+define double @cg() #0 {
+entry:
+  %a = alloca double, align 8
+  store double 5.500000e+00, double* %a, align 8
+  %0 = load double, double* %a, align 8
+  ret double %0
+}
 
-!0 = !{!"clang version 3.8.1-12~bpo8+1 (tags/RELEASE_381/final)"}
+; Function Attrs: nounwind ssp uwtable
+define double @cl() #0 {
+entry:
+  %a = alloca i32, align 4
+  store i32 3, i32* %a, align 4
+  %0 = load i32, i32* %a, align 4
+  %conv = sitofp i32 %0 to double
+  ret double %conv
+}
+
+attributes #0 = { nounwind ssp uwtable "disable-tail-calls"="false" "less-precise-fpmad"="false" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="core2" "target-features"="+cx16,+fxsr,+mmx,+sse,+sse2,+sse3,+ssse3" "unsafe-fp-math"="false" "use-soft-float"="false" }
+
+!llvm.module.flags = !{!0}
+!llvm.ident = !{!1}
+
+!0 = !{i32 1, !"PIC Level", i32 2}
+!1 = !{!"clang version 3.8.1 (tags/RELEASE_381/final)"}

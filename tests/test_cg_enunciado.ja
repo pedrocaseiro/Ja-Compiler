@@ -1,16 +1,15 @@
 class gcd2{
-  public static double a;
-  public static double b;
   public static void main(String[] args) {
-
-    a = 5.2_5;
     int b;
     b = 5;
-
     System.out.println(b);
+    return;
+  }
 
-}
-
-  public static boolean d;
-  public static boolean c;
+  public static double lul(){
+    int a;
+    a = 5;
+    return a;
+    a = 3;
+  }
 }
