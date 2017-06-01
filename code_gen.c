@@ -17,7 +17,7 @@ int print_int = 0;
 char* global_string_print[1000];
 int string_counter = 0;
 int final_size = 0;
-int assign_var;
+int assign_var = 0;
 int land_counter = 0;
 
 int array_counter = 0;

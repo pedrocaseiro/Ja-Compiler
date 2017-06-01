@@ -32,6 +32,8 @@ symbol* new_symbol(char*, int, char**, char*, char*, int);
 symbol_table* new_symbol_table(char*, char*, int, char**);
 void first_traverse(node*);
 void print_table();
+void print_global_table(int);
+void print_local_table(int);
 void print_symbol_table(symbol*);
 char* str_to_lower(char*);
 symbol* insert_symbol(symbol_table*, char*, int, char**, char*, char*, int);
