@@ -12,4 +12,14 @@ class gcd2{
     return a;
     a = 3;
   }
+  public static boolean xd(){
+    int a;
+    boolean x;
+    x = true;
+    return false;
+    return !x; 
+    a = 5;
+    return true;
+    a = 3;
+  }
 }

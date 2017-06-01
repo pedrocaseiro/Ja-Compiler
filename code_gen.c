@@ -32,6 +32,8 @@ char* return_type_to_llvm(char* type){
     return "double";
   } else if(!strcmp(type, "bool") || !strcmp(type, "Bool")){
     return "i1";
+  } else if(!strcmp(type, "boolean") || !strcmp(type, "Boolean")){
+    return "i1";
   } else if(!strcmp(type, "void") || !strcmp(type, "Void") ){
     return "void";
   } else if(!strcmp(type, "StringArray") || !strcmp(type, "String[]")){
