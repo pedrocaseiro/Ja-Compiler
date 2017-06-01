@@ -404,10 +404,11 @@ void generate_strlit(node *n){
 
 void generate_declit(node *n){
 
-  printf("    %%%d = alloca i32\n", current_temporary);
-  printf("    store i32 %d, i32* %%%d\n", atoi(fix_lit_for_conversion(n)), current_temporary);
-  current_temporary++;
-  printf("    %%%d = load i32, i32* %%%d\n", current_temporary, current_temporary-1);
+  //printf("    %%%d = alloca i32\n", current_temporary);
+  //printf("    store i32 %d, i32* %%%d\n", atoi(fix_lit_for_conversion(n)), current_temporary);
+  //current_temporary++;
+  //printf("    %%%d = load i32, i32* %%%d\n", current_temporary, current_temporary-1);
+  printf("%%%d = add i32 %d, %d\n", current_temporary, 0,  atoi(fix_lit_for_conversion(n)));
   n->address = current_temporary;
   assign_var = current_temporary;
   current_temporary++;
@@ -417,10 +418,11 @@ void generate_declit(node *n){
 
 void generate_reallit(node *n){
 
-  printf("    %%%d = alloca double\n", current_temporary);
-  printf("    store double %.16E, double* %%%d\n", atof(fix_lit_for_conversion(n)), current_temporary);
-  current_temporary++;
-  printf("    %%%d = load double, double* %%%d\n", current_temporary, current_temporary-1);
+  //printf("    %%%d = alloca double\n", current_temporary);
+  //printf("    store double %.16E, double* %%%d\n", atof(fix_lit_for_conversion(n)), current_temporary);
+  //printf("    %%%d = load double, double* %%%d\n", current_temporary, current_temporary-1);
+  printf("%%%d = fadd double %.16E, %.16E\n", current_temporary, 0.0,  atof(fix_lit_for_conversion(n)));
+
   n->address = current_temporary;
   assign_var = current_temporary;
   current_temporary++;
@@ -1028,7 +1030,20 @@ void generate_do_while(node* n){
 }
 
 
+void generate_return(node* n){
 
+  if(!strcmp(n->childs[0]->anotated_type, "int")){
+
+
+  } else if(!strcmp(n->childs[0]->anotated_type, "boolean")){
+
+
+  } else if(!strcmp(n->childs[0]->anotated_type, "double")){
+
+
+  }
+
+}
 
 void code_generation(node* n){
   int i;
@@ -1180,6 +1195,9 @@ void code_generation(node* n){
     generate_while(n);
   } else if(!strcmp(n->token->id, "DoWhile")){
     generate_do_while(n);
+  } else if(!strcmp(n->token->id, "Return")){
+    code_generation(n->childs[0]);
+    generate_return(n);
   }
 
 

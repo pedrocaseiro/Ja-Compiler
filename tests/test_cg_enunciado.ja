@@ -3,25 +3,13 @@ class gcd2{
   public static double b;
   public static void main(String[] args) {
 
-    c = true;
-    d = false;
+    a = 5.2_5;
+    int b;
+    b = 5;
 
-    int a;
-    a = 0;
-  /*  while(a < 5){
-      System.out.println("Yes");
-      a = a+1;
-    }
-*/
-    a = 0;
-    do{
-      System.out.println("Yes");
-      a = a+1;
-    }while(a<=5);
+    System.out.println(b);
 
-
-  }
-
+}
 
   public static boolean d;
   public static boolean c;
