@@ -2,11 +2,16 @@ class gcd2{
   public static double a;
   public static double b;
   public static void main(String[] args) {
-    boolean a;
-    boolean b;
-    a = true;
-    b = false;
-    System.out.println( b || (a || b));
+
+    d = 3;
+    a = 3.0;
+    boolean r;
+    r = true;
+    boolean p;
+    p = true;
+    boolean e;
+    e = p && e;
+    System.out.println(!r != (e && !e));
 
   }
 

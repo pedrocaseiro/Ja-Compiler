@@ -17,7 +17,7 @@ int print_int = 0;
 char* global_string_print[1000];
 int string_counter = 0;
 int final_size = 0;
-int assign_var = 0;
+int assign_var;
 int land_counter = 0;
 
 int array_counter = 0;
@@ -764,7 +764,7 @@ void generate_neq(node* n){
     current_temporary++;
   } else if(!strcmp(n->childs[0]->anotated_type, "boolean") && !strcmp(n->childs[1]->anotated_type, "boolean")){
     // int + int
-    printf("%%%d = icmp eq i1 %%%d, %%%d\n", current_temporary, n->childs[0]->address, n->childs[1]->address);
+    printf("%%%d = icmp ne i1 %%%d, %%%d\n", current_temporary, n->childs[0]->address, n->childs[1]->address);
     n->address = current_temporary;
     assign_var = current_temporary;
     current_temporary++;
@@ -926,10 +926,12 @@ void generate_and(node* n){
   if(local_land_counter == land_counter-1){
     printf("    %%%d = phi i1 [0, %%land.entry%d], [%%%d, %%land.rhs%d]\n", current_temporary, local_land_counter, n->childs[1]->address, local_land_counter);
     n->address = current_temporary;
+    assign_var = current_temporary;
     current_temporary++;
   } else{
     printf("    %%%d = phi i1 [0, %%land.entry%d], [%%%d, %%land.end%d]\n", current_temporary, local_land_counter, n->childs[1]->address, local_land_counter+1);
     n->address = current_temporary;
+    assign_var = current_temporary;
     current_temporary++;
   }
 

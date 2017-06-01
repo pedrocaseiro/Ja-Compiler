@@ -37,42 +37,63 @@ define void @gcd2.method.main.stringArray(i32 %argc, i8** %argv){
 
 
 
-    %a = alloca i1
-    %b = alloca i1
-    %4 = load i1, i1* %a
-    %5 = alloca i1
-    store i1 1, i1* %5
-    %6 = load i1, i1* %5
-    store i1 %6, i1* %a
-    %7 = load i1, i1* %a
-    %8 = load i1, i1* %b
-    %9 = alloca i1
-    store i1 0, i1* %9
-    %10 = load i1, i1* %9
-    store i1 %10, i1* %b
-    %11 = load i1, i1* %b
-    %12 = load i1, i1* %b
+    %4 = load i32, i32* @gcd2.d
+    %5 = alloca i32
+    store i32 3, i32* %5
+    %6 = load i32, i32* %5
+    store i32 %6, i32* @gcd2.d
+    %7 = load i32, i32* @gcd2.d
+    %8 = load double, double* @gcd2.a
+    %9 = alloca double
+    store double 3.0000000000000000E+00, double* %9
+    %10 = load double, double* %9
+    store double %10, double* @gcd2.a
+    %11 = load double, double* @gcd2.a
+    %r = alloca i1
+    %12 = load i1, i1* %r
+    %13 = alloca i1
+    store i1 1, i1* %13
+    %14 = load i1, i1* %13
+    store i1 %14, i1* %r
+    %15 = load i1, i1* %r
+    %p = alloca i1
+    %16 = load i1, i1* %p
+    %17 = alloca i1
+    store i1 1, i1* %17
+    %18 = load i1, i1* %17
+    store i1 %18, i1* %p
+    %19 = load i1, i1* %p
+    %e = alloca i1
+    %20 = load i1, i1* %e
+    %21 = load i1, i1* %p
     br label %land.entry0
 land.entry0:
-    %13 = icmp ne i1 %12, 1
-    br i1 %13, label %land.rhs0, label %land.end0
+    %22 = icmp ne i1 %21, 0
+    br i1 %22, label %land.rhs0, label %land.end0
 land.rhs0:
-    %14 = load i1, i1* %a
-    br label %land.entry1
-land.entry1:
-    %15 = icmp ne i1 %14, 1
-    br i1 %15, label %land.rhs1, label %land.end1
-land.rhs1:
-    %16 = load i1, i1* %b
-    %17 = icmp ne i1 %16, 1
-    br label %land.end1
-land.end1:
-    %18 = phi i1 [1, %land.entry1], [%16, %land.rhs1]
-    %19 = icmp ne i1 %18, 1
+    %23 = load i1, i1* %e
+    %24 = icmp ne i1 %23, 0
     br label %land.end0
 land.end0:
-    %20 = phi i1 [1, %land.entry0], [%18, %land.end1]
-    call void @printBoolean(i1 %20)
+    %25 = phi i1 [0, %land.entry0], [%23, %land.rhs0]
+    store i1 %25, i1* %e
+    %26 = load i1, i1* %e
+    %27 = load i1, i1* %r
+    %28 = icmp ne i1 %27, 1
+    %29 = load i1, i1* %e
+    br label %land.entry1
+land.entry1:
+    %30 = icmp ne i1 %29, 0
+    br i1 %30, label %land.rhs1, label %land.end1
+land.rhs1:
+    %31 = load i1, i1* %e
+    %32 = icmp ne i1 %31, 1
+    %33 = icmp ne i1 %32, 0
+    br label %land.end1
+land.end1:
+    %34 = phi i1 [0, %land.entry1], [%32, %land.rhs1]
+%35 = icmp ne i1 %28, %34
+    call void @printBoolean(i1 %35)
     ret void
 }
 @.str.int = private unnamed_addr constant [4 x i8] c"%d\0A\00"
