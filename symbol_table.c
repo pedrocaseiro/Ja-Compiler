@@ -37,6 +37,35 @@ symbol_table* new_symbol_table(char* type, char* name, int n_params, char** para
   return st;
 }
 
+
+
+void print_symbol_table(symbol* s) {
+  printf("%s\t", s->name);
+  if(s->params!= NULL){
+    int i;
+    printf("(");
+    for(i = 0; i < s->n_params; i++){
+      printf("%s", s->params[i]);
+      if(i != s->n_params - 1){
+        printf(",");
+      }
+    }
+    printf(")");
+  }
+
+  printf("\t%s", s->type);
+  if(s->flag != NULL){
+    printf("\t%s", s->flag);
+  }
+  printf("\n");
+  if(s->next != NULL){
+    print_symbol_table(s->next);
+  }
+}
+
+
+
+
 char* str_to_lower(char* s) {
   char* str = strdup(s);
   if (str == NULL)
@@ -777,29 +806,7 @@ void create_an_tree(node *n){
 }
 
 
-void print_symbol_table(symbol* s) {
-  printf("%s\t", s->name);
-  if(s->params!= NULL){
-    int i;
-    printf("(");
-    for(i = 0; i < s->n_params; i++){
-      printf("%s", s->params[i]);
-      if(i != s->n_params - 1){
-        printf(",");
-      }
-    }
-    printf(")");
-  }
 
-  printf("\t%s", s->type);
-  if(s->flag != NULL){
-    printf("\t%s", s->flag);
-  }
-  printf("\n");
-  if(s->next != NULL){
-    print_symbol_table(s->next);
-  }
-}
 
 void print_table() {
   int i = 0;
