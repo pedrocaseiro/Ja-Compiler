@@ -9,39 +9,26 @@ define i32 @main(i32 %argc, i8** %argv) #0 {
   %1 = alloca i32, align 4
   %2 = alloca i32, align 4
   %3 = alloca i8**, align 8
-  %u = alloca i32, align 4
-  %y = alloca i32, align 4
-  %r = alloca double, align 8
-  %p = alloca double, align 8
+  %a = alloca i32, align 4
+  %b = alloca i32, align 4
   store i32 0, i32* %1, align 4
   store i32 %argc, i32* %2, align 4
   store i8** %argv, i8*** %3, align 8
-  store i32 2, i32* %u, align 4
-  store i32 4, i32* %y, align 4
-  store double 2.500000e+00, double* %r, align 8
-  store double 1.500000e+00, double* %p, align 8
-  %4 = load i32, i32* %u, align 4
-  %5 = load i32, i32* %y, align 4
-  %6 = icmp sge i32 %4, %5
-  %7 = zext i1 %6 to i32
-  %8 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str, i32 0, i32 0), i32 %7)
-  %9 = load double, double* %r, align 8
-  %10 = load i32, i32* %y, align 4
-  %11 = sitofp i32 %10 to double
-  %12 = fcmp oge double %9, %11
-  %13 = zext i1 %12 to i32
-  %14 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str, i32 0, i32 0), i32 %13)
-  %15 = load i32, i32* %y, align 4
-  %16 = sitofp i32 %15 to double
-  %17 = load double, double* %r, align 8
-  %18 = fcmp oge double %16, %17
-  %19 = zext i1 %18 to i32
-  %20 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str, i32 0, i32 0), i32 %19)
-  %21 = load double, double* %p, align 8
-  %22 = load double, double* %r, align 8
-  %23 = fcmp oge double %21, %22
-  %24 = zext i1 %23 to i32
-  %25 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str, i32 0, i32 0), i32 %24)
+  store i32 1, i32* %a, align 4
+  store i32 0, i32* %b, align 4
+  %4 = load i32, i32* %b, align 4
+  %5 = icmp ne i32 %4, 0
+  br i1 %5, label %6, label %9
+
+; <label>:6                                       ; preds = %0
+  %7 = load i32, i32* %a, align 4
+  %8 = icmp ne i32 %7, 0
+  br label %9
+
+; <label>:9                                       ; preds = %6, %0
+  %10 = phi i1 [ false, %0 ], [ %8, %6 ]
+  %11 = zext i1 %10 to i32
+  %12 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str, i32 0, i32 0), i32 %11)
   ret i32 0
 }
 

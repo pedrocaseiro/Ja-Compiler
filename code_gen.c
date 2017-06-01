@@ -18,6 +18,7 @@ char* global_string_print[1000];
 int string_counter = 0;
 int final_size = 0;
 int assign_var;
+int land_counter = 0;
 
 int array_counter = 0;
 
@@ -904,9 +905,68 @@ void generate_geq(node* n){
 }
 
 
+void generate_and(node* n){
+  int local_land_counter = land_counter;
+  land_counter++;
+  printf("    br label %%land.entry%d\n", local_land_counter);
+
+  printf("land.entry%d:\n", local_land_counter);
+  printf("    %%%d = icmp ne i1 %%%d, 0\n", current_temporary, n->childs[0]->address);
+  printf("    br i1 %%%d, label %%land.rhs%d, label %%land.end%d\n", current_temporary, local_land_counter, local_land_counter);
+  current_temporary++;
+
+  printf("land.rhs%d:\n", local_land_counter);
+  code_generation(n->childs[1]);
+  printf("    %%%d = icmp ne i1 %%%d, 0\n", current_temporary, n->childs[1]->address);
+  current_temporary++;
+  printf("    br label %%land.end%d\n", local_land_counter);
+
+  printf("land.end%d:\n", local_land_counter);
+
+  if(local_land_counter == land_counter-1){
+    printf("    %%%d = phi i1 [0, %%land.entry%d], [%%%d, %%land.rhs%d]\n", current_temporary, local_land_counter, n->childs[1]->address, local_land_counter);
+    n->address = current_temporary;
+    current_temporary++;
+  } else{
+    printf("    %%%d = phi i1 [0, %%land.entry%d], [%%%d, %%land.end%d]\n", current_temporary, local_land_counter, n->childs[1]->address, local_land_counter+1);
+    n->address = current_temporary;
+    current_temporary++;
+  }
 
 
+}
 
+void generate_or(node* n){
+  int local_land_counter = land_counter;
+  land_counter++;
+
+  printf("    br label %%land.entry%d\n", local_land_counter);
+
+  printf("land.entry%d:\n", local_land_counter);
+  printf("    %%%d = icmp ne i1 %%%d, 1\n", current_temporary, n->childs[0]->address);
+  printf("    br i1 %%%d, label %%land.rhs%d, label %%land.end%d\n", current_temporary, local_land_counter, local_land_counter);
+  current_temporary++;
+
+  printf("land.rhs%d:\n", local_land_counter);
+  code_generation(n->childs[1]);
+  printf("    %%%d = icmp ne i1 %%%d, 1\n", current_temporary, n->childs[1]->address);
+  current_temporary++;
+  printf("    br label %%land.end%d\n", local_land_counter);
+
+  printf("land.end%d:\n", local_land_counter);
+
+  if(local_land_counter == land_counter-1){
+    printf("    %%%d = phi i1 [1, %%land.entry%d], [%%%d, %%land.rhs%d]\n", current_temporary, local_land_counter, n->childs[1]->address, local_land_counter);
+    n->address = current_temporary;
+    current_temporary++;
+  } else{
+    printf("    %%%d = phi i1 [1, %%land.entry%d], [%%%d, %%land.end%d]\n", current_temporary, local_land_counter, n->childs[1]->address, local_land_counter+1);
+    n->address = current_temporary;
+    current_temporary++;
+  }
+
+
+}
 
 
 
@@ -1045,6 +1105,12 @@ void code_generation(node* n){
       code_generation(n->childs[i]);
     }
     generate_geq(n);
+  } else if(!strcmp(n->token->id, "And")){
+    code_generation(n->childs[0]);
+    generate_and(n);
+  } else if(!strcmp(n->token->id, "Or")){
+    code_generation(n->childs[0]);
+    generate_or(n);
   }
 
 

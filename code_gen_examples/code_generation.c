@@ -3,15 +3,10 @@
 #include <stdio.h>
 
 int main(int argc, char* argv[]){
-  int u = 2;
-  int y = 4;
+  int a = 1;
+  int b = 0;
 
-  double r = 2.5;
-  double p = 1.5;
+  printf("%d", b && a);
 
-  printf("%d", u>=y);
-  printf("%d", r>=y);
-  printf("%d", y>=r);
-  printf("%d", p>=r);
   return 0;
 }

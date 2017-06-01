@@ -22,6 +22,8 @@ void generate_lt(node*);
 void generate_leq(node*);
 void generate_gt(node*);
 void generate_geq(node*);
+void generate_and(node*);
+void generate_or(node*);
 char* return_type_to_llvm(char*);
 char* parse_arguments_type(char*);
 void code_gen_ast(node* n);

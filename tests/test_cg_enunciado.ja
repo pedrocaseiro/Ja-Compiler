@@ -2,20 +2,11 @@ class gcd2{
   public static double a;
   public static double b;
   public static void main(String[] args) {
-    boolean e;
-    boolean f;
-    a = 9.5;
-    b = 2.5;
-    c = 3;
-    d = 2;
-    e = false;
-    f = true;
-
-    System.out.println(3>=5.3);
-    System.out.println(a>=6);
-    System.out.println(-3.3>=-5);
-    System.out.println(6.9>=args.length);
-
+    boolean a;
+    boolean b;
+    a = true;
+    b = false;
+    System.out.println( b || (a || b));
 
   }
 
