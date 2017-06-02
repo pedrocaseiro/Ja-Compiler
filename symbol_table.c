@@ -23,7 +23,7 @@ symbol* new_symbol(char* name, int n_params, char** params, char* type, char* fl
   s->next = NULL;
   s->is_method=is_method; // not a method
   s->llvm_type = NULL;
-  s->is_global = -1;
+  s->is_global = -1; // 1 - global, 2 - parameter, else it's local
   return s;
 }
 
@@ -155,7 +155,6 @@ void second_traverse(node* n){
 void first_traverse(node* n) {
   int i = 0;
   int k = 0;
-  //TODO: dá seg fault aqui sem flag!!!!!!!
   if (!strcmp(n->token->id, "Program")) {
     table[table_index] = new_symbol_table("Class", n->childs[0]->value, 0, NULL);
     table_index++;
@@ -408,6 +407,8 @@ void parse_call_node(node* n){
       }
       if(counter == g->n_params){
         n->anotated_type = g->type;
+        //TODO: we added this
+        n->pointer_table = g;
         matches++;
         strcpy(str,"(");
         int j;
@@ -422,6 +423,7 @@ void parse_call_node(node* n){
         break;
       } else if(counter + double_int_counter == g->n_params){
         n->anotated_type = g->type;
+        n->pointer_table = g;
         double_int_matches++;
         strcpy(str2,"(");
         int j;

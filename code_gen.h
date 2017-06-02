@@ -28,6 +28,7 @@ void generate_return(node* n);
 void generate_if(node* n);
 void generate_while(node* n);
 void generate_do_while(node* n);
+void generate_call(node* n);
 char* return_type_to_llvm(char*);
 char* parse_arguments_type(char*);
 void code_gen_ast(node* n);

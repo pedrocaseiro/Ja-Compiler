@@ -50,6 +50,8 @@ char* parse_arguments_type(char* type){
     return "double";
   } else if(!strcmp(type, "bool") || !strcmp(type, "Bool")){
     return "boolean";
+  } else if(!strcmp(type, "boolean") || !strcmp(type, "Boolean")){
+    return "boolean";
   } else if(!strcmp(type, "void") || !strcmp(type, "Void") ){
     return "void";
   } else if(!strcmp(type, "StringArray") || !strcmp(type, "String[]")){
@@ -205,7 +207,7 @@ void generate_methoddecl(node *n){
     if(!strcmp(n->childs[0]->childs[2]->childs[i]->childs[0]->token->id, "StringArray")){
       printf("i32 %%argc, i8** %%argv");
     } else {
-      printf("%s %s", return_type_to_llvm(n->childs[0]->childs[2]->childs[i]->childs[0]->token->id), n->childs[0]->childs[2]->childs[i]->childs[1]->value);
+      printf("%s %%%s", return_type_to_llvm(n->childs[0]->childs[2]->childs[i]->childs[0]->token->id), n->childs[0]->childs[2]->childs[i]->childs[1]->value);
     }
     if(i != n->childs[0]->childs[2]->n_children - 1) printf(", ");
   }
@@ -412,7 +414,7 @@ void generate_declit(node *n){
   //printf("    store i32 %d, i32* %%%d\n", atoi(fix_lit_for_conversion(n)), current_temporary);
   //current_temporary++;
   //printf("    %%%d = load i32, i32* %%%d\n", current_temporary, current_temporary-1);
-  printf("%%%d = add i32 %d, %d\n", current_temporary, 0,  atoi(fix_lit_for_conversion(n)));
+  printf("    %%%d = add i32 %d, %d\n", current_temporary, 0,  atoi(fix_lit_for_conversion(n)));
   n->address = current_temporary;
   assign_var = current_temporary;
   current_temporary++;
@@ -425,7 +427,7 @@ void generate_reallit(node *n){
   //printf("    %%%d = alloca double\n", current_temporary);
   //printf("    store double %.16E, double* %%%d\n", atof(fix_lit_for_conversion(n)), current_temporary);
   //printf("    %%%d = load double, double* %%%d\n", current_temporary, current_temporary-1);
-  printf("%%%d = fadd double %.16E, %.16E\n", current_temporary, 0.0,  atof(fix_lit_for_conversion(n)));
+  printf("    %%%d = fadd double %.16E, %.16E\n", current_temporary, 0.0,  atof(fix_lit_for_conversion(n)));
 
   n->address = current_temporary;
   assign_var = current_temporary;
@@ -1033,7 +1035,6 @@ void generate_do_while(node* n){
 
 }
 
-
 void generate_return(node* n){
   if(n->n_children > 0){
     if(!strcmp(return_type, "Int")){
@@ -1053,6 +1054,47 @@ void generate_return(node* n){
    }
   }
   current_temporary++;
+}
+
+char* parse_call_arguments_type_to_llvm(char* type){
+  if(!strcmp(type, "int") || !strcmp(type, "Int")){
+    return "i32";
+  } else if(!strcmp(type, "double") || !strcmp(type, "Double")){
+    return "double";
+  } else if(!strcmp(type, "bool") || !strcmp(type, "Bool")){
+    return "i1";
+  } else if(!strcmp(type, "boolean") || !strcmp(type, "Boolean")){
+    return "i1";
+  } else if(!strcmp(type, "void") || !strcmp(type, "Void") ){
+    return "void";
+  } else if(!strcmp(type, "StringArray") || !strcmp(type, "String[]")){
+    return "i8*";
+  } else {
+    return "undefined";
+  }
+}
+
+
+void generate_call(node* n){
+  int i;
+  printf("    call %s @%s.method.%s", return_type_to_llvm(n->anotated_type), class, n->childs[0]->value);
+  for(i = 1; i < n->n_children; i++){
+    printf(".%s", parse_arguments_type(n->childs[i]->anotated_type));
+  }
+  printf("(");
+  for(i = 0; i < n->pointer_table->n_params; i++){
+    if(!strcmp(n->pointer_table->params[i], "double") && !strcmp(n->childs[i+1]->anotated_type, "int")){
+      // convert int to double
+      printf("    %%%d = sitofp i32 %%%d to double\n", current_temporary, n->childs[i+1]->address);
+      printf("%s %%%d", parse_call_arguments_type_to_llvm(n->pointer_table->params[i]), current_temporary);
+      current_temporary++;
+    } else {
+      printf("%s %%%d", parse_call_arguments_type_to_llvm(n->pointer_table->params[i]), n->childs[i+1]->address);
+    }
+    if(i != n->pointer_table->n_params - 1) printf(",");
+  }
+  printf(")\n");
+  if(strcmp(n->anotated_type, "void")) current_temporary++;
 }
 
 void code_generation(node* n){
@@ -1208,6 +1250,11 @@ void code_generation(node* n){
   } else if(!strcmp(n->token->id, "Return")){
     if(n->n_children > 0) code_generation(n->childs[0]);
     generate_return(n);
+  } else if(!strcmp(n->token->id, "Call")){
+    for(i = 1; i < n->n_children; i++){
+      code_generation(n->childs[i]);
+    }
+    generate_call(n);
   }
 
 

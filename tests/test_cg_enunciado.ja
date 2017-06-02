@@ -1,25 +1,44 @@
 class gcd2{
   public static void main(String[] args) {
-    int b;
-    b = 5;
-    System.out.println(b);
+    int a;
+    a = 5;
+    coimbra(a);
+    porto(5.5);
+    porto(5);
+    lisboa(5, 5.5);
+    lisboa(5.5, 5.5);
+    //teralul(args);
+    boo(true);
     return;
   }
 
-  public static double lul(){
-    int a;
-    a = 5;
-    return a;
-    a = 3;
+  public static int coimbra(int a){
+    int teraLUL;
+    teraLUL = 15;
+    System.out.println(teraLUL);
   }
-  public static boolean xd(){
-    int a;
-    boolean x;
-    x = true;
-    return false;
-    return !x; 
-    a = 5;
-    return true;
-    a = 3;
+
+  public static void porto(double a){
+
+  }
+
+  public static void porto(int a){
+
+  }
+  public static void lisboa(int a, double b){
+
+  }
+  public static void lisboa(double a, double b){
+
+  }
+
+  public static void teralul(String[] a){
+  }
+
+  public static void boo(boolean a){
+
+  }
+
+  public static void teralul2(String[] a){
   }
 }
