@@ -66,6 +66,7 @@ node* create_and_insert_node(char* nodetype, int to_be_used, int n_children, ...
 
   tmp = transfer_nodes;
 
+  // os que vamos usar, igualo a temp e vou usar, se não for usar, vou buscar os filhos dele e guardo-os para os transferir
   while (n_children--) {
     node *children = va_arg(args, node *);
 
@@ -76,12 +77,13 @@ node* create_and_insert_node(char* nodetype, int to_be_used, int n_children, ...
       for (i = 0; i < children->n_children; i++) {
         *tmp++ = children->childs[i];
       }
-    } else {
+    } else { // it's gonna be used
       *tmp++ = children;
       nodes++;
     }
   }
 
+  // se tenho filhos
   if (nodes != 0) {
     new_node->childs = (node **) malloc (nodes * sizeof(node *));
     memcpy(new_node->childs, transfer_nodes, nodes * sizeof(node *));
@@ -123,6 +125,7 @@ void ast_decl(node *type, node *decl) {
       ast_decl_aux(type, decl->childs[i]);
     }
   } else {
+    // FieldDecl, VarDecl, ParamDecl
     ast_decl_aux(type, decl);
   }
 }
@@ -140,17 +143,24 @@ new_node->duplicated_method = 0;
 new_node->table_index = 0;*/
 void destroy_tree(node *n) {
 
+  printf("%s\n", n->token->id);
   if(n != NULL){
     int i;
     for (i = 0; i < n->n_children; i++) {
-      destroy_tree(n->childs[i]);
+      if(n->childs[i] != NULL){
+        destroy_tree(n->childs[i]);
+      }
     }
 
-    free(n->token);
-    //free(n->anotated_type);
-    free(n->value);
-    free(n->childs);
-    free(n);
+    if(n != NULL){
+      printf("a\n");
+      if(n->token != NULL){
+        free(n->token);
+      }
+      if(n->childs != NULL) free(n->childs);
+      if(n != NULL) free(n);
+      printf("f\n");
+    }
   }
 }
 

@@ -1,29 +1,13 @@
 class gcd {
 
-    public static int abc(boolean a, double b){
-
+    public static int main(String[] args){
+      int sum;
+      int i;
+      int n;
+      sum = i = 0;
+      while(i < n && sum >= 0){
+        sum = sum + Integer.parseInt(args[0]);
+        i = i + 1;
+      }
     }
-
-    public static int cde(String[] args){
-
-      //a = abc(p+h, x);
-      //a = (o+h) && y;
-      int b;
-      //boolean c;
-      //c = true;
-      //b = -(-abc(-x,y));
-      //b = !!p+k;
-      //int x;
-      //b = aaa(x,c,d);
-      //b = aaa();
-      //b = aaa(c);
-
-      b = abc(true, 5.4);
-    }
-
-
-    public static int abc(boolean a, int b){
-      int c;
-    }
-
 }

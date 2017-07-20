@@ -490,8 +490,6 @@ void parse_call_node(node* n){
       printf("Line %d, col %d: Reference to method %s%s is ambiguous\n", n->childs[0]->token->line, n->childs[0]->token->col, n->childs[0]->value, call_child_types);
     }
   }
-
-
 }
 
 void parse_parseargs_node(node* n){
@@ -618,7 +616,7 @@ void parse_reallit_node(node* n){
       e_flag = true;
 
     if(char_value[i] != '.' && char_value[i] != '0' && !e_flag)
-      different_zero_flag = true;
+      different_zero_flag = true; // != 0
     if(char_value[i] != '_'){
       str[j] = char_value[i];
       j++;
@@ -637,7 +635,6 @@ void parse_reallit_node(node* n){
       error_semantic = 1;
       printf("Line %d, col %d: Number %s out of bounds\n", n->token->line, n->token->col, n->value);
     }
-
   }
   free(str);
   n->anotated_type = strdup("double");

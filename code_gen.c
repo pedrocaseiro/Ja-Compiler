@@ -308,8 +308,6 @@ void generate_boolean_print(){
   printf("    ret:\n");
   printf("    ret void\n");
   printf("}\n");
-
-
 }
 
 
@@ -691,6 +689,7 @@ void generate_not(node* n){
 
   if(!strcmp(n->childs[0]->anotated_type, "boolean")){
 
+    // se for ne to 1 ( for 0) guardas 1, se for 0, ne 1 dá true guardas 1(true)
     printf("    %%%d = icmp ne i1 %%%d, 1\n", current_temporary, n->childs[0]->address);
     n->address = current_temporary;
     assign_var = current_temporary;
@@ -738,7 +737,6 @@ void generate_eq(node* n){
   }
 
 }
-
 
 
 
@@ -920,6 +918,7 @@ void generate_and(node* n){
   printf("    br label %%land.entry%d\n", local_land_counter);
 
   printf("land.entry%d:\n", local_land_counter);
+  // se não for igual a 0, é 1, quero continuar
   printf("    %%%d = icmp ne i1 %%%d, 0\n", current_temporary, n->childs[0]->address);
   printf("    br i1 %%%d, label %%land.rhs%d, label %%land.end%d\n", current_temporary, local_land_counter, local_land_counter);
   current_temporary++;
@@ -932,6 +931,7 @@ void generate_and(node* n){
 
   printf("land.end%d:\n", local_land_counter);
 
+  // and não tem filhos and ou or
   if(local_land_counter == land_counter-1){
     printf("    %%%d = phi i1 [0, %%land.entry%d], [%%%d, %%land.rhs%d]\n", current_temporary, local_land_counter, n->childs[1]->address, local_land_counter);
     n->address = current_temporary;

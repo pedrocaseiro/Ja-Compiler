@@ -129,8 +129,8 @@ int main(int argc, char **argv) {
       yyparse();
       if(!error_flag){
         print_tree(ast, 0);
-        //destroy_tree(ast);
       }
+      //destroy_tree(ast);
     } else if(!strcmp(argv[1], "-s")){
       return_flag = 1;
       yyparse();
@@ -142,8 +142,8 @@ int main(int argc, char **argv) {
         print_table();
         printf("\n");
         print_tree(ast,0);
-        //destroy_tree(ast);
       }
+      //destroy_tree(ast);
     } else if(!strcmp(argv[1], "-3")){
        return_flag = 1;
        yyparse();
@@ -152,8 +152,8 @@ int main(int argc, char **argv) {
         table = new_table(MAX_SIZE);
         first_traverse(ast);
         create_an_tree(ast);
-        //destroy_tree(ast);
       }
+      //destroy_tree(ast);
     }
   } else {
     return_flag = 1;
@@ -165,12 +165,13 @@ int main(int argc, char **argv) {
       create_an_tree(ast);
       //print_table();
       //print_tree(ast,0);
-      if(error_semantic == 0)
+      if(error_semantic == 0){
         code_gen_ast(ast);
-
+      }
     }
+    //destroy_tree(ast);
   }
-  //yylex_destroy();
+  yylex_destroy();
   return 0;
 }
 

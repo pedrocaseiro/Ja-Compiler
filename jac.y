@@ -25,17 +25,18 @@
 %token <token> ASSIGN SEMI COMMA RESERVED DECLIT REALLIT STRLIT
 %token <token> ID
 
-%nonassoc IF_NO_ELSE
+%nonassoc IF_NO_ELSE // operador não tem associatividade - tem a ver com indentação.
 %nonassoc ELSE
 
-%right ASSIGN
+// https://docs.oracle.com/javase/tutorial/java/nutsandbolts/operators.html
+%right ASSIGN // check
 %left OR
-%left AND
-%left EQ NEQ
+%left AND // a || b && c
+%left EQ NEQ // filhos podem ser GT LT GEQ logo estes têm mais precedência
 %left GT LT GEQ LEQ
 %left PLUS MINUS
 %left STAR DIV MOD
-%right NOT UNARY
+%right NOT UNARY // avalias primeiro direita
 
 %type <node> Program DeclarationL DeclarationAux FieldDecl FieldDeclL FormalParamsStringArray FieldsIds StringArray MethodDecl MethodHeader MethodBody MethodParams MethodParamsL VOIDAux VarDeclStatement FormalParams StrLitAux VarDecl VarDeclL VarsIds Statement StatementL Assignment MethodInvocation ParseArgs Expr ExprAux Type CommaExpr IDAux
 
