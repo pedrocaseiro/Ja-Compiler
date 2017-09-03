@@ -400,18 +400,12 @@ void generate_parseArgs(node *n){
 }
 
 void generate_strlit(node *n){
-
   global_string_print[string_counter]= (char*)n->value;
   parse_string(global_string_print[string_counter]);
   string_counter++;
 }
 
 void generate_declit(node *n){
-
-  //printf("    %%%d = alloca i32\n", current_temporary);
-  //printf("    store i32 %d, i32* %%%d\n", atoi(fix_lit_for_conversion(n)), current_temporary);
-  //current_temporary++;
-  //printf("    %%%d = load i32, i32* %%%d\n", current_temporary, current_temporary-1);
   printf("    %%%d = add i32 %d, %d\n", current_temporary, 0,  atoi(fix_lit_for_conversion(n)));
   n->address = current_temporary;
   assign_var = current_temporary;
@@ -421,12 +415,7 @@ void generate_declit(node *n){
 
 
 void generate_reallit(node *n){
-
-  //printf("    %%%d = alloca double\n", current_temporary);
-  //printf("    store double %.16E, double* %%%d\n", atof(fix_lit_for_conversion(n)), current_temporary);
-  //printf("    %%%d = load double, double* %%%d\n", current_temporary, current_temporary-1);
   printf("    %%%d = fadd double %.16E, %.16E\n", current_temporary, 0.0,  atof(fix_lit_for_conversion(n)));
-
   n->address = current_temporary;
   assign_var = current_temporary;
   current_temporary++;
@@ -452,7 +441,6 @@ void generate_boollit(node *n){
 
 // when we find a node id, we want to load it
 void generate_id(node *n){
-  //printf("%s\n", n->value);
   if(n->pointer_table != NULL && n->pointer_table->llvm_type != NULL){
     if(!strcmp(n->pointer_table->llvm_type, "i32")){
       if(n->pointer_table->is_global == 1){
@@ -502,7 +490,6 @@ void generate_minus(node* n){
 }
 void generate_plus(node* n){
   if(!strcmp(n->childs[0]->anotated_type, "int")){
-
     // int
     printf("    %%%d = alloca i32\n", current_temporary);
     printf("    store i32 %%%d, i32* %%%d\n", n->childs[0]->address, current_temporary);
@@ -686,10 +673,7 @@ void generate_mod(node* n){
 }
 
 void generate_not(node* n){
-
   if(!strcmp(n->childs[0]->anotated_type, "boolean")){
-
-    // se for ne to 1 ( for 0) guardas 1, se for 0, ne 1 dá true guardas 1(true)
     printf("    %%%d = icmp ne i1 %%%d, 1\n", current_temporary, n->childs[0]->address);
     n->address = current_temporary;
     assign_var = current_temporary;
@@ -738,8 +722,6 @@ void generate_eq(node* n){
 
 }
 
-
-
 void generate_neq(node* n){
   if(!strcmp(n->childs[0]->anotated_type, "int") && !strcmp(n->childs[1]->anotated_type, "int")){
     // int + int
@@ -779,8 +761,6 @@ void generate_neq(node* n){
 
 }
 
-
-
 void generate_lt(node* n){
   if(!strcmp(n->childs[0]->anotated_type, "int") && !strcmp(n->childs[1]->anotated_type, "int")){
     // int + int
@@ -811,9 +791,7 @@ void generate_lt(node* n){
     assign_var = current_temporary;
     current_temporary++;
   }
-
 }
-
 
 void generate_leq(node* n){
   if(!strcmp(n->childs[0]->anotated_type, "int") && !strcmp(n->childs[1]->anotated_type, "int")){
@@ -911,14 +889,12 @@ void generate_geq(node* n){
   }
 }
 
-
 void generate_and(node* n){
   int local_land_counter = land_counter;
   land_counter++;
   printf("    br label %%land.entry%d\n", local_land_counter);
 
   printf("land.entry%d:\n", local_land_counter);
-  // se não for igual a 0, é 1, quero continuar
   printf("    %%%d = icmp ne i1 %%%d, 0\n", current_temporary, n->childs[0]->address);
   printf("    br i1 %%%d, label %%land.rhs%d, label %%land.end%d\n", current_temporary, local_land_counter, local_land_counter);
   current_temporary++;
@@ -931,7 +907,6 @@ void generate_and(node* n){
 
   printf("land.end%d:\n", local_land_counter);
 
-  // and não tem filhos and ou or
   if(local_land_counter == land_counter-1){
     printf("    %%%d = phi i1 [0, %%land.entry%d], [%%%d, %%land.rhs%d]\n", current_temporary, local_land_counter, n->childs[1]->address, local_land_counter);
     n->address = current_temporary;
@@ -943,8 +918,6 @@ void generate_and(node* n){
     assign_var = current_temporary;
     current_temporary++;
   }
-
-
 }
 
 void generate_or(node* n){
@@ -975,8 +948,6 @@ void generate_or(node* n){
     n->address = current_temporary;
     current_temporary++;
   }
-
-
 }
 
 void generate_if(node* n){
@@ -993,7 +964,6 @@ void generate_if(node* n){
   printf("    br label %%label.end%d\n", local_control_flow_counter);
 
   printf("label.end%d:\n", local_control_flow_counter);
-
 }
 
 void generate_while(node* n){
@@ -1002,7 +972,6 @@ void generate_while(node* n){
 
   code_generation(n->childs[0]);
   printf("    br i1 %%%d, label %%label.body%d, label %%label.end%d\n", n->childs[0]->address, local_control_flow_counter, local_control_flow_counter);
-
 
   printf("label.body%d: \n", local_control_flow_counter);
   code_generation(n->childs[1]);
@@ -1013,7 +982,6 @@ void generate_while(node* n){
   printf("label.end%d:\n", local_control_flow_counter);
 
 }
-
 
 void generate_do_while(node* n){
   int local_control_flow_counter = control_flow_counter;
@@ -1024,7 +992,6 @@ void generate_do_while(node* n){
   code_generation(n->childs[1]);
   printf("    br i1 %%%d, label %%label.body%d, label %%label.end%d\n", n->childs[1]->address, local_control_flow_counter, local_control_flow_counter);
 
-
   printf("label.body%d: \n", local_control_flow_counter);
   code_generation(n->childs[0]);
 
@@ -1032,7 +999,6 @@ void generate_do_while(node* n){
   printf("    br i1 %%%d, label %%label.body%d, label %%label.end%d\n", n->childs[1]->address, local_control_flow_counter, local_control_flow_counter);
 
   printf("label.end%d:\n", local_control_flow_counter);
-
 }
 
 void generate_return(node* n){
@@ -1074,7 +1040,6 @@ char* parse_call_arguments_type_to_llvm(char* type){
   }
 }
 
-
 void generate_call(node* n){
   int i;
   printf("    call %s @%s.method.%s", return_type_to_llvm(n->anotated_type), class, n->childs[0]->value);
@@ -1109,7 +1074,6 @@ void code_generation(node* n){
     printf("declare i32 @printf(i8*, ...)\n");
     printf("declare i32 @atoi(...)\n");
     generate_boolean_print();
-
 
     for(i = 0; i < n->n_children; i++){
       if(!strcmp(n->childs[i]->token->id, "FieldDecl")){
@@ -1256,9 +1220,6 @@ void code_generation(node* n){
     }
     generate_call(n);
   }
-
-
-
 }
 
 void code_gen_ast(node* n){
