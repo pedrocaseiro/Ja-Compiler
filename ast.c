@@ -49,14 +49,10 @@ node* create_terminal_node(char* nodetype, int to_be_used, token_struct* v) {
   } else {
     new_terminal_node->value = v;
   }
-
-
   return new_terminal_node;
 }
 
-
 node* create_and_insert_node(char* nodetype, int to_be_used, int n_children, ...) {
-
   node *new_node, **tmp;
   int i, nodes = 0;
   va_list args;
@@ -65,8 +61,6 @@ node* create_and_insert_node(char* nodetype, int to_be_used, int n_children, ...
   new_node = newnode(nodetype, to_be_used);
 
   tmp = transfer_nodes;
-
-  // os que vamos usar, igualo a temp e vou usar, se não for usar, vou buscar os filhos dele e guardo-os para os transferir
   while (n_children--) {
     node *children = va_arg(args, node *);
 
@@ -83,13 +77,11 @@ node* create_and_insert_node(char* nodetype, int to_be_used, int n_children, ...
     }
   }
 
-  // se tenho filhos
   if (nodes != 0) {
     new_node->childs = (node **) malloc (nodes * sizeof(node *));
     memcpy(new_node->childs, transfer_nodes, nodes * sizeof(node *));
     new_node->n_children = nodes;
   }
-
   va_end(args);
   return new_node;
 }
@@ -129,18 +121,7 @@ void ast_decl(node *type, node *decl) {
     ast_decl_aux(type, decl);
   }
 }
-/*
-new_node->token = (token_struct*) malloc(sizeof(token_struct));
-new_node->token->id = nodetype;
-new_node->token->line = 0;
-new_node->token->col = 0;
-new_node->anotated_type = NULL;
-new_node->value = NULL;
-new_node->to_be_used = to_be_used;
-new_node->n_children = 0;
-new_node->childs = NULL;
-new_node->duplicated_method = 0;
-new_node->table_index = 0;*/
+
 void destroy_tree(node *n) {
 
   printf("%s\n", n->token->id);
@@ -181,7 +162,6 @@ void print_node(node* n) {
   }
 }
 
-
 void print_tree(node* n, int d) {
 
   int i, k;
@@ -201,7 +181,6 @@ bool check_if_expr(node* test_node){
   }
   return false;
 }
-
 
 bool check_if_statement(node* test_node){
   if(!strcmp(test_node->token->id, "Semi") || !strcmp(test_node->token->id, "Empty") || (strcmp(test_node->token->id, "Return") && test_node->n_children == 0)){
