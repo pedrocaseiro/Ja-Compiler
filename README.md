@@ -4,6 +4,7 @@ It has a lexical analyser, a syntax analyser, a semantic analyser and an interme
 
 All the instructions can be found at the PDF file (Portuguese version only, unfortunately attached to the repo.
 There is also a run.sh file to compile the project.
+
 When running in, the following flags can be passed:
 
 -1: performs the lexical analysis, reporting possible lexical errors, and ends.
