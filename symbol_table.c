@@ -131,13 +131,11 @@ void second_traverse(node* n){
 
   for(i = 0; i < n->childs[1]->n_children; i++){
     if(!strcmp(n->childs[1]->childs[i]->token->id, "VarDecl")){
-      // we call it with n as a VarDecl node
       if(parse_vardecl_node(n->childs[1]->childs[i])){
         symbol* aux =insert_symbol(table[table_index], n->childs[1]->childs[i]->childs[1]->value, 0, NULL, str_to_lower(n->childs[1]->childs[i]->childs[0]->token->id), NULL, 0);
         n->childs[1]->childs[i]->childs[1]->pointer_table = aux;
       }
     } else {
-      // we pass method body
       iterate_tree(n->childs[1]->childs[i]);
     }
   }
@@ -280,8 +278,6 @@ bool parse_methodheader_node(node* n){
   node* methodparams = (node*)malloc(sizeof(node));
   s = table[0]->first;
   int count = 0;
-  //char str[1000] = {0}; // TODO: não fazer 100 à mão!!!!!
-  //char str2[1000] = {0}; // TODO: MUDAR ISTO
   char* str = (char*)malloc(1000 * sizeof(char));
   char* str2 = (char*)malloc(1000 * sizeof(char));
   while(s != NULL){
@@ -366,19 +362,6 @@ void parse_assign_node(node *n){
        error_semantic = 1;
      }
 }
-// percorremos tabelas até encontrar com nome igual
-// se for match -> preenchemos árvore
-// se for compativel -> contador++
-// no fim verificar se contador > 1 - se for, ambiguous
-// senão está bem
-
-
-// percorres as tabelas todas e vês se há alguma com nome igual e nº parametros iguais
-// na tabela local ver se parametros batem certo
-// se baterem, acabou
-// se não baterem, vemos se são compativeis -> se forem variavel++;
-// se variavel > 1 -> ambiguous
-
 
 void parse_call_node(node* n){
   int k=0;
@@ -454,7 +437,6 @@ void parse_call_node(node* n){
         char call_child_types[1000]="(";
         char result_to_print[1000]="";
         int h=1;
-        //mandar print correto
         for(h = 1; h < n->n_children; h++){
           strcat(call_child_types, n->childs[h]->anotated_type);
           if(h != n->n_children - 1){
@@ -474,7 +456,6 @@ void parse_call_node(node* n){
 
       char call_child_types[1000]="(";
       int h=1;
-      //mandar print correto
       for(h = 1; h < n->n_children; h++){
         strcat(call_child_types, n->childs[h]->anotated_type);
         if(h != n->n_children - 1){
